@@ -123,7 +123,7 @@ async def run_gonogo() -> int:
             detail = await client.get_dispute(dispute.dispute_id)
             print(f"  -> Lifecycle stage: {detail.dispute_life_cycle_stage}")
             print(f"  -> Allowed options: {detail.allowed_response_options}")
-            print(f"  -> Available HATEOAS links: {[l.rel for l in detail.links]}")
+            print(f"  -> Available HATEOAS links: {[link.rel for link in detail.links]}")
 
         except PayPalAPIError as exc:
             print(f"  -> [DISPUTE CREATION NOTE]: {exc}")
