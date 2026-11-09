@@ -83,3 +83,4 @@ class ArbiterVerdict(BaseModel):
     def all_deterministic_passed(self) -> bool:
         """True if every C1-C7 check passed."""
         return len(self.failed_checks) == 0
+

@@ -1,0 +1,775 @@
+[
+  {
+    "case_id": "case-s1-merchant-breach",
+    "dispute_id": "PP-D-1001-SANDBOX",
+    "status": "WAITING_FOR_SELLER_RESPONSE",
+    "lifecycle_stage": "INQUIRY",
+    "disputed_amount": "95.00",
+    "currency": "USD",
+    "seller_response_due_date": "2026-11-14T14:45:38Z",
+    "evidence_pack": {
+      "case_id": "case-s1-merchant-breach",
+      "dispute_id": "PP-D-1001-SANDBOX",
+      "dispute_reason": "MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED",
+      "disputed_amount": "95.00",
+      "currency": "USD",
+      "mandate_pack": {
+        "intent": {
+          "id": "im_s1_voltport",
+          "user_request": "USB-C docking station, at least 8 ports, HDMI 4K output, max total USD 120, from VoltPort",
+          "constraints": {
+            "category": "USB-C docking station",
+            "min_ports": 8,
+            "has_hdmi_4k": true,
+            "max_spend": "120.00",
+            "currency": "USD",
+            "allowed_merchants": [
+              "voltport-simulated"
+            ],
+            "required_features": []
+          },
+          "spend_cap": "120.00",
+          "allowed_merchants": [
+            "voltport-simulated"
+          ],
+          "expires_at": 1794239138,
+          "nonce": "e3e5efcbe1df4613abc7b0c6890ef5e3",
+          "public_key": "a85601008bf3c33bd005acfe312837a6fcd23eeeef0034bd5ec2a3818e872676",
+          "signature": "611fb253f47240b961703500466bc7ea541a4790013eea3510399ad57659701b9d6ca3f756a7d6a78e6ea157fe5492770a23f283b917de7e99a44c097028b408"
+        },
+        "cart": {
+          "id": "cm_s1_voltport",
+          "intent_hash": "5e54e1df4cdc9e5d03bbaf98c11b879641b5d4e0099438a06d2d491c3946bff4",
+          "merchant_id": "voltport-simulated",
+          "items": [
+            {
+              "item_id": "item-vp-401",
+              "title": "VoltPort 8-in-1 Aluminum Docking Station",
+              "price": "95.00",
+              "currency": "USD",
+              "attributes": {
+                "item_id": "item-vp-401",
+                "merchant_id": "voltport-simulated",
+                "title": "VoltPort 8-in-1 Aluminum Docking Station",
+                "ports_count": 8,
+                "has_hdmi_4k": true,
+                "power_delivery_watts": 85,
+                "description": "Promised specs: 8 physical ports including HDMI 4K and 85W PD pass-through."
+              }
+            }
+          ],
+          "total_amount": "95.00",
+          "currency": "USD",
+          "created_at": 1794235538,
+          "public_key": "d3ebafa7c1bb83a07fe8ade4d6e75be6b3ca20088144634c69adb1fe227a2a19",
+          "signature": "541d530fdec0a8a5b0b6238b87db39e26b593510d80c6561000d5c95f863691a75133646e90bbebac1ab054502ba27fa3247c5eaa7d06db8ba687e7493015801"
+        }
+      },
+      "paypal_order_id": "ORDER-SANDBOX-S1-VP",
+      "paypal_capture_id": "CAPTURE-SANDBOX-S1-001",
+      "captured_amount": "95.00",
+      "captured_custom_id": "b87d63f10d9cf45070e56d5735bef413e18fde13234fcfb1b4a9939480bafacd",
+      "merchant_listing": {
+        "item_id": "item-vp-401",
+        "merchant_id": "voltport-simulated",
+        "title": "VoltPort 8-in-1 Aluminum Docking Station",
+        "ports_count": 8,
+        "has_hdmi_4k": true,
+        "power_delivery_watts": 85,
+        "description": "Promised specs: 8 physical ports including HDMI 4K and 85W PD pass-through."
+      },
+      "delivery_report": {
+        "status": "inspected",
+        "item_serial": "VP-SN-882190",
+        "ports_count": 6,
+        "has_hdmi_4k": true,
+        "power_delivery_watts": 85,
+        "inspection_notes": "Physical unit received has only 6 ports (lacks 2 USB-A ports claimed on packaging)."
+      },
+      "candidate_trace": {
+        "evaluated_candidates": [
+          {
+            "item_id": "item-vp-401",
+            "merchant_id": "voltport-simulated",
+            "merchant_name": "VoltPort Electronics",
+            "title": "VoltPort 8-in-1 Aluminum Dock",
+            "price": "95.00",
+            "ports_count": 8,
+            "has_hdmi_4k": true,
+            "satisfies_constraints": true,
+            "rejection_reasons": [],
+            "utility_score": 0.6312,
+            "sub_scores": {
+              "price_efficiency": 0.3667,
+              "ports_score": 0.8,
+              "reputation_score": 0.78,
+              "power_delivery_score": 0.85
+            }
+          }
+        ],
+        "chosen_candidate": {
+          "item_id": "item-vp-401",
+          "merchant_id": "voltport-simulated",
+          "merchant_name": "VoltPort Electronics",
+          "title": "VoltPort 8-in-1 Aluminum Dock",
+          "price": "95.00",
+          "ports_count": 8,
+          "has_hdmi_4k": true,
+          "satisfies_constraints": true,
+          "rejection_reasons": [],
+          "utility_score": 0.6312,
+          "sub_scores": {
+            "price_efficiency": 0.3667,
+            "ports_score": 0.8,
+            "reputation_score": 0.78,
+            "power_delivery_score": 0.85
+          }
+        },
+        "best_candidate": {
+          "item_id": "item-vp-401",
+          "merchant_id": "voltport-simulated",
+          "merchant_name": "VoltPort Electronics",
+          "title": "VoltPort 8-in-1 Aluminum Dock",
+          "price": "95.00",
+          "ports_count": 8,
+          "has_hdmi_4k": true,
+          "satisfies_constraints": true,
+          "rejection_reasons": [],
+          "utility_score": 0.6312,
+          "sub_scores": {
+            "price_efficiency": 0.3667,
+            "ports_score": 0.8,
+            "reputation_score": 0.78,
+            "power_delivery_score": 0.85
+          }
+        },
+        "regret_score": 0.0,
+        "is_regret_flagged": false,
+        "policy_applied": "OPTIMAL"
+      },
+      "creation_time": 1794062738
+    },
+    "verdict": {
+      "case_id": "case-s1-merchant-breach",
+      "dispute_id": "PP-D-1001-SANDBOX",
+      "verdict": "MERCHANT_AT_FAULT",
+      "summary": "Merchant at fault: Physical delivery contradicts signed listing specifications. Details: Delivered ports count (6) is less than listing spec (8)",
+      "deterministic_checks": [
+        {
+          "check_id": "C1",
+          "name": "Signature Validity",
+          "status": "PASS",
+          "details": "Both IntentMandate and CartMandate have valid Ed25519 cryptographic signatures.",
+          "failure_reason": null
+        },
+        {
+          "check_id": "C2",
+          "name": "Mandate Expiry",
+          "status": "PASS",
+          "details": "Mandate was active at reference time (expires_at=1794239138, ref=1794062738).",
+          "failure_reason": null
+        },
+        {
+          "check_id": "C3",
+          "name": "Intent Hash Linkage",
+          "status": "PASS",
+          "details": "CartMandate securely links to IntentMandate hash: 5e54e1df4cdc9e5d...",
+          "failure_reason": null
+        },
+        {
+          "check_id": "C4",
+          "name": "Order Binding (Anti-Replay)",
+          "status": "PASS",
+          "details": "Cryptographic order binding verified against custom_id (b87d63f10d9cf450...).",
+          "failure_reason": null
+        },
+        {
+          "check_id": "C5",
+          "name": "Price Drift & Spend Cap",
+          "status": "PASS",
+          "details": "Captured amount $95.00 is within cap ($120.00) and equals cart total.",
+          "failure_reason": null
+        },
+        {
+          "check_id": "C6",
+          "name": "Allowed Merchant Enforcement",
+          "status": "PASS",
+          "details": "Merchant 'voltport-simulated' is authorized in the IntentMandate.",
+          "failure_reason": null
+        },
+        {
+          "check_id": "C7",
+          "name": "Mandate Attribute Compliance",
+          "status": "PASS",
+          "details": "Cart attributes fulfill all intent constraints (ports=8, 4K HDMI=True).",
+          "failure_reason": null
+        },
+        {
+          "check_id": "REGRET",
+          "name": "Agent Regret Measure",
+          "status": "PASS",
+          "details": "Agent regret index is 0.0% (within acceptable tolerance 15.0%).",
+          "failure_reason": null
+        }
+      ],
+      "semantic_comparison": {
+        "ports_match": "mismatch",
+        "hdmi_match": "match",
+        "discrepancies": [
+          "Delivered ports count (6) is less than listing spec (8)"
+        ],
+        "is_mismatch": true,
+        "quote": "Delivered ports count (6) is less than listing spec (8)",
+        "llm_used": false,
+        "model": "deterministic_fallback"
+      },
+      "regret_score": 0.0,
+      "is_regret_flagged": false,
+      "failed_checks": [],
+      "llm_used": false,
+      "verdict_timestamp": 1794235538
+    },
+    "planned_action": {
+      "case_id": "case-s1-merchant-breach",
+      "dispute_id": "PP-D-1001-SANDBOX",
+      "action_type": "accept-claim",
+      "http_method": "POST",
+      "api_path": "/v1/customer/disputes/PP-D-1001-SANDBOX/accept-claim",
+      "request_payload": {
+        "accept_claim_type": "REFUND",
+        "note": "AgentCourt Auto-Resolution: Merchant accepting buyer claim. Reason: Merchant at fault: Physical delivery contradicts signed listing specifications. Details: Delivered ports count (6) is less than listing spec (8)"
+      },
+      "rationale": "Delivery report contradicted listing specifications. Full refund recommended for buyer.",
+      "off_paypal_ledger_entry": null,
+      "requires_human_approval": true,
+      "executed": false,
+      "execution_result": null
+    },
+    "created_at": 1794062738,
+    "executed": false,
+    "execution_result": null
+  },
+  {
+    "case_id": "case-s2-operator-price-drift",
+    "dispute_id": "PP-D-1002-SANDBOX",
+    "status": "WAITING_FOR_SELLER_RESPONSE",
+    "lifecycle_stage": "INQUIRY",
+    "disputed_amount": "119.00",
+    "currency": "USD",
+    "seller_response_due_date": "2026-11-16T14:45:38Z",
+    "evidence_pack": {
+      "case_id": "case-s2-operator-price-drift",
+      "dispute_id": "PP-D-1002-SANDBOX",
+      "dispute_reason": "CREDIT_NOT_PROCESSED",
+      "disputed_amount": "119.00",
+      "currency": "USD",
+      "mandate_pack": {
+        "intent": {
+          "id": "im_s2_price_drift",
+          "user_request": "USB-C docking station, 8+ ports, 4K HDMI, max $120",
+          "constraints": {
+            "category": "USB-C docking station",
+            "min_ports": 8,
+            "has_hdmi_4k": true,
+            "max_spend": "120.00",
+            "currency": "USD",
+            "allowed_merchants": [
+              "dockcraft-simulated"
+            ],
+            "required_features": []
+          },
+          "spend_cap": "120.00",
+          "allowed_merchants": [
+            "dockcraft-simulated"
+          ],
+          "expires_at": 1794239138,
+          "nonce": "41611e1346e44fa79fa4b7033ac97210",
+          "public_key": "f52c9341fb212fb1959b885da70d7a0031051f20ba2e6e5a330e1ba159e37a47",
+          "signature": "0cd12242a8f13291a5d2ec8a0c62196cfa5c854aee6dad4670f2f9c0e9e4f3f0951bb22aadc9d19287a8b49b5805262a0c8461c9308b71f292f6f6ce5340bc0e"
+        },
+        "cart": {
+          "id": "cm_s2_price_drift",
+          "intent_hash": "fc9931096c2089aab5e2eac74f34fb3f0bd7be84118e882551af1cb8eb42caa0",
+          "merchant_id": "dockcraft-simulated",
+          "items": [
+            {
+              "item_id": "item-dc-101",
+              "title": "DockCraft Pro 10-in-1 USB-C Hub",
+              "price": "89.00",
+              "currency": "USD",
+              "attributes": {
+                "item_id": "item-dc-101",
+                "merchant_id": "dockcraft-simulated",
+                "title": "DockCraft Pro 10-in-1 USB-C Hub",
+                "ports_count": 10,
+                "has_hdmi_4k": true,
+                "power_delivery_watts": 100
+              }
+            }
+          ],
+          "total_amount": "89.00",
+          "currency": "USD",
+          "created_at": 1794235538,
+          "public_key": "2b1b07ed4a91e7fe70efea4e509edf2466cbe5721ca75a4c470c4f1d10187fea",
+          "signature": "692eee804b918aafe6771c242431ccf24a0cf3cd7c7e5dbc8f5efb355c767762c6722cfb9097e2484eb1909072460b10544f10b1d0fc453fd5c88ab141a8900a"
+        }
+      },
+      "paypal_order_id": "ORDER-SANDBOX-S2-DC",
+      "paypal_capture_id": "CAPTURE-SANDBOX-S2-002",
+      "captured_amount": "119.00",
+      "captured_custom_id": "60e453686933e08ef72963f585dcdb5fc0637291e0023146c1c79a78ae14f745",
+      "merchant_listing": {
+        "item_id": "item-dc-101",
+        "merchant_id": "dockcraft-simulated",
+        "title": "DockCraft Pro 10-in-1 USB-C Hub",
+        "ports_count": 10,
+        "has_hdmi_4k": true,
+        "power_delivery_watts": 100
+      },
+      "delivery_report": {
+        "status": "inspected",
+        "item_serial": "DC-PRO-99120",
+        "ports_count": 10,
+        "has_hdmi_4k": true,
+        "power_delivery_watts": 100,
+        "inspection_notes": "Unit verified in perfect condition with 10 operational ports and 4K display."
+      },
+      "candidate_trace": {
+        "evaluated_candidates": [
+          {
+            "item_id": "item-dc-101",
+            "merchant_id": "dockcraft-simulated",
+            "merchant_name": "DockCraft",
+            "title": "DockCraft Pro 10-in-1",
+            "price": "89.00",
+            "ports_count": 10,
+            "has_hdmi_4k": true,
+            "satisfies_constraints": true,
+            "rejection_reasons": [],
+            "utility_score": 0.7567,
+            "sub_scores": {
+              "price_efficiency": 0.4067,
+              "ports_score": 1.0,
+              "reputation_score": 0.96,
+              "power_delivery_score": 1.0
+            }
+          }
+        ],
+        "chosen_candidate": {
+          "item_id": "item-dc-101",
+          "merchant_id": "dockcraft-simulated",
+          "merchant_name": "DockCraft",
+          "title": "DockCraft Pro 10-in-1",
+          "price": "89.00",
+          "ports_count": 10,
+          "has_hdmi_4k": true,
+          "satisfies_constraints": true,
+          "rejection_reasons": [],
+          "utility_score": 0.7567,
+          "sub_scores": {
+            "price_efficiency": 0.4067,
+            "ports_score": 1.0,
+            "reputation_score": 0.96,
+            "power_delivery_score": 1.0
+          }
+        },
+        "best_candidate": {
+          "item_id": "item-dc-101",
+          "merchant_id": "dockcraft-simulated",
+          "merchant_name": "DockCraft",
+          "title": "DockCraft Pro 10-in-1",
+          "price": "89.00",
+          "ports_count": 10,
+          "has_hdmi_4k": true,
+          "satisfies_constraints": true,
+          "rejection_reasons": [],
+          "utility_score": 0.7567,
+          "sub_scores": {
+            "price_efficiency": 0.4067,
+            "ports_score": 1.0,
+            "reputation_score": 0.96,
+            "power_delivery_score": 1.0
+          }
+        },
+        "regret_score": 0.0,
+        "is_regret_flagged": false,
+        "policy_applied": "OPTIMAL"
+      },
+      "creation_time": 1794149138
+    },
+    "verdict": {
+      "case_id": "case-s2-operator-price-drift",
+      "dispute_id": "PP-D-1002-SANDBOX",
+      "verdict": "OPERATOR_AT_FAULT",
+      "summary": "Agent Operator at fault: Mandate compliance violated (C5). Reason: Price drift detected: captured $119.00 != cart total $89.00",
+      "deterministic_checks": [
+        {
+          "check_id": "C1",
+          "name": "Signature Validity",
+          "status": "PASS",
+          "details": "Both IntentMandate and CartMandate have valid Ed25519 cryptographic signatures.",
+          "failure_reason": null
+        },
+        {
+          "check_id": "C2",
+          "name": "Mandate Expiry",
+          "status": "PASS",
+          "details": "Mandate was active at reference time (expires_at=1794239138, ref=1794149138).",
+          "failure_reason": null
+        },
+        {
+          "check_id": "C3",
+          "name": "Intent Hash Linkage",
+          "status": "PASS",
+          "details": "CartMandate securely links to IntentMandate hash: fc9931096c2089aa...",
+          "failure_reason": null
+        },
+        {
+          "check_id": "C4",
+          "name": "Order Binding (Anti-Replay)",
+          "status": "PASS",
+          "details": "Cryptographic order binding verified against custom_id (60e453686933e08e...).",
+          "failure_reason": null
+        },
+        {
+          "check_id": "C5",
+          "name": "Price Drift & Spend Cap",
+          "status": "FAIL",
+          "details": "Captured amount $119.00 differs from signed cart total $89.00.",
+          "failure_reason": "Price drift detected: captured $119.00 != cart total $89.00"
+        },
+        {
+          "check_id": "C6",
+          "name": "Allowed Merchant Enforcement",
+          "status": "PASS",
+          "details": "Merchant 'dockcraft-simulated' is authorized in the IntentMandate.",
+          "failure_reason": null
+        },
+        {
+          "check_id": "C7",
+          "name": "Mandate Attribute Compliance",
+          "status": "PASS",
+          "details": "Cart attributes fulfill all intent constraints (ports=10, 4K HDMI=True).",
+          "failure_reason": null
+        },
+        {
+          "check_id": "REGRET",
+          "name": "Agent Regret Measure",
+          "status": "PASS",
+          "details": "Agent regret index is 0.0% (within acceptable tolerance 15.0%).",
+          "failure_reason": null
+        }
+      ],
+      "semantic_comparison": null,
+      "regret_score": 0.0,
+      "is_regret_flagged": false,
+      "failed_checks": [
+        "C5"
+      ],
+      "llm_used": false,
+      "verdict_timestamp": 1794235538
+    },
+    "planned_action": {
+      "case_id": "case-s2-operator-price-drift",
+      "dispute_id": "PP-D-1002-SANDBOX",
+      "action_type": "provide-evidence",
+      "http_method": "POST",
+      "api_path": "/v1/customer/disputes/PP-D-1002-SANDBOX/provide-evidence",
+      "request_payload": {
+        "evidences": [
+          {
+            "evidence_type": "OTHER",
+            "notes": "AgentCourt Mandate Defense: Merchant delivered faithfully to the signed cart. Dispute stems from an Agent Operator mandate violation (C5). Cryptographic evidence pack attached."
+          }
+        ]
+      },
+      "rationale": "Agent acted outside buyer authorization. Defend merchant and attribute liability to operator.",
+      "off_paypal_ledger_entry": {
+        "event": "OPERATOR_LIABILITY_RECORDED",
+        "failed_checks": [
+          "C5"
+        ],
+        "amount": "119.00"
+      },
+      "requires_human_approval": true,
+      "executed": false,
+      "execution_result": null
+    },
+    "created_at": 1794149138,
+    "executed": false,
+    "execution_result": null
+  },
+  {
+    "case_id": "case-s3-agent-regret",
+    "dispute_id": "PP-D-1003-SANDBOX",
+    "status": "WAITING_FOR_SELLER_RESPONSE",
+    "lifecycle_stage": "INQUIRY",
+    "disputed_amount": "115.00",
+    "currency": "USD",
+    "seller_response_due_date": "2026-11-18T14:45:38Z",
+    "evidence_pack": {
+      "case_id": "case-s3-agent-regret",
+      "dispute_id": "PP-D-1003-SANDBOX",
+      "dispute_reason": "OTHER",
+      "disputed_amount": "115.00",
+      "currency": "USD",
+      "mandate_pack": {
+        "intent": {
+          "id": "im_s3_regret",
+          "user_request": "USB-C docking station, at least 8 ports, HDMI 4K output, max total USD 120",
+          "constraints": {
+            "category": "USB-C docking station",
+            "min_ports": 8,
+            "has_hdmi_4k": true,
+            "max_spend": "120.00",
+            "currency": "USD",
+            "allowed_merchants": [
+              "dockcraft-simulated",
+              "nexusgear-simulated"
+            ],
+            "required_features": []
+          },
+          "spend_cap": "120.00",
+          "allowed_merchants": [
+            "dockcraft-simulated",
+            "nexusgear-simulated"
+          ],
+          "expires_at": 1794239138,
+          "nonce": "770088b24ff045e29418987880748155",
+          "public_key": "420973d590a3eac4b6f52d85ac51186e6a57d2e6a21cd9b09c5c1efd398661e6",
+          "signature": "009429a2545dfebe85925928a8617825b7ec0ec3b36819276d05c7b432116201d2b2460f2ff9e19869728594a2adc507e8530d7d73c8a9bc5cda60096ab57c09"
+        },
+        "cart": {
+          "id": "cm_s3_regret",
+          "intent_hash": "379f3ce8fbea024e2d3c999d4a2840cdd4e68e062b737b3c93a75a377ec72c29",
+          "merchant_id": "nexusgear-simulated",
+          "items": [
+            {
+              "item_id": "item-ng-201",
+              "title": "Nexus 8-Port Universal USB-C Dock",
+              "price": "115.00",
+              "currency": "USD",
+              "attributes": {
+                "item_id": "item-ng-201",
+                "merchant_id": "nexusgear-simulated",
+                "title": "Nexus 8-Port Universal USB-C Dock",
+                "ports_count": 8,
+                "has_hdmi_4k": true,
+                "power_delivery_watts": 85
+              }
+            }
+          ],
+          "total_amount": "115.00",
+          "currency": "USD",
+          "created_at": 1794235538,
+          "public_key": "d79cc1a2396f7ba676d3f75ae748a16724eb0e76c8fc80dde12b2c5f7390471d",
+          "signature": "f60653eaa38bcbd8620cb9a812b9b4bc84eceefe2edb3a90d5ec545fc02e2e5d838d160a69331ec5b027bf172c8947e1dedfc7c75837edbc08afb7dcc16f920b"
+        }
+      },
+      "paypal_order_id": "ORDER-SANDBOX-S3-NG",
+      "paypal_capture_id": "CAPTURE-SANDBOX-S3-003",
+      "captured_amount": "115.00",
+      "captured_custom_id": "4839de65b1060c9dd7d4a108ce0d949c59b5d0494632f4916db2491d85d50c99",
+      "merchant_listing": {
+        "item_id": "item-ng-201",
+        "merchant_id": "nexusgear-simulated",
+        "title": "Nexus 8-Port Universal USB-C Dock",
+        "ports_count": 8,
+        "has_hdmi_4k": true,
+        "power_delivery_watts": 85
+      },
+      "delivery_report": {
+        "status": "inspected",
+        "item_serial": "NG-8P-4401",
+        "ports_count": 8,
+        "has_hdmi_4k": true,
+        "power_delivery_watts": 85,
+        "inspection_notes": "Unit verified: 8 ports, 4K HDMI active."
+      },
+      "candidate_trace": {
+        "evaluated_candidates": [
+          {
+            "item_id": "item-ng-201",
+            "merchant_id": "nexusgear-simulated",
+            "merchant_name": "NexusGear Direct",
+            "title": "Nexus 8-Port Universal USB-C Dock",
+            "price": "115.00",
+            "ports_count": 8,
+            "has_hdmi_4k": true,
+            "satisfies_constraints": true,
+            "rejection_reasons": [],
+            "utility_score": 0.5958,
+            "sub_scores": {
+              "price_efficiency": 0.2333,
+              "ports_score": 0.8,
+              "reputation_score": 0.9,
+              "power_delivery_score": 0.85
+            }
+          },
+          {
+            "item_id": "item-dc-101",
+            "merchant_id": "dockcraft-simulated",
+            "merchant_name": "DockCraft Labs",
+            "title": "DockCraft Pro 10-in-1 USB-C Hub",
+            "price": "89.00",
+            "ports_count": 10,
+            "has_hdmi_4k": true,
+            "satisfies_constraints": true,
+            "rejection_reasons": [],
+            "utility_score": 0.7567,
+            "sub_scores": {
+              "price_efficiency": 0.4067,
+              "ports_score": 1.0,
+              "reputation_score": 0.96,
+              "power_delivery_score": 1.0
+            }
+          }
+        ],
+        "chosen_candidate": {
+          "item_id": "item-ng-201",
+          "merchant_id": "nexusgear-simulated",
+          "merchant_name": "NexusGear Direct",
+          "title": "Nexus 8-Port Universal USB-C Dock",
+          "price": "115.00",
+          "ports_count": 8,
+          "has_hdmi_4k": true,
+          "satisfies_constraints": true,
+          "rejection_reasons": [],
+          "utility_score": 0.5958,
+          "sub_scores": {
+            "price_efficiency": 0.2333,
+            "ports_score": 0.8,
+            "reputation_score": 0.9,
+            "power_delivery_score": 0.85
+          }
+        },
+        "best_candidate": {
+          "item_id": "item-dc-101",
+          "merchant_id": "dockcraft-simulated",
+          "merchant_name": "DockCraft Labs",
+          "title": "DockCraft Pro 10-in-1 USB-C Hub",
+          "price": "89.00",
+          "ports_count": 10,
+          "has_hdmi_4k": true,
+          "satisfies_constraints": true,
+          "rejection_reasons": [],
+          "utility_score": 0.7567,
+          "sub_scores": {
+            "price_efficiency": 0.4067,
+            "ports_score": 1.0,
+            "reputation_score": 0.96,
+            "power_delivery_score": 1.0
+          }
+        },
+        "regret_score": 0.2126,
+        "is_regret_flagged": true,
+        "policy_applied": "FIRST_ACCEPTABLE"
+      },
+      "creation_time": 1793976338
+    },
+    "verdict": {
+      "case_id": "case-s3-agent-regret",
+      "dispute_id": "PP-D-1003-SANDBOX",
+      "verdict": "WITHIN_MANDATE_REGRET",
+      "summary": "Within mandate, but agent regret detected: Purchase complied with constraints, but a significantly superior offer ('DockCraft Pro 10-in-1 USB-C Hub') was bypassed (regret index 21.3%).",
+      "deterministic_checks": [
+        {
+          "check_id": "C1",
+          "name": "Signature Validity",
+          "status": "PASS",
+          "details": "Both IntentMandate and CartMandate have valid Ed25519 cryptographic signatures.",
+          "failure_reason": null
+        },
+        {
+          "check_id": "C2",
+          "name": "Mandate Expiry",
+          "status": "PASS",
+          "details": "Mandate was active at reference time (expires_at=1794239138, ref=1793976338).",
+          "failure_reason": null
+        },
+        {
+          "check_id": "C3",
+          "name": "Intent Hash Linkage",
+          "status": "PASS",
+          "details": "CartMandate securely links to IntentMandate hash: 379f3ce8fbea024e...",
+          "failure_reason": null
+        },
+        {
+          "check_id": "C4",
+          "name": "Order Binding (Anti-Replay)",
+          "status": "PASS",
+          "details": "Cryptographic order binding verified against custom_id (4839de65b1060c9d...).",
+          "failure_reason": null
+        },
+        {
+          "check_id": "C5",
+          "name": "Price Drift & Spend Cap",
+          "status": "PASS",
+          "details": "Captured amount $115.00 is within cap ($120.00) and equals cart total.",
+          "failure_reason": null
+        },
+        {
+          "check_id": "C6",
+          "name": "Allowed Merchant Enforcement",
+          "status": "PASS",
+          "details": "Merchant 'nexusgear-simulated' is authorized in the IntentMandate.",
+          "failure_reason": null
+        },
+        {
+          "check_id": "C7",
+          "name": "Mandate Attribute Compliance",
+          "status": "PASS",
+          "details": "Cart attributes fulfill all intent constraints (ports=8, 4K HDMI=True).",
+          "failure_reason": null
+        },
+        {
+          "check_id": "REGRET",
+          "name": "Agent Regret Measure",
+          "status": "FAIL",
+          "details": "Agent regret index is 21.3% (exceeds 15.0%).",
+          "failure_reason": "Suboptimal choice: agent chose 'Nexus 8-Port Universal USB-C Dock' while superior option 'DockCraft Pro 10-in-1 USB-C Hub' was available."
+        }
+      ],
+      "semantic_comparison": {
+        "ports_match": "match",
+        "hdmi_match": "match",
+        "discrepancies": [],
+        "is_mismatch": false,
+        "quote": "Specs match physical delivery inspection.",
+        "llm_used": false,
+        "model": "deterministic_fallback"
+      },
+      "regret_score": 0.2126,
+      "is_regret_flagged": true,
+      "failed_checks": [],
+      "llm_used": false,
+      "verdict_timestamp": 1794235538
+    },
+    "planned_action": {
+      "case_id": "case-s3-agent-regret",
+      "dispute_id": "PP-D-1003-SANDBOX",
+      "action_type": "provide-evidence",
+      "http_method": "POST",
+      "api_path": "/v1/customer/disputes/PP-D-1003-SANDBOX/provide-evidence",
+      "request_payload": {
+        "evidences": [
+          {
+            "evidence_type": "OTHER",
+            "notes": "AgentCourt Review: Transaction complied with authorized mandate. Buyer regret detected (21.3% suboptimal index). Merchant fulfilled signed agreement."
+          }
+        ]
+      },
+      "rationale": "Mandate was respected. Merchant defends dispute with signed mandate and candidate trace.",
+      "off_paypal_ledger_entry": {
+        "event": "AGENT_REGRET_RECORDED",
+        "regret_score": 0.2126
+      },
+      "requires_human_approval": true,
+      "executed": false,
+      "execution_result": null
+    },
+    "created_at": 1793976338,
+    "executed": false,
+    "execution_result": null
+  }
+]
