@@ -14,9 +14,7 @@ def test_config_sandbox_default():
 def test_config_rejects_production_env():
     with pytest.raises(ValidationError) as exc:
         Settings(PAYPAL_ENV="production")  # type: ignore
-    assert "SAFETY VIOLATION" in str(exc.value) or "Input should be 'sandbox'" in str(
-        exc.value
-    )
+    assert "SAFETY VIOLATION" in str(exc.value) or "Input should be 'sandbox'" in str(exc.value)
 
 
 def test_config_rejects_live_url():

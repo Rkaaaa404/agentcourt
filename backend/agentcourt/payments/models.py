@@ -83,9 +83,7 @@ class OrderCreateRequest(BaseModel):
     amount: Decimal
     currency: str = "USD"
     item_name: str
-    custom_id: str = Field(
-        description="Order binding hash: sha256(intent_hash || cart_hash || order_id)"
-    )
+    custom_id: str = Field(description="Order binding hash: sha256(intent_hash || cart_hash || order_id)")
     return_url: str = "http://localhost:8000/api/checkout/success"
     cancel_url: str = "http://localhost:8000/api/checkout/cancel"
 

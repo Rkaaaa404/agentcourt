@@ -1,0 +1,102 @@
+{
+  "_metadata": {
+    "description": "Fictional merchant catalog for AgentCourt hackathon scenarios.",
+    "is_simulated": true,
+    "last_updated": "2026-11-09",
+    "product_category": "USB-C docking station"
+  },
+  "merchants": [
+    {
+      "id": "dockcraft-simulated",
+      "name": "DockCraft Labs (Simulated)",
+      "rating": 4.8,
+      "verified": true,
+      "items": [
+        {
+          "id": "item-dc-101",
+          "title": "DockCraft Pro 10-in-1 USB-C Hub",
+          "price": "89.00",
+          "currency": "USD",
+          "ports_count": 10,
+          "has_hdmi_4k": true,
+          "power_delivery_watts": 100,
+          "ethernet_speed_mbps": 1000,
+          "features": ["10_ports", "hdmi_4k_60hz", "pd_100w", "gigabit_ethernet", "sd_tf_reader"],
+          "description": "Premium 10-in-1 docking station with dual 4K HDMI, 100W Power Delivery, Gigabit LAN, and high-speed card slots."
+        },
+        {
+          "id": "item-dc-102",
+          "title": "DockCraft Slim 6-in-1 Hub",
+          "price": "49.00",
+          "currency": "USD",
+          "ports_count": 6,
+          "has_hdmi_4k": true,
+          "power_delivery_watts": 60,
+          "ethernet_speed_mbps": 0,
+          "features": ["6_ports", "hdmi_4k_30hz", "pd_60w"],
+          "description": "Compact travel hub with 6 ports and 4K HDMI."
+        }
+      ]
+    },
+    {
+      "id": "nexusgear-simulated",
+      "name": "NexusGear Direct (Simulated)",
+      "rating": 4.5,
+      "verified": true,
+      "items": [
+        {
+          "id": "item-ng-201",
+          "title": "Nexus 8-Port Universal USB-C Dock",
+          "price": "115.00",
+          "currency": "USD",
+          "ports_count": 8,
+          "has_hdmi_4k": true,
+          "power_delivery_watts": 85,
+          "ethernet_speed_mbps": 1000,
+          "features": ["8_ports", "hdmi_4k_30hz", "pd_85w", "gigabit_ethernet"],
+          "description": "Reliable 8-port workspace hub with 4K HDMI video and 85W fast host charging."
+        }
+      ]
+    },
+    {
+      "id": "ankerlink-simulated",
+      "name": "AnkerLink Solutions (Simulated)",
+      "rating": 4.2,
+      "verified": true,
+      "items": [
+        {
+          "id": "item-al-301",
+          "title": "AnkerLink Ultra Multiport Dock 9-in-1",
+          "price": "105.00",
+          "currency": "USD",
+          "ports_count": 9,
+          "has_hdmi_4k": true,
+          "power_delivery_watts": 100,
+          "ethernet_speed_mbps": 1000,
+          "features": ["9_ports", "hdmi_4k_60hz", "pd_100w", "gigabit_ethernet"],
+          "description": "High performance 9-in-1 USB-C workstation with 4K@60Hz display output."
+        }
+      ]
+    },
+    {
+      "id": "voltport-simulated",
+      "name": "VoltPort Electronics (Simulated)",
+      "rating": 3.9,
+      "verified": true,
+      "items": [
+        {
+          "id": "item-vp-401",
+          "title": "VoltPort 8-in-1 Aluminum Docking Station",
+          "price": "95.00",
+          "currency": "USD",
+          "ports_count": 8,
+          "has_hdmi_4k": true,
+          "power_delivery_watts": 85,
+          "ethernet_speed_mbps": 100,
+          "features": ["8_ports", "hdmi_4k_30hz", "pd_85w"],
+          "description": "Listing specifications: 8 physical ports including HDMI 4K and 85W PD pass-through."
+        }
+      ]
+    }
+  ]
+}

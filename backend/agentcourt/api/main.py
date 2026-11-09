@@ -13,10 +13,7 @@ from fastapi.responses import JSONResponse
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifecycle hooks."""
     # Safety assertion on startup
-    if (
-        settings.PAYPAL_ENV != "sandbox"
-        or settings.PAYPAL_BASE_URL != "https://api-m.sandbox.paypal.com"
-    ):
+    if settings.PAYPAL_ENV != "sandbox" or settings.PAYPAL_BASE_URL != "https://api-m.sandbox.paypal.com":
         raise RuntimeError("FATAL SAFETY CHECK FAILED: Sandbox only allowed.")
     yield
 

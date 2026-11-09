@@ -37,6 +37,10 @@ class PaymentsPort(ABC):
         """Fetch details of an order."""
 
     @abstractmethod
+    async def patch_order_custom_id(self, order_id: str, custom_id: str) -> bool:
+        """Update the custom_id binding on an existing PayPal order."""
+
+    @abstractmethod
     async def refund_capture(
         self,
         capture_id: str,
@@ -63,9 +67,7 @@ class PaymentsPort(ABC):
         """Change the reason of an active sandbox dispute."""
 
     @abstractmethod
-    async def send_dispute_message(
-        self, dispute_id: str, message: str
-    ) -> dict[str, Any]:
+    async def send_dispute_message(self, dispute_id: str, message: str) -> dict[str, Any]:
         """Send a message to the other party in a dispute."""
 
     @abstractmethod

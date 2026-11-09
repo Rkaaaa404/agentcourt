@@ -68,9 +68,7 @@ async def test_oauth_caching(paypal_client):
 @pytest.mark.asyncio
 async def test_create_order(paypal_client):
     with respx.mock(base_url=BASE, assert_all_called=False) as respx_mock:
-        respx_mock.post("/v1/oauth2/token").respond(
-            200, json={"access_token": "ACCESS_TOKEN", "expires_in": 3600}
-        )
+        respx_mock.post("/v1/oauth2/token").respond(200, json={"access_token": "ACCESS_TOKEN", "expires_in": 3600})
         respx_mock.post("/v2/checkout/orders").respond(
             201,
             json={
@@ -101,18 +99,13 @@ async def test_create_order(paypal_client):
         assert order.id == "ORDER-999"
         assert order.status == "CREATED"
         assert order.custom_id == "test_binding_hash_123"
-        assert (
-            order.approval_url
-            == "https://sandbox.paypal.com/checkoutnow?token=ORDER-999"
-        )
+        assert order.approval_url == "https://sandbox.paypal.com/checkoutnow?token=ORDER-999"
 
 
 @pytest.mark.asyncio
 async def test_capture_order(paypal_client):
     with respx.mock(base_url=BASE, assert_all_called=False) as respx_mock:
-        respx_mock.post("/v1/oauth2/token").respond(
-            200, json={"access_token": "ACCESS_TOKEN", "expires_in": 3600}
-        )
+        respx_mock.post("/v1/oauth2/token").respond(200, json={"access_token": "ACCESS_TOKEN", "expires_in": 3600})
         respx_mock.post("/v2/checkout/orders/ORDER-999/capture").respond(
             201,
             json={
@@ -148,9 +141,7 @@ async def test_capture_order(paypal_client):
 @pytest.mark.asyncio
 async def test_create_and_get_dispute(paypal_client):
     with respx.mock(base_url=BASE, assert_all_called=False) as respx_mock:
-        respx_mock.post("/v1/oauth2/token").respond(
-            200, json={"access_token": "ACCESS_TOKEN", "expires_in": 3600}
-        )
+        respx_mock.post("/v1/oauth2/token").respond(200, json={"access_token": "ACCESS_TOKEN", "expires_in": 3600})
         # Mock dispute creation
         respx_mock.post("/v1/customer/disputes").respond(
             201,
@@ -208,9 +199,7 @@ async def test_create_and_get_dispute(paypal_client):
 @pytest.mark.asyncio
 async def test_dispute_merchant_actions(paypal_client):
     with respx.mock(base_url=BASE, assert_all_called=False) as respx_mock:
-        respx_mock.post("/v1/oauth2/token").respond(
-            200, json={"access_token": "ACCESS_TOKEN", "expires_in": 3600}
-        )
+        respx_mock.post("/v1/oauth2/token").respond(200, json={"access_token": "ACCESS_TOKEN", "expires_in": 3600})
 
         # accept-claim
         respx_mock.post("/v1/customer/disputes/DISPUTE-888/accept-claim").respond(
@@ -251,18 +240,14 @@ async def test_dispute_merchant_actions(paypal_client):
 @pytest.mark.asyncio
 async def test_dispute_simulations(paypal_client):
     with respx.mock(base_url=BASE, assert_all_called=False) as respx_mock:
-        respx_mock.post("/v1/oauth2/token").respond(
-            200, json={"access_token": "ACCESS_TOKEN", "expires_in": 3600}
-        )
+        respx_mock.post("/v1/oauth2/token").respond(200, json={"access_token": "ACCESS_TOKEN", "expires_in": 3600})
 
         # require-evidence
         respx_mock.post("/v1/customer/disputes/DISPUTE-888/require-evidence").respond(
             200,
             json={"dispute_id": "DISPUTE-888", "status": "WAITING_FOR_SELLER_RESPONSE"},
         )
-        r1 = await paypal_client.simulate_require_evidence(
-            "DISPUTE-888", RequireEvidenceAction.SELLER_EVIDENCE
-        )
+        r1 = await paypal_client.simulate_require_evidence("DISPUTE-888", RequireEvidenceAction.SELLER_EVIDENCE)
         assert r1.get("status") == "WAITING_FOR_SELLER_RESPONSE"
 
         # adjudicate
@@ -270,25 +255,19 @@ async def test_dispute_simulations(paypal_client):
             200,
             json={"dispute_id": "DISPUTE-888", "adjudication_outcome": "SELLER_FAVOR"},
         )
-        r2 = await paypal_client.simulate_adjudicate(
-            "DISPUTE-888", AdjudicationOutcome.SELLER_FAVOR
-        )
+        r2 = await paypal_client.simulate_adjudicate("DISPUTE-888", AdjudicationOutcome.SELLER_FAVOR)
         assert r2.get("adjudication_outcome") == "SELLER_FAVOR"
 
 
 @pytest.mark.asyncio
 async def test_refund_capture_fallback(paypal_client):
     with respx.mock(base_url=BASE, assert_all_called=False) as respx_mock:
-        respx_mock.post("/v1/oauth2/token").respond(
-            200, json={"access_token": "ACCESS_TOKEN", "expires_in": 3600}
-        )
+        respx_mock.post("/v1/oauth2/token").respond(200, json={"access_token": "ACCESS_TOKEN", "expires_in": 3600})
         respx_mock.post("/v2/payments/captures/CAPTURE-111/refund").respond(
             201, json={"id": "REFUND-777", "status": "COMPLETED"}
         )
 
-        res = await paypal_client.refund_capture(
-            "CAPTURE-111", amount=Decimal("110.00"), note="Full fallback refund"
-        )
+        res = await paypal_client.refund_capture("CAPTURE-111", amount=Decimal("110.00"), note="Full fallback refund")
         assert res["id"] == "REFUND-777"
         assert res["status"] == "COMPLETED"
 
@@ -296,9 +275,7 @@ async def test_refund_capture_fallback(paypal_client):
 @pytest.mark.asyncio
 async def test_webhook_verification(paypal_client):
     with respx.mock(base_url=BASE, assert_all_called=False) as respx_mock:
-        respx_mock.post("/v1/oauth2/token").respond(
-            200, json={"access_token": "ACCESS_TOKEN", "expires_in": 3600}
-        )
+        respx_mock.post("/v1/oauth2/token").respond(200, json={"access_token": "ACCESS_TOKEN", "expires_in": 3600})
         respx_mock.post("/v1/notifications/verify-webhook-signature").respond(
             200, json={"verification_status": "SUCCESS"}
         )
@@ -318,9 +295,7 @@ async def test_webhook_verification(paypal_client):
 @pytest.mark.asyncio
 async def test_paypal_api_error_debug_id(paypal_client):
     with respx.mock(base_url=BASE, assert_all_called=False) as respx_mock:
-        respx_mock.post("/v1/oauth2/token").respond(
-            200, json={"access_token": "ACCESS_TOKEN", "expires_in": 3600}
-        )
+        respx_mock.post("/v1/oauth2/token").respond(200, json={"access_token": "ACCESS_TOKEN", "expires_in": 3600})
         respx_mock.get("/v2/checkout/orders/ORDER-FAIL").respond(
             404,
             json={"name": "RESOURCE_NOT_FOUND", "message": "Order not found"},

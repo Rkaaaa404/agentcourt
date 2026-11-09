@@ -84,10 +84,7 @@ class PayPalClient(PaymentsPort):
         self.config = config or settings
 
         # Fail-safe sandbox constraint check
-        if (
-            self.config.PAYPAL_ENV != "sandbox"
-            or self.config.PAYPAL_BASE_URL.rstrip("/") != SANDBOX_URL
-        ):
+        if self.config.PAYPAL_ENV != "sandbox" or self.config.PAYPAL_BASE_URL.rstrip("/") != SANDBOX_URL:
             raise RuntimeError(
                 f"SAFETY SHUTDOWN: PayPalClient initialized with illegal URL/ENV "
                 f"({self.config.PAYPAL_ENV}, {self.config.PAYPAL_BASE_URL}). "
@@ -115,20 +112,12 @@ class PayPalClient(PaymentsPort):
     async def get_access_token(self, force_refresh: bool = False) -> str:
         """Fetch and cache OAuth access token using client credentials."""
         now = time.time()
-        if (
-            not force_refresh
-            and self._access_token
-            and now < (self._token_expires_at - 60)
-        ):
+        if not force_refresh and self._access_token and now < (self._token_expires_at - 60):
             return self._access_token
 
         async with self._token_lock:
             # Recheck inside lock
-            if (
-                not force_refresh
-                and self._access_token
-                and time.time() < (self._token_expires_at - 60)
-            ):
+            if not force_refresh and self._access_token and time.time() < (self._token_expires_at - 60):
                 return self._access_token
 
             client = await self._get_client()
@@ -165,9 +154,7 @@ class PayPalClient(PaymentsPort):
             self._access_token = res_data["access_token"]
             expires_in = res_data.get("expires_in", 3600)
             self._token_expires_at = time.time() + float(expires_in)
-            logger.info(
-                "Acquired PayPal OAuth token, expires in %d seconds", expires_in
-            )
+            logger.info("Acquired PayPal OAuth token, expires in %d seconds", expires_in)
             return self._access_token
 
     async def _request(
@@ -220,9 +207,7 @@ class PayPalClient(PaymentsPort):
 
                 # Token expired retry
                 if response.status_code == 401 and attempt < retries:
-                    logger.warning(
-                        "Received 401 Unauthorized. Refreshing token and retrying..."
-                    )
+                    logger.warning("Received 401 Unauthorized. Refreshing token and retrying...")
                     token = await self.get_access_token(force_refresh=True)
                     req_headers["Authorization"] = f"Bearer {token}"
                     continue
@@ -266,9 +251,7 @@ class PayPalClient(PaymentsPort):
                 last_error = exc
                 if attempt < retries:
                     wait_time = 0.5 * (2 ** (attempt - 1))
-                    logger.warning(
-                        "Network error: %s. Retrying in %.2fs...", exc, wait_time
-                    )
+                    logger.warning("Network error: %s. Retrying in %.2fs...", exc, wait_time)
                     await asyncio.sleep(wait_time)
                     continue
                 raise PayPalAPIError(f"Network error contacting PayPal: {exc}") from exc
@@ -378,6 +361,22 @@ class PayPalClient(PaymentsPort):
             raw_response=data,
         )
 
+    async def patch_order_custom_id(self, order_id: str, custom_id: str) -> bool:
+        """Update custom_id on an existing order to bind the assigned PayPal order ID."""
+        payload = [
+            {
+                "op": "add",
+                "path": "/purchase_units/@reference_id=='default'/custom_id",
+                "value": custom_id,
+            }
+        ]
+        try:
+            resp = await self._request("PATCH", f"/v2/checkout/orders/{order_id}", json_data=payload)
+            return resp.status_code in (200, 204)
+        except Exception as exc:
+            logger.warning("Failed to patch order custom_id on order %s: %s", order_id, exc)
+            return False
+
     async def refund_capture(
         self,
         capture_id: str,
@@ -409,14 +408,10 @@ class PayPalClient(PaymentsPort):
         """
         buyer_email = self.config.PAYPAL_BUYER_EMAIL
         if not buyer_email:
-            raise ValueError(
-                "PAYPAL_BUYER_EMAIL is required to simulate buyer dispute creation."
-            )
+            raise ValueError("PAYPAL_BUYER_EMAIL is required to simulate buyer dispute creation.")
 
         body = {
-            "disputed_transactions": [
-                {"buyer_transaction_id": request.buyer_transaction_id}
-            ],
+            "disputed_transactions": [{"buyer_transaction_id": request.buyer_transaction_id}],
             "reason": request.reason.value,
             "dispute_amount": {
                 "currency_code": request.currency,
@@ -509,9 +504,7 @@ class PayPalClient(PaymentsPort):
         )
         return await self.get_dispute(dispute_id)
 
-    async def send_dispute_message(
-        self, dispute_id: str, message: str
-    ) -> dict[str, Any]:
+    async def send_dispute_message(self, dispute_id: str, message: str) -> dict[str, Any]:
         """Send a message on the dispute thread."""
         resp = await self._request(
             "POST",
@@ -643,9 +636,7 @@ class PayPalClient(PaymentsPort):
         """Verify webhook signature via PayPal's verify-webhook-signature endpoint."""
         webhook_id = self.config.PAYPAL_WEBHOOK_ID
         if not webhook_id:
-            logger.warning(
-                "PAYPAL_WEBHOOK_ID is not configured. Webhook signature cannot be verified."
-            )
+            logger.warning("PAYPAL_WEBHOOK_ID is not configured. Webhook signature cannot be verified.")
             return False
 
         # Extract normalized headers (PayPal headers can be lower or title case)
@@ -657,20 +648,14 @@ class PayPalClient(PaymentsPort):
         transmission_sig = header_map.get("paypal-transmission-sig")
         transmission_time = header_map.get("paypal-transmission-time")
 
-        if not all(
-            [auth_algo, cert_url, transmission_id, transmission_sig, transmission_time]
-        ):
-            logger.warning(
-                "Missing required PayPal webhook headers for signature verification."
-            )
+        if not all([auth_algo, cert_url, transmission_id, transmission_sig, transmission_time]):
+            logger.warning("Missing required PayPal webhook headers for signature verification.")
             return False
 
         try:
             event_body = json.loads(body.decode("utf-8"))
         except (json.JSONDecodeError, UnicodeDecodeError) as exc:
-            logger.error(
-                "Failed to parse webhook JSON body for signature verification: %s", exc
-            )
+            logger.error("Failed to parse webhook JSON body for signature verification: %s", exc)
             return False
 
         payload = {

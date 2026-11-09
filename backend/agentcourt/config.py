@@ -31,41 +31,25 @@ class Settings(BaseSettings):
         description="Base URL for PayPal API. Hard-coded to sandbox endpoint.",
     )
     PAYPAL_CLIENT_ID: str = Field(default="", description="Sandbox OAuth Client ID")
-    PAYPAL_CLIENT_SECRET: str = Field(
-        default="", description="Sandbox OAuth Client Secret"
-    )
-    PAYPAL_MERCHANT_EMAIL: str = Field(
-        default="", description="Sandbox Merchant Business Email"
-    )
+    PAYPAL_CLIENT_SECRET: str = Field(default="", description="Sandbox OAuth Client Secret")
+    PAYPAL_MERCHANT_EMAIL: str = Field(default="", description="Sandbox Merchant Business Email")
     PAYPAL_BUYER_EMAIL: str = Field(default="", description="Sandbox Buyer Email")
     PAYPAL_BUYER_PASSWORD: str = Field(default="", description="Sandbox Buyer Password")
-    PAYPAL_WEBHOOK_ID: str = Field(
-        default="", description="Sandbox Registered Webhook ID"
-    )
+    PAYPAL_WEBHOOK_ID: str = Field(default="", description="Sandbox Registered Webhook ID")
 
     # Service & Database
     PORT: int = Field(default=8000, description="Web server port")
     HOST: str = Field(default="0.0.0.0", description="Web server host")
-    APP_URL: str = Field(
-        default="http://localhost:8000", description="Public or local base URL"
-    )
-    DATABASE_URL: str = Field(
-        default="sqlite:///./agentcourt.db", description="Database connection string"
-    )
+    APP_URL: str = Field(default="http://localhost:8000", description="Public or local base URL")
+    DATABASE_URL: str = Field(default="sqlite:///./agentcourt.db", description="Database connection string")
 
     # LLM Settings (Pluggable: Anthropic or OpenAI-compatible)
-    LLM_PROVIDER: str = Field(
-        default="anthropic", description="LLM provider: anthropic or openai"
-    )
-    LLM_MODEL: str = Field(
-        default="claude-3-5-sonnet-20241022", description="Model identifier"
-    )
+    LLM_PROVIDER: str = Field(default="anthropic", description="LLM provider: anthropic or openai")
+    LLM_MODEL: str = Field(default="claude-3-5-sonnet-20241022", description="Model identifier")
     LLM_API_KEY: str = Field(default="", description="API key for chosen LLM provider")
 
     # Decision thresholds
-    REGRET_THRESHOLD: Decimal = Field(
-        default=Decimal("0.15"), description="Regret trigger threshold"
-    )
+    REGRET_THRESHOLD: Decimal = Field(default=Decimal("0.15"), description="Regret trigger threshold")
 
     @field_validator("PAYPAL_ENV")
     @classmethod
