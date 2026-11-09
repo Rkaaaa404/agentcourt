@@ -1,10 +1,10 @@
 {
-  "timestamp": 1794234530,
+  "timestamp": 1794235569,
   "total_scenarios": 15,
   "passed_scenarios": 15,
   "failed_scenarios": 0,
   "accuracy_pct": 100.0,
-  "elapsed_ms": 5.25,
+  "elapsed_ms": 9.51,
   "class_breakdown": {
     "NO_FAULT": {
       "correct": 4,
@@ -114,7 +114,7 @@
       ],
       "regret_score": 0.0,
       "llm_used": false,
-      "summary": "Agent Operator at fault: Mandate compliance violated (C1, C2, C3, C4). Reason: IntentMandate signature invalid or tampered; Mandate expired at timestamp 1794230930 (reference time 1794234530).; Expected d9621159c0965a8991aed513998e7c0a740e3d6f56a4e2a35eaed011fdd0ac61, found f944d79ff33ac39ee5e4af6d430040db65f5963a469cba2e55eaeca97835d5b3; Captured custom_id '82061bd8f5e88086...' does not match expected binding 'ac2bf327c8b07cd9...'."
+      "summary": "Agent Operator at fault: Mandate compliance violated (C1, C2, C3, C4). Reason: IntentMandate signature invalid or tampered; Mandate expired at timestamp 1794231969 (reference time 1794235569).; Expected dfe4779aad0e2486fdbf542923240c916b525ebc2366691c97e4feb27e7a8c0b, found bdc332840d346a2e8f0e2e9064a4428833a2cc96aab48bfc891c446d0a737282; Captured custom_id 'a614c7923b6c7024...' does not match expected binding '3feaac836a76d089...'."
     },
     {
       "id": "SCENARIO_07_UNLINKED_CART",
@@ -130,7 +130,7 @@
       ],
       "regret_score": 0.0,
       "llm_used": false,
-      "summary": "Agent Operator at fault: Mandate compliance violated (C1, C3, C4). Reason: CartMandate signature invalid or tampered; Expected 16bc30e60c89cb219c096e827f90bba35506a9916531679fde37ea5c97815d60, found ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff; Captured custom_id '0b270bff0385189d...' does not match expected binding '019ec7bb1d318e6e...'."
+      "summary": "Agent Operator at fault: Mandate compliance violated (C1, C3, C4). Reason: CartMandate signature invalid or tampered; Expected 6bdf98d44d8a60e62943e8d6c6822c50e47d25cee18bc6e021484aa2f8ecdd9b, found ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff; Captured custom_id 'c2bff88c743326a5...' does not match expected binding '4ccf7861e61ae513...'."
     },
     {
       "id": "SCENARIO_08_REPLAYED_MANDATE",
@@ -144,7 +144,7 @@
       ],
       "regret_score": 0.0,
       "llm_used": false,
-      "summary": "Agent Operator at fault: Mandate compliance violated (C4). Reason: Captured custom_id 'forged_or_differ...' does not match expected binding '8b30350654c39411...'."
+      "summary": "Agent Operator at fault: Mandate compliance violated (C4). Reason: Captured custom_id 'forged_or_differ...' does not match expected binding '28cf9d8931f36d8c...'."
     },
     {
       "id": "SCENARIO_09_UNALLOWED_MERCHANT",

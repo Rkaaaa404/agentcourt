@@ -87,7 +87,7 @@ flowchart TD
 
 ### 1. Clone & Configure
 ```bash
-git clone https://github.com/agentcourt/agentcourt.git
+git clone https://github.com/livai12/agentcourt.git
 cd agentcourt
 cp .env.example .env
 ```
@@ -107,13 +107,21 @@ PAYPAL_BUYER_PASSWORD=your_sandbox_buyer_password
 python scripts/check_env.py
 ```
 
-### 3. Run Unit Tests (Mocked Sandbox Endpoints)
+### 3. Run Offline Evaluation Harness (15 Scenarios)
+```bash
+python eval/run_eval.py
+```
+
+### 4. Run Unit Tests (Mocked Sandbox Endpoints)
 ```bash
 pytest backend/tests/ -v
 ```
 
-### 4. Run Locally
+### 5. Run Locally
 ```bash
+# Seed demo cases for initial state
+python scripts/seed_demo.py
+
 # Terminal 1: Backend API
 uvicorn backend.agentcourt.api.main:app --reload --port 8000
 
@@ -124,6 +132,72 @@ npm run dev
 ```
 
 Visit `http://localhost:5173` to explore the dashboard.
+
+---
+
+## 15-Scenario Evaluation Harness Results
+
+AgentCourt includes a rigorous 15-scenario evaluation test suite (`eval/run_eval.py`) validating all baseline, breach, security, and edge-case paths:
+
+| ID | Scenario | Category | Expected Verdict | Actual Verdict | Status |
+|:---|:---|:---|:---|:---|:---:|
+| `SCENARIO_01_VAL` | Valid Purchase & Compliance | Baseline | `NO_FAULT` | `NO_FAULT` | **PASS** |
+| `SCENARIO_02_ATT` | Merchant Attribute Mismatch (Delivered 6 ports instead of 10) | Merchant Breach | `MERCHANT_AT_FAULT` | `MERCHANT_AT_FAULT` | **PASS** |
+| `SCENARIO_03_PRI` | Price Drift: Captured Total Exceeds Signed Cart | Operator Breach | `OPERATOR_AT_FAULT` | `OPERATOR_AT_FAULT` | **PASS** |
+| `SCENARIO_04_SPE` | Spend Cap Breach: Captured Amount Exceeds Authorized Cap | Operator Breach | `OPERATOR_AT_FAULT` | `OPERATOR_AT_FAULT` | **PASS** |
+| `SCENARIO_05_TAM` | Tampered Mandate Signature | Operator Breach | `OPERATOR_AT_FAULT` | `OPERATOR_AT_FAULT` | **PASS** |
+| `SCENARIO_06_EXP` | Expired Mandate Execution | Operator Breach | `OPERATOR_AT_FAULT` | `OPERATOR_AT_FAULT` | **PASS** |
+| `SCENARIO_07_UNL` | Cart Unlinked From Intent Hash | Operator Breach | `OPERATOR_AT_FAULT` | `OPERATOR_AT_FAULT` | **PASS** |
+| `SCENARIO_08_REP` | Replayed Mandate onto Foreign Order (C4 Binding Mismatch) | Operator Breach | `OPERATOR_AT_FAULT` | `OPERATOR_AT_FAULT` | **PASS** |
+| `SCENARIO_09_UNA` | Agent Purchased from Unauthorized Merchant | Operator Breach | `OPERATOR_AT_FAULT` | `OPERATOR_AT_FAULT` | **PASS** |
+| `SCENARIO_10_CAR` | Cart Attributes Violate Intent Constraints | Operator Breach | `OPERATOR_AT_FAULT` | `OPERATOR_AT_FAULT` | **PASS** |
+| `SCENARIO_11_REG` | Agent Suboptimal Choice: Regret (28%) > 15% | Innovation / Regret | `WITHIN_MANDATE_REGRET` | `WITHIN_MANDATE_REGRET` | **PASS** |
+| `SCENARIO_12_REG` | Minimal Regret (5% <= 15%): No Fault | Innovation / Regret | `NO_FAULT` | `NO_FAULT` | **PASS** |
+| `SCENARIO_13_PRO` | Adversarial Prompt Injection in Listing Shielded | Security / AI Safety | `NO_FAULT` | `NO_FAULT` | **PASS** |
+| `SCENARIO_14_UNC` | Unclear / Incomplete Delivery Report | Human Fallback | `NEEDS_HUMAN` | `NEEDS_HUMAN` | **PASS** |
+| `SCENARIO_15_MIS` | Missing Candidate Trace (Degraded Gracefully) | Resilience | `NO_FAULT` | `NO_FAULT` | **PASS** |
+
+**Summary**: 15/15 scenarios passed (**100.0% accuracy**).
+
+---
+
+## Academic & Industry References
+
+AgentCourt's mandate specification and threat model draw from foundational research in agentic commerce and verifiable mandates:
+
+1. **Google & PayPal Agent Payment Protocol (AP2)**:
+   - *Autonomous Payment Protocol (AP2) Mandate Framework*, Google / PayPal working initiatives (2025–2026).
+   - Everest Group Research Note: *Autonomous Agent Payments & Mandate Attributions* (2025).
+2. **Multi-Agent Markets & Adversarial Commerce**:
+   - Microsoft Research: *Magentic Marketplace: Evaluating Autonomous Agents in Multi-Party Economic Games* (2025).
+   - RFC 8785: *JSON Canonicalization Scheme (JCS)* for deterministic JSON signature generation.
+
+---
+
+## Deployment to Render
+
+AgentCourt includes a production-ready `Dockerfile` and `render.yaml` blueprint.
+
+### Deploy Steps:
+1. Connect your GitHub repository (`https://github.com/livai12/agentcourt`) to [Render](https://dashboard.render.com).
+2. Select **New > Blueprint** and link the repository.
+3. Add the following Environment Variables in the Render Dashboard:
+   - `PAYPAL_ENV=sandbox`
+   - `PAYPAL_CLIENT_ID=...`
+   - `PAYPAL_CLIENT_SECRET=...`
+   - `PAYPAL_MERCHANT_EMAIL=...`
+   - `PAYPAL_BUYER_EMAIL=...`
+4. Click **Apply**. Render will automatically build the unified Docker image (Vite frontend served directly by FastAPI static files) and provide a public HTTPS URL.
+
+---
+
+## Documentation
+
+- [Devpost Submission Document](file:///docs/DEVPOST.md)
+- [Video Recording Script (< 3 mins)](file:///docs/VIDEO_SCRIPT.md)
+- [Architecture & Security Model](file:///docs/ARCHITECTURE.md)
+- [System Limitations & Threat Model](file:///docs/LIMITATIONS.md)
+- [AI & Sponsor Tools Integration](file:///docs/AI_TOOLS.md)
 
 ---
 
