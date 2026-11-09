@@ -42,9 +42,7 @@ async def run_gonogo() -> int:
 
     if not settings.PAYPAL_CLIENT_ID or "your_" in settings.PAYPAL_CLIENT_ID:
         print("[ERROR] PAYPAL_CLIENT_ID is not configured in .env.")
-        print(
-            "Please edit .env with your sandbox credentials from developer.paypal.com."
-        )
+        print("Please edit .env with your sandbox credentials from developer.paypal.com.")
         return 1
 
     client = PayPalClient()
@@ -77,9 +75,7 @@ async def run_gonogo() -> int:
         print("\n" + "#" * 65)
         print("MANUAL BUYER APPROVAL REQUIRED:")
         print(f"1. Open this URL in your browser: {order.approval_url}")
-        print(
-            f"2. Log in using your sandbox buyer account: {settings.PAYPAL_BUYER_EMAIL or '[BUYER EMAIL]'}"
-        )
+        print(f"2. Log in using your sandbox buyer account: {settings.PAYPAL_BUYER_EMAIL or '[BUYER EMAIL]'}")
         print("3. Click 'Complete Purchase' / 'Approve'.")
         print("#" * 65)
 
@@ -93,13 +89,9 @@ async def run_gonogo() -> int:
 
         # Step 4: Verify Custom ID persistence
         if capture.custom_id == test_binding:
-            print(
-                "  -> [VERIFIED] Assumption 2 PASSED: custom_id persisted to capture!"
-            )
+            print("  -> [VERIFIED] Assumption 2 PASSED: custom_id persisted to capture!")
         else:
-            print(
-                f"  -> [NOTE] custom_id on capture was '{capture.custom_id}' (expected '{test_binding}')."
-            )
+            print(f"  -> [NOTE] custom_id on capture was '{capture.custom_id}' (expected '{test_binding}').")
 
         # Step 5: Test Sandbox Dispute creation
         print(f"\n[Step 5] Testing Dispute creation on capture ID {capture.id}...")
@@ -112,12 +104,8 @@ async def run_gonogo() -> int:
                 note="AgentCourt automated sandbox go/no-go verification test.",
             )
             dispute = await client.create_dispute(dispute_req)
-            print(
-                f"  -> SUCCESS! Dispute ID: {dispute.dispute_id}, Status: {dispute.status}"
-            )
-            print(
-                "  -> [VERIFIED] Assumption 1 PASSED: capture_id accepted as buyer_transaction_id!"
-            )
+            print(f"  -> SUCCESS! Dispute ID: {dispute.dispute_id}, Status: {dispute.status}")
+            print("  -> [VERIFIED] Assumption 1 PASSED: capture_id accepted as buyer_transaction_id!")
 
             # Step 6: Test dispute details
             detail = await client.get_dispute(dispute.dispute_id)
@@ -127,12 +115,8 @@ async def run_gonogo() -> int:
 
         except PayPalAPIError as exc:
             print(f"  -> [DISPUTE CREATION NOTE]: {exc}")
-            print(
-                "  -> Testing fallback settlement: issuing refund directly on capture..."
-            )
-            refund_resp = await client.refund_capture(
-                capture.id, note="Go/No-go fallback test refund"
-            )
+            print("  -> Testing fallback settlement: issuing refund directly on capture...")
+            refund_resp = await client.refund_capture(capture.id, note="Go/No-go fallback test refund")
             print(f"  -> Fallback Refund Result: {refund_resp}")
 
         print("\n[OK] PayPal Sandbox Go/No-Go execution complete.")

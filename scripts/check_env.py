@@ -35,16 +35,10 @@ def main() -> int:
         print("AgentCourt strictly permits 'sandbox' only. Aborting immediately.")
         return 1
 
-    paypal_url = (
-        os.environ.get("PAYPAL_BASE_URL", "https://api-m.sandbox.paypal.com")
-        .strip()
-        .rstrip("/")
-    )
+    paypal_url = os.environ.get("PAYPAL_BASE_URL", "https://api-m.sandbox.paypal.com").strip().rstrip("/")
     if paypal_url != "https://api-m.sandbox.paypal.com":
         print(f"[FATAL SAFETY VIOLATION] PAYPAL_BASE_URL is set to '{paypal_url}'.")
-        print(
-            "AgentCourt strictly hardcodes 'https://api-m.sandbox.paypal.com'. Aborting."
-        )
+        print("AgentCourt strictly hardcodes 'https://api-m.sandbox.paypal.com'. Aborting.")
         return 1
 
     print("[OK] Safety constraints verified: SANDBOX ONLY.")
@@ -65,9 +59,7 @@ def main() -> int:
         for k in missing_creds:
             print(f"  - {k}")
         print("\nNote: Mocked unit tests will run and pass without these.")
-        print(
-            "To run live sandbox tests (scripts/paypal_gonogo.py), copy .env.example to .env and fill them in."
-        )
+        print("To run live sandbox tests (scripts/paypal_gonogo.py), copy .env.example to .env and fill them in.")
     else:
         print("[OK] Sandbox credentials detected.")
 
@@ -75,9 +67,7 @@ def main() -> int:
     llm_key = os.environ.get("LLM_API_KEY", "")
     llm_provider = os.environ.get("LLM_PROVIDER", "anthropic")
     if not llm_key:
-        print(
-            "\n[INFO] LLM_API_KEY is not set. Arbiter will run in deterministic fallback mode (llm_used: false)."
-        )
+        print("\n[INFO] LLM_API_KEY is not set. Arbiter will run in deterministic fallback mode (llm_used: false).")
     else:
         print(f"[OK] LLM Provider configured: {llm_provider} (Key present).")
 

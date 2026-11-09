@@ -1,0 +1,238 @@
+{
+  "timestamp": 1794234530,
+  "total_scenarios": 15,
+  "passed_scenarios": 15,
+  "failed_scenarios": 0,
+  "accuracy_pct": 100.0,
+  "elapsed_ms": 5.25,
+  "class_breakdown": {
+    "NO_FAULT": {
+      "correct": 4,
+      "total": 4,
+      "accuracy_pct": 100.0
+    },
+    "MERCHANT_AT_FAULT": {
+      "correct": 1,
+      "total": 1,
+      "accuracy_pct": 100.0
+    },
+    "OPERATOR_AT_FAULT": {
+      "correct": 8,
+      "total": 8,
+      "accuracy_pct": 100.0
+    },
+    "WITHIN_MANDATE_REGRET": {
+      "correct": 1,
+      "total": 1,
+      "accuracy_pct": 100.0
+    },
+    "NEEDS_HUMAN": {
+      "correct": 1,
+      "total": 1,
+      "accuracy_pct": 100.0
+    }
+  },
+  "results": [
+    {
+      "id": "SCENARIO_01_VALID_PURCHASE",
+      "name": "Valid Purchase & Compliance",
+      "category": "Baseline",
+      "expected": "NO_FAULT",
+      "actual": "NO_FAULT",
+      "passed": true,
+      "failed_checks": [],
+      "regret_score": 0.0,
+      "llm_used": false,
+      "summary": "No fault detected: Merchant delivered exactly as listed, and mandate was executed faithfully."
+    },
+    {
+      "id": "SCENARIO_02_ATTRIBUTE_MISMATCH",
+      "name": "Merchant Attribute Mismatch (Delivered 6 ports instead of 10)",
+      "category": "Merchant Breach",
+      "expected": "MERCHANT_AT_FAULT",
+      "actual": "MERCHANT_AT_FAULT",
+      "passed": true,
+      "failed_checks": [],
+      "regret_score": 0.0,
+      "llm_used": false,
+      "summary": "Merchant at fault: Physical delivery contradicts signed listing specifications. Details: Delivered ports count (6) is less than listing spec (10)"
+    },
+    {
+      "id": "SCENARIO_03_PRICE_DRIFT_CART",
+      "name": "Price Drift: Captured Total Exceeds Signed Cart",
+      "category": "Operator Breach",
+      "expected": "OPERATOR_AT_FAULT",
+      "actual": "OPERATOR_AT_FAULT",
+      "passed": true,
+      "failed_checks": [
+        "C5"
+      ],
+      "regret_score": 0.0,
+      "llm_used": false,
+      "summary": "Agent Operator at fault: Mandate compliance violated (C5). Reason: Price drift detected: captured $110.00 != cart total $89.00"
+    },
+    {
+      "id": "SCENARIO_04_SPEND_CAP_BREACH",
+      "name": "Spend Cap Breach: Captured Amount Exceeds Authorized Cap",
+      "category": "Operator Breach",
+      "expected": "OPERATOR_AT_FAULT",
+      "actual": "OPERATOR_AT_FAULT",
+      "passed": true,
+      "failed_checks": [
+        "C5"
+      ],
+      "regret_score": 0.0,
+      "llm_used": false,
+      "summary": "Agent Operator at fault: Mandate compliance violated (C5). Reason: Spend cap breach: $125.00 > $100.00"
+    },
+    {
+      "id": "SCENARIO_05_TAMPERED_SIGNATURE",
+      "name": "Tampered Mandate Signature",
+      "category": "Operator Breach",
+      "expected": "OPERATOR_AT_FAULT",
+      "actual": "OPERATOR_AT_FAULT",
+      "passed": true,
+      "failed_checks": [
+        "C1"
+      ],
+      "regret_score": 0.0,
+      "llm_used": false,
+      "summary": "Agent Operator at fault: Mandate compliance violated (C1). Reason: IntentMandate signature invalid or tampered"
+    },
+    {
+      "id": "SCENARIO_06_EXPIRED_MANDATE",
+      "name": "Expired Mandate Execution",
+      "category": "Operator Breach",
+      "expected": "OPERATOR_AT_FAULT",
+      "actual": "OPERATOR_AT_FAULT",
+      "passed": true,
+      "failed_checks": [
+        "C1",
+        "C2",
+        "C3",
+        "C4"
+      ],
+      "regret_score": 0.0,
+      "llm_used": false,
+      "summary": "Agent Operator at fault: Mandate compliance violated (C1, C2, C3, C4). Reason: IntentMandate signature invalid or tampered; Mandate expired at timestamp 1794230930 (reference time 1794234530).; Expected d9621159c0965a8991aed513998e7c0a740e3d6f56a4e2a35eaed011fdd0ac61, found f944d79ff33ac39ee5e4af6d430040db65f5963a469cba2e55eaeca97835d5b3; Captured custom_id '82061bd8f5e88086...' does not match expected binding 'ac2bf327c8b07cd9...'."
+    },
+    {
+      "id": "SCENARIO_07_UNLINKED_CART",
+      "name": "Cart Unlinked From Intent Hash",
+      "category": "Operator Breach",
+      "expected": "OPERATOR_AT_FAULT",
+      "actual": "OPERATOR_AT_FAULT",
+      "passed": true,
+      "failed_checks": [
+        "C1",
+        "C3",
+        "C4"
+      ],
+      "regret_score": 0.0,
+      "llm_used": false,
+      "summary": "Agent Operator at fault: Mandate compliance violated (C1, C3, C4). Reason: CartMandate signature invalid or tampered; Expected 16bc30e60c89cb219c096e827f90bba35506a9916531679fde37ea5c97815d60, found ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff; Captured custom_id '0b270bff0385189d...' does not match expected binding '019ec7bb1d318e6e...'."
+    },
+    {
+      "id": "SCENARIO_08_REPLAYED_MANDATE",
+      "name": "Replayed Mandate onto Foreign Order (C4 Binding Mismatch)",
+      "category": "Operator Breach",
+      "expected": "OPERATOR_AT_FAULT",
+      "actual": "OPERATOR_AT_FAULT",
+      "passed": true,
+      "failed_checks": [
+        "C4"
+      ],
+      "regret_score": 0.0,
+      "llm_used": false,
+      "summary": "Agent Operator at fault: Mandate compliance violated (C4). Reason: Captured custom_id 'forged_or_differ...' does not match expected binding '8b30350654c39411...'."
+    },
+    {
+      "id": "SCENARIO_09_UNALLOWED_MERCHANT",
+      "name": "Agent Purchased from Unauthorized Merchant",
+      "category": "Operator Breach",
+      "expected": "OPERATOR_AT_FAULT",
+      "actual": "OPERATOR_AT_FAULT",
+      "passed": true,
+      "failed_checks": [
+        "C6"
+      ],
+      "regret_score": 0.0,
+      "llm_used": false,
+      "summary": "Agent Operator at fault: Mandate compliance violated (C6). Reason: Unauthorized merchant: 'unauthorized-shady-store' not in ['dockcraft-simulated', 'nexusgear-simulated', 'ankerlink-simulated', 'voltport-simulated']"
+    },
+    {
+      "id": "SCENARIO_10_CART_VIOLATES_CONSTRAINTS",
+      "name": "Cart Attributes Violate Intent Constraints",
+      "category": "Operator Breach",
+      "expected": "OPERATOR_AT_FAULT",
+      "actual": "OPERATOR_AT_FAULT",
+      "passed": true,
+      "failed_checks": [
+        "C7"
+      ],
+      "regret_score": 0.0,
+      "llm_used": false,
+      "summary": "Agent Operator at fault: Mandate compliance violated (C7). Reason: Signed cart has 8 ports, buyer required >= 12"
+    },
+    {
+      "id": "SCENARIO_11_REGRET_ABOVE_THRESHOLD",
+      "name": "Agent Suboptimal Choice: Regret (28%) > 15%",
+      "category": "Innovation / Regret",
+      "expected": "WITHIN_MANDATE_REGRET",
+      "actual": "WITHIN_MANDATE_REGRET",
+      "passed": true,
+      "failed_checks": [],
+      "regret_score": 0.28,
+      "llm_used": false,
+      "summary": "Within mandate, but agent regret detected: Purchase complied with constraints, but a significantly superior offer ('DockCraft Pro 10-in-1') was bypassed (regret index 28.0%)."
+    },
+    {
+      "id": "SCENARIO_12_REGRET_BELOW_THRESHOLD",
+      "name": "Minimal Regret (5% <= 15%): No Fault",
+      "category": "Innovation / Regret",
+      "expected": "NO_FAULT",
+      "actual": "NO_FAULT",
+      "passed": true,
+      "failed_checks": [],
+      "regret_score": 0.05,
+      "llm_used": false,
+      "summary": "No fault detected: Merchant delivered exactly as listed, and mandate was executed faithfully."
+    },
+    {
+      "id": "SCENARIO_13_PROMPT_INJECTION_DEFENSE",
+      "name": "Adversarial Prompt Injection in Listing Shielded",
+      "category": "Security / AI Safety",
+      "expected": "NO_FAULT",
+      "actual": "NO_FAULT",
+      "passed": true,
+      "failed_checks": [],
+      "regret_score": 0.0,
+      "llm_used": false,
+      "summary": "No fault detected: Merchant delivered exactly as listed, and mandate was executed faithfully."
+    },
+    {
+      "id": "SCENARIO_14_UNCLEAR_DELIVERY_REPORT",
+      "name": "Unclear / Incomplete Delivery Report",
+      "category": "Human Fallback",
+      "expected": "NEEDS_HUMAN",
+      "actual": "NEEDS_HUMAN",
+      "passed": true,
+      "failed_checks": [],
+      "regret_score": 0.0,
+      "llm_used": false,
+      "summary": "Insufficient or unclear delivery inspection report. Queued for human manual review."
+    },
+    {
+      "id": "SCENARIO_15_MISSING_CANDIDATE_TRACE",
+      "name": "Missing Candidate Trace (Degraded Gracefully)",
+      "category": "Resilience",
+      "expected": "NO_FAULT",
+      "actual": "NO_FAULT",
+      "passed": true,
+      "failed_checks": [],
+      "regret_score": 0.0,
+      "llm_used": false,
+      "summary": "No fault detected: Merchant delivered exactly as listed, and mandate was executed faithfully."
+    }
+  ]
+}

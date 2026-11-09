@@ -4,9 +4,11 @@ import os
 import sys
 from pathlib import Path
 
-# Ensure backend directory is in python path
+# Ensure backend and project root directories are in python path
 BACKEND_DIR = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = BACKEND_DIR.parent
 sys.path.insert(0, str(BACKEND_DIR))
+sys.path.insert(0, str(PROJECT_ROOT))
 
 # Ensure test runs in sandbox
 os.environ["PAYPAL_ENV"] = "sandbox"

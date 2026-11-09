@@ -3,6 +3,9 @@
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
+from agentcourt.api.cases import router as cases_router
+from agentcourt.api.purchases import router as purchases_router
+from agentcourt.api.webhooks import router as webhooks_router
 from agentcourt.config import settings
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -32,6 +35,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(cases_router)
+app.include_router(purchases_router)
+app.include_router(webhooks_router)
 
 
 @app.get("/healthz")
