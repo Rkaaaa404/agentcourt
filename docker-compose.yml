@@ -1,0 +1,18 @@
+services:
+  agentcourt:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agentcourt
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - PAYPAL_ENV=sandbox
+    volumes:
+      - agentcourt_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  agentcourt_data:
