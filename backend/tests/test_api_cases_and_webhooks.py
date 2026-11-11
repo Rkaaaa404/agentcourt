@@ -142,3 +142,22 @@ async def test_checkout_cancel_callback():
         data = res.json()
         assert data["checkout"] == "cancelled"
         assert data["status"] == "CANCELLED_BY_BUYER"
+
+
+@pytest.mark.asyncio
+async def test_seed_and_auto_seed_inside_event_loop(monkeypatch):
+    from agentcourt.api import cases as cases_mod
+    from agentcourt.api.store import default_store
+
+    monkeypatch.setattr(default_store, "load_all_cases", lambda: [])
+    cases_mod.CASES_REGISTRY.clear()
+
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        r_cases = await ac.get("/api/cases")
+        assert r_cases.status_code == 200
+        assert len(r_cases.json()) >= 3
+
+        r_tl = await ac.get("/api/cases/timeline")
+        assert r_tl.status_code == 200
+        assert len(r_tl.json()["resources"]["rows"]) >= 3

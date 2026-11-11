@@ -5,6 +5,8 @@ Generates the 3 hackathon flagship scenarios (S1, S2, S3) with complete
 cryptographic mandates, candidate traces, arbiter verdicts, and timeline records.
 """
 
+import asyncio
+import concurrent.futures
 import json
 import sys
 import time
@@ -34,6 +36,17 @@ from agentcourt.mandate.models import (
 )
 
 CASES_FILE = PROJECT_ROOT / "data" / "demo_cases.json"
+
+
+def _adjudicate_sync(engine: ArbiterEngine, evidence_pack: EvidencePack):
+    """Run async adjudication safely whether or not an asyncio event loop is already active."""
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        return asyncio.run(engine.adjudicate(evidence_pack))
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+        return pool.submit(asyncio.run, engine.adjudicate(evidence_pack)).result()
 
 
 def build_scenario_s1() -> CaseRecord:
@@ -133,9 +146,7 @@ def build_scenario_s1() -> CaseRecord:
 
     # Adjudicate
     engine = ArbiterEngine()
-    import asyncio
-
-    verdict = asyncio.run(engine.adjudicate(evidence_pack))
+    verdict = _adjudicate_sync(engine, evidence_pack)
     planned = plan_action_for_verdict(verdict, Decimal("95.00"))
 
     due_date = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(now + 86400 * 5))
@@ -251,9 +262,7 @@ def build_scenario_s2() -> CaseRecord:
     )
 
     engine = ArbiterEngine()
-    import asyncio
-
-    verdict = asyncio.run(engine.adjudicate(evidence_pack))
+    verdict = _adjudicate_sync(engine, evidence_pack)
     planned = plan_action_for_verdict(verdict, Decimal("119.00"))
 
     due_date = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(now + 86400 * 7))
@@ -381,9 +390,7 @@ def build_scenario_s3() -> CaseRecord:
     )
 
     engine = ArbiterEngine()
-    import asyncio
-
-    verdict = asyncio.run(engine.adjudicate(evidence_pack))
+    verdict = _adjudicate_sync(engine, evidence_pack)
     planned = plan_action_for_verdict(verdict, Decimal("115.00"))
 
     due_date = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(now + 86400 * 9))
