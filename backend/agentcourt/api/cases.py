@@ -313,6 +313,19 @@ async def sync_paypal_disputes() -> dict[str, Any]:
         await client.close()
 
 
+@router.get("/ledger/verify")
+async def verify_ledger_integrity() -> dict[str, Any]:
+    """Verify SHA-256 hash chain integrity across the entire append-only ledger."""
+    intact, error_reason = default_ledger.verify_integrity()
+    entries = default_ledger.get_entries()
+    return {
+        "intact": intact,
+        "error": error_reason,
+        "total_entries": len(entries),
+        "latest_hash": entries[-1].entry_hash if entries else None,
+    }
+
+
 @router.get("/timeline")
 async def get_bryntum_timeline_data() -> dict[str, Any]:
     """Feed structured resources, events, and time range for Bryntum Scheduler component."""
@@ -372,9 +385,12 @@ async def get_bryntum_timeline_data() -> dict[str, Any]:
                 "startDate": _format_bryntum_date(c_time),
                 "endDate": _format_bryntum_date(inquiry_end_ts),
                 "eventColor": "slate",
-                "style": "background-color:#475569;border-color:#64748B;color:#F8FAFC;",
+                "style": "background-color:#334155;border-color:#64748B;color:#F8FAFC;",
                 "cls": "inquiry-window-event",
                 "eventType": "inquiry",
+                "verdict": c.verdict.verdict.value,
+                "disputeId": c.dispute_id,
+                "lifecycleStage": c.lifecycle_stage,
             }
         )
 
@@ -389,6 +405,9 @@ async def get_bryntum_timeline_data() -> dict[str, Any]:
                 "style": f"background-color:{v_color};border-color:{v_color};color:#0F172A;font-weight:600;",
                 "cls": "prep-block-event",
                 "eventType": "prep",
+                "verdict": c.verdict.verdict.value,
+                "disputeId": c.dispute_id,
+                "lifecycleStage": c.lifecycle_stage,
             }
         )
 
@@ -403,6 +422,9 @@ async def get_bryntum_timeline_data() -> dict[str, Any]:
                 "style": "background-color:#EF4444;border-color:#FCA5A5;color:#FFFFFF;",
                 "cls": "deadline-milestone-event",
                 "eventType": "deadline",
+                "verdict": c.verdict.verdict.value,
+                "disputeId": c.dispute_id,
+                "lifecycleStage": c.lifecycle_stage,
             }
         )
 
@@ -419,6 +441,9 @@ async def get_bryntum_timeline_data() -> dict[str, Any]:
                     "style": "background-color:#10B981;border-color:#34D399;color:#052E16;font-weight:600;",
                     "cls": "resolution-event",
                     "eventType": "resolution",
+                    "verdict": c.verdict.verdict.value,
+                    "disputeId": c.dispute_id,
+                    "lifecycleStage": c.lifecycle_stage,
                 }
             )
 
@@ -618,4 +643,43 @@ async def simulate_buyer_dispute_endpoint(req: SimulateDisputeRequest) -> dict[s
         "paypal_note": paypal_note,
         "verdict": record.verdict.verdict.value,
         "summary": record.verdict.summary,
+    }
+
+
+@router.post("/{case_id}/simulate-webhook-update")
+async def simulate_webhook_deadline_shift(case_id: str) -> dict[str, Any]:
+    """Simulate a PayPal CUSTOMER.DISPUTE.UPDATED webhook that escalates stage and shifts due date."""
+    ensure_seeded_if_empty()
+    case = get_case(case_id)
+    if not case:
+        raise HTTPException(status_code=404, detail=f"Case '{case_id}' not found.")
+
+    current_due = _parse_iso_timestamp(case.seller_response_due_date, case.created_at + 86400 * 6)
+    new_due = max(case.created_at + 86400 * 3, current_due - 86400 * 2)
+    new_due_iso = _format_bryntum_date(new_due)
+
+    case.seller_response_due_date = new_due_iso
+    case.lifecycle_stage = "CHARGEBACK" if case.lifecycle_stage == "INQUIRY" else "PRE_ARBITRATION"
+    register_case(case)
+
+    event_id = f"WH-SIM-{case.dispute_id}-{int(time.time())}"
+    default_store.record_webhook_event(event_id, "CUSTOMER.DISPUTE.UPDATED", verified=False)
+    default_ledger.append(
+        event_type=LedgerEventType.DISPUTE_OPENED,
+        payload={
+            "webhook_event_id": event_id,
+            "event_type": "CUSTOMER.DISPUTE.UPDATED",
+            "lifecycle_stage": case.lifecycle_stage,
+            "shifted_due_date": new_due_iso,
+        },
+        case_id=case.case_id,
+    )
+
+    return {
+        "status": "SUCCESS",
+        "case_id": case.case_id,
+        "dispute_id": case.dispute_id,
+        "lifecycle_stage": case.lifecycle_stage,
+        "seller_response_due_date": new_due_iso,
+        "webhook_event_id": event_id,
     }

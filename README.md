@@ -204,6 +204,7 @@ AgentCourt includes a production-ready `Dockerfile` and `render.yaml` blueprint.
 ## Sponsor Technologies & Integrations
 
 - **PayPal**: Comprehensive Orders v2, Customer Disputes API lifecycle, Webhooks signature verification, and sandbox simulation assertion headers.
-- **Bryntum Scheduler**: High-performance interactive dispute case lifecycle timeline view (with inquiry windows, evidence preparation buffers, and response due-date markers).
-- **Render**: One-click cloud deployment via `render.yaml` Docker Blueprint.
+- **AG Grid**: Interactive sortable/filterable Dispute Cases Registry and 15-Scenario Evaluation Matrix powered by `ag-grid-react`.
+- **Bryntum Scheduler**: High-performance interactive dispute case lifecycle timeline view (with inquiry windows, evidence preparation buffers, response due-date markers, and webhook deadline shifts).
+- **Render**: Cloud deployment via `Dockerfile` and `render.yaml` Blueprint.
 - **APIMatic**: API context specification and integration validation (see [AI_TOOLS.md](file:///docs/AI_TOOLS.md)).

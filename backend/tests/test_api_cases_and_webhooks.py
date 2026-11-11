@@ -161,3 +161,16 @@ async def test_seed_and_auto_seed_inside_event_loop(monkeypatch):
         r_tl = await ac.get("/api/cases/timeline")
         assert r_tl.status_code == 200
         assert len(r_tl.json()["resources"]["rows"]) >= 3
+
+        r_ledger = await ac.get("/api/cases/ledger/verify")
+        assert r_ledger.status_code == 200
+        assert r_ledger.json()["intact"] is True
+        assert r_ledger.json()["total_entries"] >= 1
+
+        r_wh = await ac.get("/api/webhooks/events")
+        assert r_wh.status_code == 200
+        assert "events" in r_wh.json()
+
+        r_shift = await ac.post("/api/cases/case-s1-merchant-breach/simulate-webhook-update")
+        assert r_shift.status_code == 200
+        assert r_shift.json()["lifecycle_stage"] == "CHARGEBACK"

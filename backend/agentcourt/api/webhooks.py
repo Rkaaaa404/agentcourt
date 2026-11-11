@@ -15,6 +15,12 @@ logger = logging.getLogger("agentcourt.api.webhooks")
 router = APIRouter(prefix="/api/webhooks", tags=["webhooks"])
 
 
+@router.get("/events")
+async def list_webhook_events(limit: int = 20) -> dict[str, Any]:
+    """List recently received PayPal webhook events for operational visibility."""
+    return {"events": default_store.list_webhook_events(limit=limit)}
+
+
 @router.post("/paypal")
 async def handle_paypal_webhook(
     request: Request,

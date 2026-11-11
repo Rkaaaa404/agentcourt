@@ -6,7 +6,10 @@
     "lifecycle_stage": "INQUIRY",
     "disputed_amount": "95.00",
     "currency": "USD",
-    "seller_response_due_date": "2026-11-14T14:45:38Z",
+    "seller_response_due_date": "2026-11-16T13:39:13Z",
+    "allowed_links": [],
+    "allowed_response_options": [],
+    "source_mode": "SIMULATED_FIXTURE",
     "evidence_pack": {
       "case_id": "case-s1-merchant-breach",
       "dispute_id": "PP-D-1001-SANDBOX",
@@ -32,14 +35,14 @@
           "allowed_merchants": [
             "voltport-simulated"
           ],
-          "expires_at": 1794239138,
-          "nonce": "e3e5efcbe1df4613abc7b0c6890ef5e3",
-          "public_key": "a85601008bf3c33bd005acfe312837a6fcd23eeeef0034bd5ec2a3818e872676",
-          "signature": "611fb253f47240b961703500466bc7ea541a4790013eea3510399ad57659701b9d6ca3f756a7d6a78e6ea157fe5492770a23f283b917de7e99a44c097028b408"
+          "expires_at": 1794407953,
+          "nonce": "aa117e4d2bb34b5abc3b8b089846da2b",
+          "public_key": "06c5ff20a53f55f8d2e21ad3eac91f8857d65f11309a9cfead5beb7bdb503b33",
+          "signature": "4cc7669f0b1c337d80bc2aaf5caccaa4d67833d6449592e7138200a7f7c54c2e60b307ce11261ddbff44db9550367b9ae49c4e2ef7324f7598cc00b488afc30a"
         },
         "cart": {
           "id": "cm_s1_voltport",
-          "intent_hash": "5e54e1df4cdc9e5d03bbaf98c11b879641b5d4e0099438a06d2d491c3946bff4",
+          "intent_hash": "284383dc9664025b6279ac60a4356e82d57480e151b386f1e878359ecd04d766",
           "merchant_id": "voltport-simulated",
           "items": [
             {
@@ -60,15 +63,15 @@
           ],
           "total_amount": "95.00",
           "currency": "USD",
-          "created_at": 1794235538,
-          "public_key": "d3ebafa7c1bb83a07fe8ade4d6e75be6b3ca20088144634c69adb1fe227a2a19",
-          "signature": "541d530fdec0a8a5b0b6238b87db39e26b593510d80c6561000d5c95f863691a75133646e90bbebac1ab054502ba27fa3247c5eaa7d06db8ba687e7493015801"
+          "created_at": 1794404353,
+          "public_key": "b78fe2a7d8fdfc367df61a4faa06c38b16b6d17ac28dbc85821c86d2b3bbc296",
+          "signature": "f4a7ef935fa0a4f72b07c6becfa45427fb01af523bef922570aa52e1c02f4d86ca9f7adbf36ba97c96fe37f1bb034b58166b6d1b4d64c119da485e9eb2960207"
         }
       },
       "paypal_order_id": "ORDER-SANDBOX-S1-VP",
       "paypal_capture_id": "CAPTURE-SANDBOX-S1-001",
       "captured_amount": "95.00",
-      "captured_custom_id": "b87d63f10d9cf45070e56d5735bef413e18fde13234fcfb1b4a9939480bafacd",
+      "captured_custom_id": "a97335d7e5a16be3696934d56b90bc7de5741e1ee8ce62f8700f6c03b4fe842b",
       "merchant_listing": {
         "item_id": "item-vp-401",
         "merchant_id": "voltport-simulated",
@@ -147,7 +150,7 @@
         "is_regret_flagged": false,
         "policy_applied": "OPTIMAL"
       },
-      "creation_time": 1794062738
+      "creation_time": 1794231553
     },
     "verdict": {
       "case_id": "case-s1-merchant-breach",
@@ -166,21 +169,21 @@
           "check_id": "C2",
           "name": "Mandate Expiry",
           "status": "PASS",
-          "details": "Mandate was active at reference time (expires_at=1794239138, ref=1794062738).",
+          "details": "Mandate was active at reference time (expires_at=1794407953, ref=1794231553).",
           "failure_reason": null
         },
         {
           "check_id": "C3",
           "name": "Intent Hash Linkage",
           "status": "PASS",
-          "details": "CartMandate securely links to IntentMandate hash: 5e54e1df4cdc9e5d...",
+          "details": "CartMandate securely links to IntentMandate hash: 284383dc9664025b...",
           "failure_reason": null
         },
         {
           "check_id": "C4",
           "name": "Order Binding (Anti-Replay)",
           "status": "PASS",
-          "details": "Cryptographic order binding verified against custom_id (b87d63f10d9cf450...).",
+          "details": "Cryptographic order binding verified against custom_id (a97335d7e5a16be3...).",
           "failure_reason": null
         },
         {
@@ -227,7 +230,7 @@
       "is_regret_flagged": false,
       "failed_checks": [],
       "llm_used": false,
-      "verdict_timestamp": 1794235538
+      "verdict_timestamp": 1794404353
     },
     "planned_action": {
       "case_id": "case-s1-merchant-breach",
@@ -245,8 +248,9 @@
       "executed": false,
       "execution_result": null
     },
-    "created_at": 1794062738,
+    "created_at": 1794231553,
     "executed": false,
+    "execution_mode": null,
     "execution_result": null
   },
   {
@@ -256,7 +260,10 @@
     "lifecycle_stage": "INQUIRY",
     "disputed_amount": "119.00",
     "currency": "USD",
-    "seller_response_due_date": "2026-11-16T14:45:38Z",
+    "seller_response_due_date": "2026-11-18T13:39:13Z",
+    "allowed_links": [],
+    "allowed_response_options": [],
+    "source_mode": "SIMULATED_FIXTURE",
     "evidence_pack": {
       "case_id": "case-s2-operator-price-drift",
       "dispute_id": "PP-D-1002-SANDBOX",
@@ -282,14 +289,14 @@
           "allowed_merchants": [
             "dockcraft-simulated"
           ],
-          "expires_at": 1794239138,
-          "nonce": "41611e1346e44fa79fa4b7033ac97210",
-          "public_key": "f52c9341fb212fb1959b885da70d7a0031051f20ba2e6e5a330e1ba159e37a47",
-          "signature": "0cd12242a8f13291a5d2ec8a0c62196cfa5c854aee6dad4670f2f9c0e9e4f3f0951bb22aadc9d19287a8b49b5805262a0c8461c9308b71f292f6f6ce5340bc0e"
+          "expires_at": 1794407953,
+          "nonce": "450d6d6ca7814142952f721ce40292f2",
+          "public_key": "7ec562d5f49c5e20ae90c28e022f4355ce09140a4b76a295107ff33cf36bb8c5",
+          "signature": "51eafde5e72bb88918736ff0f37c30596541860ad252fc942d3304bc7811136d41e542cd38a3881d573aa72743aa7f855a65da26af2bfc8836e368aec5c6e309"
         },
         "cart": {
           "id": "cm_s2_price_drift",
-          "intent_hash": "fc9931096c2089aab5e2eac74f34fb3f0bd7be84118e882551af1cb8eb42caa0",
+          "intent_hash": "4e2c1a8f7b96f5490b7f229012e477127223e5d241d576cfc3dc7af825074f00",
           "merchant_id": "dockcraft-simulated",
           "items": [
             {
@@ -309,15 +316,15 @@
           ],
           "total_amount": "89.00",
           "currency": "USD",
-          "created_at": 1794235538,
-          "public_key": "2b1b07ed4a91e7fe70efea4e509edf2466cbe5721ca75a4c470c4f1d10187fea",
-          "signature": "692eee804b918aafe6771c242431ccf24a0cf3cd7c7e5dbc8f5efb355c767762c6722cfb9097e2484eb1909072460b10544f10b1d0fc453fd5c88ab141a8900a"
+          "created_at": 1794404353,
+          "public_key": "b16b0403b28accd3e2565cca94c33ad67e78e10e37e571a1f511484fd736bc05",
+          "signature": "285b4391370bc75d7a88492b78495e6402294d6d9dc3bd9f2dd06209ae204d5583721d1be5d9f57d18d5dce224e41a84a0c149d453727b971d9999fe193d300f"
         }
       },
       "paypal_order_id": "ORDER-SANDBOX-S2-DC",
       "paypal_capture_id": "CAPTURE-SANDBOX-S2-002",
       "captured_amount": "119.00",
-      "captured_custom_id": "60e453686933e08ef72963f585dcdb5fc0637291e0023146c1c79a78ae14f745",
+      "captured_custom_id": "23a751fb5c037037ce61523590995dc67a24d5eb97fa78a3e74aaa7f12bf645b",
       "merchant_listing": {
         "item_id": "item-dc-101",
         "merchant_id": "dockcraft-simulated",
@@ -395,7 +402,7 @@
         "is_regret_flagged": false,
         "policy_applied": "OPTIMAL"
       },
-      "creation_time": 1794149138
+      "creation_time": 1794317953
     },
     "verdict": {
       "case_id": "case-s2-operator-price-drift",
@@ -414,21 +421,21 @@
           "check_id": "C2",
           "name": "Mandate Expiry",
           "status": "PASS",
-          "details": "Mandate was active at reference time (expires_at=1794239138, ref=1794149138).",
+          "details": "Mandate was active at reference time (expires_at=1794407953, ref=1794317953).",
           "failure_reason": null
         },
         {
           "check_id": "C3",
           "name": "Intent Hash Linkage",
           "status": "PASS",
-          "details": "CartMandate securely links to IntentMandate hash: fc9931096c2089aa...",
+          "details": "CartMandate securely links to IntentMandate hash: 4e2c1a8f7b96f549...",
           "failure_reason": null
         },
         {
           "check_id": "C4",
           "name": "Order Binding (Anti-Replay)",
           "status": "PASS",
-          "details": "Cryptographic order binding verified against custom_id (60e453686933e08e...).",
+          "details": "Cryptographic order binding verified against custom_id (23a751fb5c037037...).",
           "failure_reason": null
         },
         {
@@ -467,7 +474,7 @@
         "C5"
       ],
       "llm_used": false,
-      "verdict_timestamp": 1794235538
+      "verdict_timestamp": 1794404353
     },
     "planned_action": {
       "case_id": "case-s2-operator-price-drift",
@@ -495,8 +502,9 @@
       "executed": false,
       "execution_result": null
     },
-    "created_at": 1794149138,
+    "created_at": 1794317953,
     "executed": false,
+    "execution_mode": null,
     "execution_result": null
   },
   {
@@ -506,7 +514,10 @@
     "lifecycle_stage": "INQUIRY",
     "disputed_amount": "115.00",
     "currency": "USD",
-    "seller_response_due_date": "2026-11-18T14:45:38Z",
+    "seller_response_due_date": "2026-11-20T13:39:13Z",
+    "allowed_links": [],
+    "allowed_response_options": [],
+    "source_mode": "SIMULATED_FIXTURE",
     "evidence_pack": {
       "case_id": "case-s3-agent-regret",
       "dispute_id": "PP-D-1003-SANDBOX",
@@ -534,14 +545,14 @@
             "dockcraft-simulated",
             "nexusgear-simulated"
           ],
-          "expires_at": 1794239138,
-          "nonce": "770088b24ff045e29418987880748155",
-          "public_key": "420973d590a3eac4b6f52d85ac51186e6a57d2e6a21cd9b09c5c1efd398661e6",
-          "signature": "009429a2545dfebe85925928a8617825b7ec0ec3b36819276d05c7b432116201d2b2460f2ff9e19869728594a2adc507e8530d7d73c8a9bc5cda60096ab57c09"
+          "expires_at": 1794407953,
+          "nonce": "b2eae91da9d94f24bda1963b1db4b2ef",
+          "public_key": "00540af987777c7fd86f57c8d2c0955fca80062fa7685551c3d8e26b171b182e",
+          "signature": "13b945951bcdad7e668fbe0e3284bc295475f9cbd6bc23cede3255a17fa54982e817e5a65ab0d7465c5caa23612873a1abddbe9c7ecaddb55219ed8688bdad09"
         },
         "cart": {
           "id": "cm_s3_regret",
-          "intent_hash": "379f3ce8fbea024e2d3c999d4a2840cdd4e68e062b737b3c93a75a377ec72c29",
+          "intent_hash": "9d0f78788f2968c2efd54a2a2dbf2fffc1e227049339a30c493a45ae1ae1e13b",
           "merchant_id": "nexusgear-simulated",
           "items": [
             {
@@ -561,15 +572,15 @@
           ],
           "total_amount": "115.00",
           "currency": "USD",
-          "created_at": 1794235538,
-          "public_key": "d79cc1a2396f7ba676d3f75ae748a16724eb0e76c8fc80dde12b2c5f7390471d",
-          "signature": "f60653eaa38bcbd8620cb9a812b9b4bc84eceefe2edb3a90d5ec545fc02e2e5d838d160a69331ec5b027bf172c8947e1dedfc7c75837edbc08afb7dcc16f920b"
+          "created_at": 1794404353,
+          "public_key": "0a6cdd57de9e59d9a9e86ce4e26d8d7fd9b94aa9f3d416d4c72d6bd4674b8933",
+          "signature": "fa01962d53a43617c24ea8b4bac2eb67bb7786e640837a3af2f6b24fcdd1ea8951cb6bf90c748022ed6181cdcb631fcc1c3191395a94e541f3b4fb2ddc34d20a"
         }
       },
       "paypal_order_id": "ORDER-SANDBOX-S3-NG",
       "paypal_capture_id": "CAPTURE-SANDBOX-S3-003",
       "captured_amount": "115.00",
-      "captured_custom_id": "4839de65b1060c9dd7d4a108ce0d949c59b5d0494632f4916db2491d85d50c99",
+      "captured_custom_id": "9f9315fe53eebbc77e4ed59e18dea3bda365b8e98d000f8d4790c8129925f597",
       "merchant_listing": {
         "item_id": "item-ng-201",
         "merchant_id": "nexusgear-simulated",
@@ -665,7 +676,7 @@
         "is_regret_flagged": true,
         "policy_applied": "FIRST_ACCEPTABLE"
       },
-      "creation_time": 1793976338
+      "creation_time": 1794145153
     },
     "verdict": {
       "case_id": "case-s3-agent-regret",
@@ -684,21 +695,21 @@
           "check_id": "C2",
           "name": "Mandate Expiry",
           "status": "PASS",
-          "details": "Mandate was active at reference time (expires_at=1794239138, ref=1793976338).",
+          "details": "Mandate was active at reference time (expires_at=1794407953, ref=1794145153).",
           "failure_reason": null
         },
         {
           "check_id": "C3",
           "name": "Intent Hash Linkage",
           "status": "PASS",
-          "details": "CartMandate securely links to IntentMandate hash: 379f3ce8fbea024e...",
+          "details": "CartMandate securely links to IntentMandate hash: 9d0f78788f2968c2...",
           "failure_reason": null
         },
         {
           "check_id": "C4",
           "name": "Order Binding (Anti-Replay)",
           "status": "PASS",
-          "details": "Cryptographic order binding verified against custom_id (4839de65b1060c9d...).",
+          "details": "Cryptographic order binding verified against custom_id (9f9315fe53eebbc7...).",
           "failure_reason": null
         },
         {
@@ -743,33 +754,35 @@
       "is_regret_flagged": true,
       "failed_checks": [],
       "llm_used": false,
-      "verdict_timestamp": 1794235538
+      "verdict_timestamp": 1794404353
     },
     "planned_action": {
       "case_id": "case-s3-agent-regret",
       "dispute_id": "PP-D-1003-SANDBOX",
-      "action_type": "provide-evidence",
+      "action_type": "make-offer",
       "http_method": "POST",
-      "api_path": "/v1/customer/disputes/PP-D-1003-SANDBOX/provide-evidence",
+      "api_path": "/v1/customer/disputes/PP-D-1003-SANDBOX/make-offer",
       "request_payload": {
-        "evidences": [
-          {
-            "evidence_type": "OTHER",
-            "notes": "AgentCourt Review: Transaction complied with authorized mandate. Buyer regret detected (21.3% suboptimal index). Merchant fulfilled signed agreement."
-          }
-        ]
+        "offer_amount": {
+          "currency_code": "USD",
+          "value": "17.25"
+        },
+        "offer_type": "REFUND",
+        "note": "AgentCourt Goodwill Remedy: Transaction complied with authorized mandate, but agent regret index reached 21.3%. Offering proportional goodwill refund of $17.25 USD."
       },
-      "rationale": "Mandate was respected. Merchant defends dispute with signed mandate and candidate trace.",
+      "rationale": "Mandate was respected, but agent selected a suboptimal offer. Propose proportional goodwill partial refund via make-offer without penalizing merchant.",
       "off_paypal_ledger_entry": {
         "event": "AGENT_REGRET_RECORDED",
-        "regret_score": 0.2126
+        "regret_score": 0.2126,
+        "goodwill_offer_amount": "17.25"
       },
       "requires_human_approval": true,
       "executed": false,
       "execution_result": null
     },
-    "created_at": 1793976338,
+    "created_at": 1794145153,
     "executed": false,
+    "execution_mode": null,
     "execution_result": null
   }
 ]

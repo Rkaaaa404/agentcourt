@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
   FileText,
   CheckCircle2,
@@ -7,6 +7,9 @@ import {
   RotateCw,
   AlertCircle,
 } from 'lucide-react'
+import { AgGridReact } from 'ag-grid-react'
+import type { ColDef, ICellRendererParams } from 'ag-grid-community'
+import { agentCourtGridTheme, VERDICT_STYLES } from '../agGridSetup'
 import { EvalResultsResponse, EvalScenarioResult } from '../types'
 
 export default function EvaluationView() {
@@ -35,37 +38,113 @@ export default function EvaluationView() {
     }
   }
 
-  const filteredResults =
-    evalData?.results?.filter((r: EvalScenarioResult) => {
-      const matchesCat = filterCategory === 'ALL' || r.category === filterCategory
-      const matchesSearch =
-        r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        r.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        r.expected.toLowerCase().includes(searchQuery.toLowerCase())
-      return matchesCat && matchesSearch
-    }) || []
+  const filteredResults = useMemo(
+    () =>
+      evalData?.results?.filter((r: EvalScenarioResult) => {
+        const matchesCat = filterCategory === 'ALL' || r.category === filterCategory
+        return matchesCat
+      }) || [],
+    [evalData, filterCategory]
+  )
 
-  const categories = ['ALL', ...Array.from(new Set(evalData?.results?.map((r) => r.category) || []))]
+  const categories = useMemo(
+    () => ['ALL', ...Array.from(new Set(evalData?.results?.map((r) => r.category) || []))],
+    [evalData]
+  )
+
+  const columnDefs = useMemo<ColDef<EvalScenarioResult>[]>(
+    () => [
+      {
+        headerName: 'Scenario ID',
+        field: 'id',
+        width: 155,
+        cellRenderer: (p: ICellRendererParams<EvalScenarioResult>) => (
+          <span className="font-mono text-[11px] text-sky-300 font-semibold">{p.value}</span>
+        ),
+      },
+      {
+        headerName: 'Scenario Description',
+        field: 'name',
+        minWidth: 260,
+        flex: 1.5,
+        cellRenderer: (p: ICellRendererParams<EvalScenarioResult>) => (
+          <span className="font-medium text-slate-100">{p.value}</span>
+        ),
+      },
+      {
+        headerName: 'Category',
+        field: 'category',
+        width: 150,
+        cellRenderer: (p: ICellRendererParams<EvalScenarioResult>) => (
+          <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px] text-slate-300">
+            {p.value}
+          </span>
+        ),
+      },
+      {
+        headerName: 'Expected',
+        field: 'expected',
+        width: 185,
+        cellRenderer: (p: ICellRendererParams<EvalScenarioResult>) => {
+          const st = VERDICT_STYLES[p.value] || VERDICT_STYLES.NEEDS_HUMAN
+          return (
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold border ${st.badge}`}>
+              {p.value}
+            </span>
+          )
+        },
+      },
+      {
+        headerName: 'Actual',
+        field: 'actual',
+        width: 185,
+        cellRenderer: (p: ICellRendererParams<EvalScenarioResult>) => {
+          const st = VERDICT_STYLES[p.value] || VERDICT_STYLES.NEEDS_HUMAN
+          return (
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold border ${st.badge}`}>
+              {p.value}
+            </span>
+          )
+        },
+      },
+      {
+        headerName: 'Status',
+        field: 'passed',
+        width: 100,
+        cellRenderer: (p: ICellRendererParams<EvalScenarioResult>) =>
+          p.value ? (
+            <span className="inline-flex items-center gap-1 text-emerald-400 font-bold text-[11px]">
+              <CheckCircle2 className="w-3.5 h-3.5" /> PASS
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 text-rose-400 font-bold text-[11px]">
+              <XCircle className="w-3.5 h-3.5" /> FAIL
+            </span>
+          ),
+      },
+    ],
+    []
+  )
 
   return (
     <div className="space-y-6">
       {/* View Header */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+      <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
         <div>
           <h2 className="text-xl font-bold text-white flex items-center gap-2.5">
             <FileText className="w-5 h-5 text-sky-400" />
-            15-Scenario Offline Evaluation Matrix
+            15-Scenario Adversarial Evaluation Matrix (AG Grid)
           </h2>
           <p className="text-xs text-slate-400 mt-1 max-w-2xl">
-            Pure-function verification executing all baseline, adversarial (tampered signature, price drift, replayed mandate,
-            unauthorized merchant, prompt injection), and regret scenarios through the dual-layer arbiter.
+            Deterministic &amp; AI safety benchmark across baseline, tampered signature, price drift, replay attack,
+            unauthorized merchant, prompt-injection shield, and regret scenarios.
           </p>
         </div>
 
         <button
           onClick={fetchResults}
           disabled={isLoading}
-          className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 border border-slate-700 transition disabled:opacity-50 self-start md:self-auto"
+          className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold flex items-center gap-2 border border-slate-700 transition disabled:opacity-50 self-start md:self-auto"
         >
           <RotateCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
           Refresh Evaluation
@@ -82,25 +161,25 @@ export default function EvaluationView() {
       {/* KPI Cards */}
       {evalData && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-1 shadow-sm">
+          <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl p-4 space-y-1 shadow-sm">
             <span className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">Total Scenarios</span>
             <div className="text-2xl font-bold text-white font-mono">{evalData.total_scenarios}</div>
-            <span className="text-[10px] text-emerald-400 font-medium">100% Deterministic Fixtures</span>
+            <span className="text-[10px] text-emerald-400 font-medium">100% Reproducible Fixtures</span>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-1 shadow-sm">
+          <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl p-4 space-y-1 shadow-sm">
             <span className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">Accuracy Score</span>
             <div className="text-2xl font-bold text-emerald-400 font-mono">{evalData.accuracy_pct}%</div>
             <span className="text-[10px] text-slate-400">{evalData.passed_scenarios} / {evalData.total_scenarios} Passed</span>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-1 shadow-sm">
+          <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl p-4 space-y-1 shadow-sm">
             <span className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">Execution Time</span>
             <div className="text-2xl font-bold text-sky-400 font-mono">{evalData.elapsed_ms} ms</div>
             <span className="text-[10px] text-slate-400">Pure In-Memory Evaluation</span>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-1 shadow-sm">
+          <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl p-4 space-y-1 shadow-sm">
             <span className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">Verdict Classes</span>
             <div className="text-2xl font-bold text-purple-400 font-mono">5 / 5</div>
             <span className="text-[10px] text-slate-400">All Verdict Categories Covered</span>
@@ -110,9 +189,9 @@ export default function EvaluationView() {
 
       {/* Verdict Class Breakdown Cards */}
       {evalData?.class_breakdown && (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
+        <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl p-5 shadow-sm space-y-3">
           <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-            Accuracy by Verdict Class:
+            Accuracy by Verdict Class
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs">
             {Object.entries(evalData.class_breakdown).map(([clsName, stat]) => (
@@ -128,15 +207,14 @@ export default function EvaluationView() {
         </div>
       )}
 
-      {/* Scenarios Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-sm space-y-4 p-6">
-        {/* Search & Category Filter */}
+      {/* Scenarios AG Grid */}
+      <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl overflow-hidden shadow-sm space-y-4 p-5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div className="relative flex-1 max-w-sm">
             <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
             <input
               type="text"
-              placeholder="Search scenarios..."
+              placeholder="Search scenarios, IDs, or verdicts..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white focus:outline-none focus:border-sky-500"
@@ -160,46 +238,19 @@ export default function EvaluationView() {
           </div>
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto border border-slate-800 rounded-xl">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase tracking-wider text-[10px]">
-              <tr>
-                <th className="px-5 py-3">ID</th>
-                <th className="px-5 py-3">Scenario Name</th>
-                <th className="px-5 py-3">Category</th>
-                <th className="px-5 py-3">Expected Verdict</th>
-                <th className="px-5 py-3">Actual Verdict</th>
-                <th className="px-5 py-3 text-center">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60">
-              {filteredResults.map((r) => (
-                <tr key={r.id} className="hover:bg-slate-800/30 transition">
-                  <td className="px-5 py-3.5 font-mono text-slate-400 text-[11px]">{r.id}</td>
-                  <td className="px-5 py-3.5 font-semibold text-slate-200">{r.name}</td>
-                  <td className="px-5 py-3.5 text-slate-400">
-                    <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-[10px]">
-                      {r.category}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3.5 font-mono text-[11px] text-slate-300">{r.expected}</td>
-                  <td className="px-5 py-3.5 font-mono text-[11px] text-slate-300">{r.actual}</td>
-                  <td className="px-5 py-3.5 text-center">
-                    {r.passed ? (
-                      <span className="inline-flex items-center gap-1 text-emerald-400 font-bold text-[11px]">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> PASS
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 text-rose-400 font-bold text-[11px]">
-                        <XCircle className="w-3.5 h-3.5" /> FAIL
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="w-full rounded-xl overflow-hidden border border-slate-800">
+          <AgGridReact<EvalScenarioResult>
+            theme={agentCourtGridTheme}
+            rowData={filteredResults}
+            columnDefs={columnDefs}
+            quickFilterText={searchQuery}
+            domLayout="autoHeight"
+            defaultColDef={{
+              sortable: true,
+              resizable: true,
+              filter: true,
+            }}
+          />
         </div>
       </div>
     </div>

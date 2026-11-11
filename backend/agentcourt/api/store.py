@@ -179,6 +179,23 @@ class StateStore:
             conn.commit()
             return cur.rowcount > 0
 
+    def list_webhook_events(self, limit: int = 20) -> list[dict[str, Any]]:
+        """List recent recorded PayPal webhook events."""
+        with self._lock, self._connect() as conn:
+            rows = conn.execute(
+                "SELECT event_id, event_type, verified, received_at FROM webhook_events ORDER BY received_at DESC LIMIT ?",
+                (limit,),
+            ).fetchall()
+        return [
+            {
+                "event_id": r[0],
+                "event_type": r[1],
+                "verified": bool(r[2]),
+                "received_at": r[3],
+            }
+            for r in rows
+        ]
+
 
 default_store = StateStore()
 

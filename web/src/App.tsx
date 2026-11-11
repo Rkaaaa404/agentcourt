@@ -71,7 +71,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-sky-500/30 selection:text-sky-200">
+    <div className="min-h-screen text-slate-100 flex flex-col font-sans selection:bg-sky-500/30 selection:text-sky-200">
       {/* Top Navbar */}
       <Navbar
         activeTab={activeTab}
@@ -83,7 +83,7 @@ export default function App() {
       />
 
       {/* Main Screen Content */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-6 md:p-8">
+      <main className="flex-1 max-w-[1440px] w-full mx-auto px-4 md:px-8 py-6">
         {activeTab === 'purchase' && (
           <PurchaseView
             initialOrderId={checkoutOrderId}
@@ -112,14 +112,18 @@ export default function App() {
       />
 
       {/* Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950/60 px-6 py-4 flex flex-col md:flex-row items-center justify-between text-xs text-slate-500 gap-2">
+      <footer className="border-t border-slate-900/90 bg-[#050a16]/80 px-6 py-4 flex flex-col md:flex-row items-center justify-between text-xs text-slate-500 gap-2">
         <div className="flex items-center gap-2">
-          <span className="font-semibold text-slate-400">AgentCourt</span>
+          <span className="font-semibold text-slate-300">AgentCourt</span>
           <span>&bull;</span>
           <span>Post-Payment Liability Layer for Autonomous Agent Commerce</span>
         </div>
-        <div className="flex items-center gap-3 text-[11px]">
-          <span className="text-amber-400/80 font-mono">PayPal Sandbox Mode Only</span>
+        <div className="flex flex-wrap items-center gap-2.5 text-[11px]">
+          <span className="text-sky-400/90 font-mono">PayPal Orders v2 &amp; Disputes</span>
+          <span>&bull;</span>
+          <span className="text-emerald-400/90 font-mono">Bryntum Scheduler</span>
+          <span>&bull;</span>
+          <span className="text-purple-400/90 font-mono">AG Grid</span>
           <span>&bull;</span>
           <span>MIT License</span>
         </div>
