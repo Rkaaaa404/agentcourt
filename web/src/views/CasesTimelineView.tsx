@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
   Calendar,
   AlertCircle,
@@ -6,8 +6,11 @@ import {
   ShieldAlert,
   Clock,
   CheckCircle2,
-  ChevronRight,
+  RefreshCw,
 } from 'lucide-react'
+import { BryntumScheduler } from '@bryntum/scheduler-react'
+import '@bryntum/scheduler/scheduler.css'
+import '@bryntum/scheduler/stockholm-dark.css'
 import { CaseSummary, VerdictType } from '../types'
 
 interface CasesTimelineViewProps {
@@ -19,6 +22,8 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
   const [timelineData, setTimelineData] = useState<any | null>(null)
   const [filterVerdict, setFilterVerdict] = useState<string>('ALL')
   const [isLoading, setIsLoading] = useState(true)
+  const [isSyncing, setIsSyncing] = useState(false)
+  const [syncMessage, setSyncMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -50,10 +55,55 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
     }
   }
 
-  const filteredCases = cases.filter((c) => {
-    if (filterVerdict === 'ALL') return true
-    return c.verdict === filterVerdict
-  })
+  const handleSyncPayPal = async () => {
+    setIsSyncing(true)
+    setSyncMessage(null)
+    setError(null)
+    try {
+      const resp = await fetch('/api/cases/sync-paypal', { method: 'POST' })
+      const data = await resp.json()
+      if (!resp.ok) {
+        throw new Error(data.detail || 'PayPal sync failed')
+      }
+      setSyncMessage(`Synced ${data.synced_count} dispute(s) from PayPal Sandbox Disputes API.`)
+      await fetchData()
+    } catch (err: any) {
+      setError(err.message || 'Error syncing PayPal disputes')
+    } finally {
+      setIsSyncing(false)
+    }
+  }
+
+  const filteredCases = useMemo(
+    () =>
+      cases.filter((c) => {
+        if (filterVerdict === 'ALL') return true
+        return c.verdict === filterVerdict
+      }),
+    [cases, filterVerdict]
+  )
+
+  const filteredResources = useMemo(() => {
+    const rows = timelineData?.resources?.rows || []
+    if (filterVerdict === 'ALL') return rows
+    return rows.filter((r: any) => r.verdict === filterVerdict)
+  }, [timelineData, filterVerdict])
+
+  const filteredEvents = useMemo(() => {
+    const allowedIds = new Set(filteredResources.map((r: any) => r.id))
+    const rows = timelineData?.events?.rows || []
+    return rows.filter((e: any) => allowedIds.has(e.resourceId))
+  }, [timelineData, filteredResources])
+
+  const schedulerColumns = useMemo(
+    () => [
+      { text: 'Case', field: 'name', width: 175 },
+      { text: 'Dispute ID', field: 'dispute_id', width: 145 },
+      { text: 'Verdict', field: 'verdict', width: 165 },
+      { text: 'Amount', field: 'amount', width: 105 },
+    ],
+    []
+  )
 
   const getVerdictBadge = (verdict: VerdictType) => {
     switch (verdict) {
@@ -93,58 +143,69 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
   return (
     <div className="space-y-6">
       {/* View Header */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-sm">
         <div>
           <h2 className="text-xl font-bold text-white flex items-center gap-2.5">
             <Calendar className="w-5 h-5 text-sky-400" />
-            Dispute Cases Timeline & Bryntum Scheduler
+            Dispute Cases Timeline &amp; Bryntum Scheduler
           </h2>
           <p className="text-xs text-slate-400 mt-1 max-w-2xl">
-            Displays active PayPal disputes across inquiry windows, auto-scheduled evidence preparation blocks, and
-            seller response deadlines. Colors correspond directly to Arbiter liability verdicts.
+            Interactive Bryntum Scheduler mapping inquiry windows, auto-scheduled evidence preparation blocks, and
+            PayPal seller response due dates. Click any timeline event or table row to inspect the evidence pack.
           </p>
         </div>
 
-        {/* Filter Pills */}
-        <div className="flex flex-wrap items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-800 text-xs">
+        <div className="flex flex-wrap items-center gap-2">
           <button
-            onClick={() => setFilterVerdict('ALL')}
-            className={`px-3 py-1.5 rounded-lg transition font-medium ${
-              filterVerdict === 'ALL' ? 'bg-sky-600 text-white font-semibold' : 'text-slate-400 hover:text-white'
-            }`}
+            onClick={handleSyncPayPal}
+            disabled={isSyncing}
+            className="px-3 py-1.5 rounded-xl bg-sky-600/15 hover:bg-sky-600/25 text-sky-300 border border-sky-500/30 text-xs font-medium flex items-center gap-1.5 transition disabled:opacity-50"
           >
-            All ({cases.length})
+            <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
+            {isSyncing ? 'Syncing PayPal...' : 'Sync Sandbox Disputes'}
           </button>
-          <button
-            onClick={() => setFilterVerdict('MERCHANT_AT_FAULT')}
-            className={`px-3 py-1.5 rounded-lg transition font-medium ${
-              filterVerdict === 'MERCHANT_AT_FAULT'
-                ? 'bg-amber-600 text-white font-semibold'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            Merchant Breach
-          </button>
-          <button
-            onClick={() => setFilterVerdict('OPERATOR_AT_FAULT')}
-            className={`px-3 py-1.5 rounded-lg transition font-medium ${
-              filterVerdict === 'OPERATOR_AT_FAULT'
-                ? 'bg-purple-600 text-white font-semibold'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            Operator Breach
-          </button>
-          <button
-            onClick={() => setFilterVerdict('WITHIN_MANDATE_REGRET')}
-            className={`px-3 py-1.5 rounded-lg transition font-medium ${
-              filterVerdict === 'WITHIN_MANDATE_REGRET'
-                ? 'bg-cyan-600 text-white font-semibold'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            Agent Regret
-          </button>
+
+          {/* Filter Pills */}
+          <div className="flex flex-wrap items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-800 text-xs">
+            <button
+              onClick={() => setFilterVerdict('ALL')}
+              className={`px-3 py-1.5 rounded-lg transition font-medium ${
+                filterVerdict === 'ALL' ? 'bg-sky-600 text-white font-semibold' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              All ({cases.length})
+            </button>
+            <button
+              onClick={() => setFilterVerdict('MERCHANT_AT_FAULT')}
+              className={`px-3 py-1.5 rounded-lg transition font-medium ${
+                filterVerdict === 'MERCHANT_AT_FAULT'
+                  ? 'bg-amber-600 text-white font-semibold'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Merchant Breach
+            </button>
+            <button
+              onClick={() => setFilterVerdict('OPERATOR_AT_FAULT')}
+              className={`px-3 py-1.5 rounded-lg transition font-medium ${
+                filterVerdict === 'OPERATOR_AT_FAULT'
+                  ? 'bg-purple-600 text-white font-semibold'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Operator Breach
+            </button>
+            <button
+              onClick={() => setFilterVerdict('WITHIN_MANDATE_REGRET')}
+              className={`px-3 py-1.5 rounded-lg transition font-medium ${
+                filterVerdict === 'WITHIN_MANDATE_REGRET'
+                  ? 'bg-cyan-600 text-white font-semibold'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Agent Regret
+            </button>
+          </div>
         </div>
       </div>
 
@@ -155,6 +216,13 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
         </div>
       )}
 
+      {syncMessage && (
+        <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-300 flex items-center gap-2.5">
+          <CheckCircle2 className="w-4 h-4 shrink-0" />
+          <span>{syncMessage}</span>
+        </div>
+      )}
+
       {error && (
         <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-300 flex items-center gap-2.5">
           <AlertCircle className="w-4 h-4 shrink-0" />
@@ -162,15 +230,15 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
         </div>
       )}
 
-      {/* Bryntum Timeline Visualizer */}
+      {/* Real Bryntum Scheduler Component */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-800 pb-3 gap-2">
           <div className="flex items-center gap-2 text-sm font-bold text-white">
             <Clock className="w-4 h-4 text-sky-400" />
-            Bryntum Scheduler Case Lifecycle Gantt
+            Bryntum Scheduler — Case Lifecycle &amp; Response Deadlines
           </div>
           {/* Legend */}
-          <div className="flex items-center gap-3 text-[11px] text-slate-400">
+          <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-400">
             <span className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-slate-500" /> Inquiry Window
             </span>
@@ -178,54 +246,34 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
               <span className="w-2.5 h-2.5 rounded-full bg-amber-400" /> Auto-Evidence Prep Block
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-rose-500" /> Response Deadline Marker
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-500" /> Seller Response Due
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" /> Resolved Action
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" /> Executed Resolution
             </span>
           </div>
         </div>
 
-        {/* Timeline Event Lanes */}
-        <div className="space-y-3 pt-2">
-          {timelineData?.resources?.rows?.map((resource: any) => {
-            const caseEvents = timelineData?.events?.rows?.filter((e: any) => e.resourceId === resource.id) || []
-            return (
-              <div
-                key={resource.id}
-                onClick={() => onSelectCase(resource.id)}
-                className="group p-4 bg-slate-950 border border-slate-800/80 hover:border-sky-500/50 rounded-xl cursor-pointer transition space-y-3"
-              >
-                {/* Lane Header */}
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-white group-hover:text-sky-300 transition">{resource.id}</span>
-                    <span className="text-slate-500 font-mono">({resource.dispute_id})</span>
-                    {getVerdictBadge(resource.verdict)}
-                  </div>
-                  <div className="flex items-center gap-2 text-slate-400 font-mono text-xs">
-                    <span>${resource.amount} {resource.currency}</span>
-                    <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-white transition" />
-                  </div>
-                </div>
-
-                {/* Timeline Gantt Bar Simulation */}
-                <div className="relative h-7 bg-slate-900 rounded-lg overflow-hidden border border-slate-800/60 flex items-center px-2">
-                  <div className="w-full flex items-center gap-2 text-[10px] font-mono">
-                    {caseEvents.map((ev: any) => (
-                      <div
-                        key={ev.id}
-                        style={{ backgroundColor: ev.eventColor }}
-                        className="px-2.5 py-1 rounded text-white font-medium shadow-sm flex items-center gap-1 whitespace-nowrap overflow-hidden text-ellipsis"
-                      >
-                        <span>{ev.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )
-          })}
+        <div className="agentcourt-bryntum-host w-full" style={{ height: Math.max(260, filteredResources.length * 60 + 95) }}>
+          {timelineData && (
+            <BryntumScheduler
+              height={Math.max(260, filteredResources.length * 60 + 95)}
+              rowHeight={52}
+              barMargin={8}
+              readOnly={true}
+              viewPreset="dayAndWeek"
+              startDate={timelineData.startDate}
+              endDate={timelineData.endDate}
+              columns={schedulerColumns}
+              resources={filteredResources}
+              events={filteredEvents}
+              onEventClick={({ resourceRecord }) => {
+                if (resourceRecord?.id) {
+                  onSelectCase(String(resourceRecord.id))
+                }
+              }}
+            />
+          )}
         </div>
       </div>
 
@@ -248,7 +296,7 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
                 <th className="px-6 py-3.5">Amount</th>
                 <th className="px-6 py-3.5">Arbiter Verdict</th>
                 <th className="px-6 py-3.5">Planned PayPal Action</th>
-                <th className="px-6 py-3.5">Status</th>
+                <th className="px-6 py-3.5">Source / Status</th>
                 <th className="px-6 py-3.5 text-right">Action</th>
               </tr>
             </thead>
@@ -275,7 +323,8 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
                   <td className="px-6 py-4">
                     {c.executed ? (
                       <span className="text-emerald-400 flex items-center gap-1 font-medium">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Executed
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        {c.execution_mode === 'paypal_sandbox' ? 'Executed (PayPal Sandbox)' : 'Executed (Local Fallback)'}
                       </span>
                     ) : (
                       <span className="text-amber-400 flex items-center gap-1 font-medium">

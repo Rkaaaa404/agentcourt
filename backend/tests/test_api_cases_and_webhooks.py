@@ -77,7 +77,15 @@ async def test_cases_endpoints(sample_case):
         assert detail["case"]["case_id"] == "case_api_1"
         assert "ledger_events" in detail
 
-        # 4. Eval results endpoint
+        # 4. Timeline endpoint uses seller_response_due_date
+        r_timeline = await ac.get("/api/cases/timeline")
+        assert r_timeline.status_code == 200
+        tl = r_timeline.json()
+        assert tl["success"] is True
+        deadline_ev = next(e for e in tl["events"]["rows"] if e["id"] == "case_api_1-deadline")
+        assert deadline_ev["startDate"] == "2026-11-20T12:00:00Z"
+
+        # 5. Eval results endpoint
         r_eval = await ac.get("/api/eval/results")
         assert r_eval.status_code == 200
         eval_data = r_eval.json()
@@ -85,16 +93,52 @@ async def test_cases_endpoints(sample_case):
 
 
 @pytest.mark.asyncio
-async def test_webhooks_endpoint():
+async def test_webhooks_endpoint(monkeypatch):
+    from agentcourt.config import settings
+
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        event_id = f"WH-EVT-{int(time.time() * 1000)}"
         payload = {
+            "id": event_id,
             "event_type": "CUSTOMER.DISPUTE.CREATED",
             "resource": {
                 "dispute_id": "DISP-WH-1",
                 "status": "OPEN",
+                "reason": "MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED",
+                "dispute_amount": {"currency_code": "USD", "value": "95.00"},
+                "seller_response_due_date": "2026-11-25T10:00:00Z",
             },
         }
+
+        # 1. Unsigned request rejected when PAYPAL_WEBHOOK_ID is configured
+        monkeypatch.setattr(settings, "PAYPAL_WEBHOOK_ID", "WH-TEST-CONFIGURED")
+        res_unsigned = await ac.post("/api/webhooks/paypal", json=payload)
+        assert res_unsigned.status_code == 400
+
+        # 2. Local dev mode (PAYPAL_WEBHOOK_ID unset) processes, deduplicates, and reconciles
+        monkeypatch.setattr(settings, "PAYPAL_WEBHOOK_ID", "")
         res = await ac.post("/api/webhooks/paypal", json=payload)
         assert res.status_code == 200
         assert res.text == "Webhook processed successfully"
+
+        # Duplicate event ID should be ignored cleanly
+        res_dup = await ac.post("/api/webhooks/paypal", json=payload)
+        assert res_dup.status_code == 200
+        assert res_dup.text == "Webhook duplicate ignored"
+
+        # Verify dispute was reconciled into Cases Registry
+        r_case = await ac.get("/api/cases/DISP-WH-1")
+        assert r_case.status_code == 200
+        assert r_case.json()["case"]["dispute_id"] == "DISP-WH-1"
+
+
+@pytest.mark.asyncio
+async def test_checkout_cancel_callback():
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        res = await ac.get("/api/checkout/cancel?token=ORDER-CANCEL-TEST&format=json")
+        assert res.status_code == 200
+        data = res.json()
+        assert data["checkout"] == "cancelled"
+        assert data["status"] == "CANCELLED_BY_BUYER"

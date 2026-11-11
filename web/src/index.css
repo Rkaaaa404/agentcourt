@@ -12,3 +12,20 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Blend Bryntum Scheduler container cleanly with Slate-950 surface */
+.agentcourt-bryntum-host .b-scheduler {
+  border-radius: 0.75rem;
+  border: 1px solid #1e293b;
+  overflow: hidden;
+  --b-panel-background: #020617;
+  --b-grid-header-background: #0f172a;
+  --b-grid-cell-border-color: #1e293b;
+  --b-stripe-odd-color: #0b1220;
+}
+
+.agentcourt-bryntum-host .b-sch-event {
+  border-radius: 6px;
+  font-size: 11px;
+  cursor: pointer;
+}

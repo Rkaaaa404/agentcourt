@@ -4,6 +4,7 @@ from agentcourt.executor.executor import ActionExecutor, ExecutionError
 from agentcourt.executor.planner import (
     PlannedActionType,
     PlannedPayPalAction,
+    is_action_permitted,
     plan_action_for_verdict,
 )
 
@@ -12,6 +13,7 @@ __all__ = [
     "ExecutionError",
     "PlannedActionType",
     "PlannedPayPalAction",
+    "is_action_permitted",
     "plan_action_for_verdict",
 ]
 

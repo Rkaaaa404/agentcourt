@@ -8,6 +8,7 @@ from agentcourt.executor import (
     ActionExecutor,
     ExecutionError,
     PlannedActionType,
+    is_action_permitted,
     plan_action_for_verdict,
 )
 from agentcourt.payments.models import (
@@ -58,6 +59,9 @@ class MockExecutorPayments(PaymentsPort):
     async def create_dispute(self, request: DisputeCreateRequest) -> DisputeDetail:
         return DisputeDetail(dispute_id="D-1", status="OPEN", reason="TEST")
 
+    async def list_disputes(self, page_size: int = 20):
+        return []
+
     async def get_dispute(self, dispute_id: str) -> DisputeDetail:
         return DisputeDetail(dispute_id=dispute_id, status="OPEN", reason="TEST")
 
@@ -107,7 +111,23 @@ def test_plan_action_mapping():
     assert p_op.off_paypal_ledger_entry is not None
     assert p_op.off_paypal_ledger_entry["event"] == "OPERATOR_LIABILITY_RECORDED"
 
-    # 3. NEEDS_HUMAN -> none
+    # 3. WITHIN_MANDATE_REGRET -> make-offer goodwill refund
+    v_reg = ArbiterVerdict(
+        case_id="c_reg",
+        dispute_id="d_reg",
+        verdict=VerdictType.WITHIN_MANDATE_REGRET,
+        summary="Suboptimal offer",
+        deterministic_checks=[],
+        regret_score=0.28,
+        is_regret_flagged=True,
+    )
+    p_reg = plan_action_for_verdict(v_reg, Decimal("100.00"))
+    assert p_reg.action_type == PlannedActionType.MAKE_OFFER
+    assert "/make-offer" in p_reg.api_path
+    assert p_reg.request_payload["offer_amount"]["value"] == "15.00"
+    assert p_reg.off_paypal_ledger_entry["event"] == "AGENT_REGRET_RECORDED"
+
+    # 4. NEEDS_HUMAN -> none
     v_human = ArbiterVerdict(
         case_id="c_3",
         dispute_id="d_3",
@@ -117,6 +137,13 @@ def test_plan_action_mapping():
     )
     p_human = plan_action_for_verdict(v_human)
     assert p_human.action_type == PlannedActionType.NONE
+
+    # 5. HATEOAS link & option check
+    ok, _ = is_action_permitted(PlannedActionType.ACCEPT_CLAIM, allowed_links=["self", "accept_claim"])
+    assert ok is True
+    denied, msg = is_action_permitted(PlannedActionType.ACCEPT_CLAIM, allowed_links=["self", "send_message"])
+    assert denied is False
+    assert msg is not None
 
 
 @pytest.mark.asyncio

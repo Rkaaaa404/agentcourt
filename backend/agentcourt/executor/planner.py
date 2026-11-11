@@ -87,30 +87,37 @@ def plan_action_for_verdict(
         )
 
     elif verdict.verdict == VerdictType.WITHIN_MANDATE_REGRET:
-        notes = (
-            f"AgentCourt Review: Transaction complied with authorized mandate. "
-            f"Buyer regret detected ({verdict.regret_score:.1%} suboptimal index). "
-            f"Merchant fulfilled signed agreement."
+        goodwill_offer = (amt * Decimal("0.15")).quantize(Decimal("0.01"))
+        if amt > Decimal("0.00") and goodwill_offer < Decimal("5.00"):
+            goodwill_offer = min(amt, Decimal("5.00"))
+        note = (
+            f"AgentCourt Goodwill Remedy: Transaction complied with authorized mandate, "
+            f"but agent regret index reached {verdict.regret_score:.1%}. "
+            f"Offering proportional goodwill refund of ${goodwill_offer:.2f} USD."
         )
         payload = {
-            "evidences": [
-                {
-                    "evidence_type": "OTHER",
-                    "notes": notes,
-                }
-            ]
+            "offer_amount": {
+                "currency_code": "USD",
+                "value": f"{goodwill_offer:.2f}",
+            },
+            "offer_type": "REFUND",
+            "note": note,
         }
         return PlannedPayPalAction(
             case_id=verdict.case_id,
             dispute_id=dispute_id,
-            action_type=PlannedActionType.PROVIDE_EVIDENCE,
+            action_type=PlannedActionType.MAKE_OFFER,
             http_method="POST",
-            api_path=f"/v1/customer/disputes/{dispute_id}/provide-evidence",
+            api_path=f"/v1/customer/disputes/{dispute_id}/make-offer",
             request_payload=payload,
-            rationale="Mandate was respected. Merchant defends dispute with signed mandate and candidate trace.",
+            rationale=(
+                "Mandate was respected, but agent selected a suboptimal offer. "
+                "Propose proportional goodwill partial refund via make-offer without penalizing merchant."
+            ),
             off_paypal_ledger_entry={
                 "event": "AGENT_REGRET_RECORDED",
                 "regret_score": verdict.regret_score,
+                "goodwill_offer_amount": f"{goodwill_offer:.2f}",
             },
         )
 
@@ -150,3 +157,36 @@ def plan_action_for_verdict(
             off_paypal_ledger_entry=None,
             requires_human_approval=True,
         )
+
+
+def is_action_permitted(
+    action_type: PlannedActionType,
+    allowed_links: list[str] | None = None,
+    allowed_response_options: list[str] | None = None,
+) -> tuple[bool, str | None]:
+    """Check whether a planned PayPal Disputes action is permitted by HATEOAS links/options.
+
+    When PayPal has not supplied links/options (e.g. local simulated fixture), returns (True, None).
+    """
+    if action_type == PlannedActionType.NONE:
+        return False, "Action type NONE requires manual human review."
+
+    links = {link.lower() for link in (allowed_links or [])}
+    options = {opt.upper() for opt in (allowed_response_options or [])}
+
+    if not links and not options:
+        return True, None
+
+    rel_map = {
+        PlannedActionType.ACCEPT_CLAIM: ("accept_claim", "accept-claim", "ACCEPT_CLAIM"),
+        PlannedActionType.PROVIDE_EVIDENCE: ("provide_evidence", "provide-evidence", "PROVIDE_EVIDENCE"),
+        PlannedActionType.MAKE_OFFER: ("make_offer", "make-offer", "MAKE_OFFER"),
+    }
+    expected = rel_map.get(action_type, ())
+    if any(r in links for r in expected[:2]) or any(o in options for o in expected[2:]):
+        return True, None
+
+    return (
+        False,
+        f"PayPal dispute stage does not permit '{action_type.value}' (links={sorted(links)}, options={sorted(options)}).",
+    )

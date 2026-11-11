@@ -13,10 +13,12 @@ export interface CaseSummary {
   disputed_amount: string
   currency: string
   seller_response_due_date: string | null
+  source_mode?: string
   verdict: VerdictType
   verdict_summary: string
   action_type: string
   executed: boolean
+  execution_mode?: string | null
   created_at: number
   regret_score: number
   is_regret_flagged: boolean
@@ -63,6 +65,9 @@ export interface CaseDetail {
     disputed_amount: string
     currency: string
     seller_response_due_date: string | null
+    allowed_links?: string[]
+    allowed_response_options?: string[]
+    source_mode?: string
     evidence_pack: {
       case_id: string
       dispute_id: string
@@ -137,6 +142,8 @@ export interface CaseDetail {
     }
     planned_action: PlannedAction
     executed: boolean
+    execution_mode?: string | null
+    execution_result?: Record<string, any> | null
   }
   ledger_events: Array<{
     index: number

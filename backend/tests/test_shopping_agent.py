@@ -50,6 +50,9 @@ class MockPayments(PaymentsPort):
     async def create_dispute(self, request: DisputeCreateRequest) -> DisputeDetail:
         return DisputeDetail(dispute_id="D-1", status="OPEN", reason="TEST")
 
+    async def list_disputes(self, page_size: int = 20):
+        return []
+
     async def get_dispute(self, dispute_id: str) -> DisputeDetail:
         return DisputeDetail(dispute_id=dispute_id, status="OPEN", reason="TEST")
 

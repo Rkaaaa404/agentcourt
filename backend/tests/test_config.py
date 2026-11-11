@@ -21,3 +21,9 @@ def test_config_rejects_live_url():
     with pytest.raises(ValidationError) as exc:
         Settings(PAYPAL_BASE_URL="https://api-m.paypal.com")
     assert "SAFETY VIOLATION" in str(exc.value)
+
+
+def test_config_uses_render_external_url(monkeypatch):
+    monkeypatch.setenv("RENDER_EXTERNAL_URL", "https://agentcourt.onrender.com/")
+    s = Settings(PAYPAL_ENV="sandbox", PAYPAL_BASE_URL=SANDBOX_URL)
+    assert s.APP_URL == "https://agentcourt.onrender.com"

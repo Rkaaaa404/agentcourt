@@ -54,6 +54,10 @@ class PaymentsPort(ABC):
         """Buyer-side simulation: create a customer dispute in the sandbox."""
 
     @abstractmethod
+    async def list_disputes(self, page_size: int = 20) -> list[DisputeDetail]:
+        """List customer disputes from the sandbox."""
+
+    @abstractmethod
     async def get_dispute(self, dispute_id: str) -> DisputeDetail:
         """Fetch latest details, status, allowed response options, and HATEOAS links for a dispute."""
 

@@ -267,6 +267,10 @@ class PayPalClient(PaymentsPort):
 
     async def create_order(self, request: OrderCreateRequest) -> OrderResponse:
         """Create a PayPal order with CAPTURE intent and custom_id binding."""
+        base_app_url = self.config.APP_URL.rstrip("/")
+        return_url = request.return_url or f"{base_app_url}/api/checkout/success"
+        cancel_url = request.cancel_url or f"{base_app_url}/api/checkout/cancel"
+
         payload = {
             "intent": "CAPTURE",
             "purchase_units": [
@@ -280,8 +284,8 @@ class PayPalClient(PaymentsPort):
                 }
             ],
             "application_context": {
-                "return_url": request.return_url,
-                "cancel_url": request.cancel_url,
+                "return_url": return_url,
+                "cancel_url": cancel_url,
                 "user_action": "PAY_NOW",
             },
         }
@@ -447,6 +451,43 @@ class PayPalClient(PaymentsPort):
                 raw_response=data,
             )
         )
+
+    async def list_disputes(self, page_size: int = 20) -> list[DisputeDetail]:
+        """List customer disputes from PayPal Sandbox (`GET /v1/customer/disputes`)."""
+        resp = await self._request("GET", f"/v1/customer/disputes?page_size={page_size}")
+        data = resp.json()
+        items = data.get("items", [])
+        disputes: list[DisputeDetail] = []
+        for item in items:
+            amt = None
+            if "dispute_amount" in item:
+                amt = Money(
+                    currency_code=item["dispute_amount"].get("currency_code", "USD"),
+                    value=item["dispute_amount"].get("value", "0.00"),
+                )
+            links = [
+                HATEOASLink(
+                    href=link["href"],
+                    rel=link["rel"],
+                    method=link.get("method", "GET"),
+                )
+                for link in item.get("links", [])
+            ]
+            disputes.append(
+                DisputeDetail(
+                    dispute_id=item.get("dispute_id", ""),
+                    status=item.get("status", "OPEN"),
+                    dispute_life_cycle_stage=item.get("dispute_life_cycle_stage"),
+                    reason=item.get("reason", ""),
+                    dispute_amount=amt,
+                    seller_response_due_date=item.get("seller_response_due_date"),
+                    allowed_response_options=item.get("allowed_response_options", []),
+                    evidences=item.get("evidences", []),
+                    links=links,
+                    raw_response=item,
+                )
+            )
+        return disputes
 
     async def get_dispute(self, dispute_id: str) -> DisputeDetail:
         """Fetch dispute details, status, lifecycle stage, and HATEOAS links."""

@@ -60,7 +60,12 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
         throw new Error(errJson.detail || 'Action execution failed')
       }
 
-      setExecutionMessage('Planned PayPal action successfully executed and recorded in the cryptographic ledger!')
+      const data = await resp.json()
+      setExecutionMessage(
+        data.execution_mode === 'paypal_sandbox'
+          ? 'Planned PayPal action executed live against PayPal Sandbox Disputes API and recorded in the ledger!'
+          : 'Simulated dispute fixture settled in local fallback mode and recorded in the cryptographic ledger (not a live PayPal dispute ID).'
+      )
       await fetchDetail()
     } catch (err: any) {
       setError(err.message || 'Execution error')
@@ -139,7 +144,18 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
+          {c.source_mode && (
+            <span
+              className={`text-[10px] font-mono px-2.5 py-1 rounded-full border ${
+                c.source_mode === 'PAYPAL_SANDBOX'
+                  ? 'bg-sky-500/10 text-sky-300 border-sky-500/30'
+                  : 'bg-slate-800 text-slate-300 border-slate-700'
+              }`}
+            >
+              {c.source_mode === 'PAYPAL_SANDBOX' ? 'PayPal Sandbox Live' : 'Simulated Fixture'}
+            </span>
+          )}
           {renderVerdictBadge(verdict.verdict)}
           <span className="text-xs font-mono px-3 py-1 bg-slate-950 border border-slate-800 rounded-full text-slate-300">
             {c.status}
@@ -365,6 +381,16 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
                   </span>
                 </div>
               )}
+
+              {((c.allowed_links && c.allowed_links.length > 0) ||
+                (c.allowed_response_options && c.allowed_response_options.length > 0)) && (
+                <div className="text-[10px] text-slate-400 border-t border-slate-800 pt-1.5">
+                  HATEOAS Permitted:{' '}
+                  <span className="font-mono text-sky-300">
+                    {[...(c.allowed_links || []), ...(c.allowed_response_options || [])].join(', ')}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Human Approve and Execute Button */}
@@ -372,7 +398,9 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
               {c.executed ? (
                 <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-center text-xs text-emerald-400 font-semibold flex items-center justify-center gap-2">
                   <CheckCircle2 className="w-4 h-4" />
-                  Action Executed & Settled at PayPal
+                  {c.execution_mode === 'paypal_sandbox'
+                    ? 'Action Executed at PayPal Sandbox'
+                    : 'Executed in Local Sandbox Fallback'}
                 </div>
               ) : (
                 <button

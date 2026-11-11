@@ -23,5 +23,5 @@ AgentCourt is an open-source proof-of-concept built for the **PayPal AI Hackatho
 ## 3. Production Readiness & Security Disclaimer
 
 - **Not Production Software**: This codebase has not undergone independent third-party cryptographic or cybersecurity audits and should not be used in production without formal review.
-- **Ephemeral Storage on Render**: The default demo deployment uses SQLite. When deployed on ephemeral cloud containers (e.g. Render Free Tier), persistent data is reset upon container recycling. The `scripts/seed_demo.py` script is provided to repopulate initial states.
+- **Ephemeral Storage on Render Free Tier**: Both local and default Render Blueprint (`plan: free`) deployments use SQLite (`DATABASE_URL` and `LEDGER_DB_PATH`). On Render's Free Tier, persistent data resets upon container recycling/sleep; `ensure_seeded_if_empty()` and `scripts/seed_demo.py` automatically repopulate the 3 flagship demo scenarios on startup.
 - **Human-in-the-Loop Safeguard**: Autonomous agents and LLM classifiers are never permitted to unilaterally execute PayPal dispute settlement calls. Every state-altering call requires explicit human confirmation via the UI.

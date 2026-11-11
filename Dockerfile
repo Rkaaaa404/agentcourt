@@ -14,6 +14,7 @@ WORKDIR /app
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/app/backend:/app \
     PORT=8000 \
     HOST=0.0.0.0
 
@@ -38,6 +39,6 @@ EXPOSE 8000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8000/healthz || exit 1
+  CMD sh -c "curl -f http://localhost:${PORT:-8000}/healthz || exit 1"
 
-CMD ["python", "-m", "uvicorn", "backend.agentcourt.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "python -m uvicorn backend.agentcourt.api.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

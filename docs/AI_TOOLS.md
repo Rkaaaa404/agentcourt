@@ -24,6 +24,5 @@ AgentCourt incorporates AI at specific, bounded runtime stages where natural lan
 - **Role**: AI-assisted development environment and pair-programming assistant used for codebase architecture, implementation, typing, testing, and continuous verification.
 
 ### APIMatic Context Plugin
-- **Status & Details**:
-  [HUMAN TO FILL: where the plugin was used and what it produced]
-  *(The APIMatic Context Plugin was evaluated for API specification and schema generation. Because Antigravity operates on its native coding agent architecture, complete any APIMatic CLI/plugin runs in your supported environment and paste the generated context outputs or verification notes here).*
+- **Status**: Optional sponsor integration (not yet executed in this environment).
+- **Planned Usage**: To qualify for the APIMatic sponsor track, install the PayPal Server SDK Context Plugin (`npx context-plugins install https://github.com/paypaldev/server-sdk-context-plugin-preview`), validate/generate PayPal REST API context notes, record the generated artifacts here, and submit the APIMatic claim form prior to deadline.

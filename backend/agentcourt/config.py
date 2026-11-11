@@ -3,10 +3,11 @@
 Enforces strictly sandbox-only PayPal execution and immutable safety rules.
 """
 
+import os
 from decimal import Decimal
 from typing import Literal
 
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 SANDBOX_URL = "https://api-m.sandbox.paypal.com"
@@ -42,6 +43,10 @@ class Settings(BaseSettings):
     HOST: str = Field(default="0.0.0.0", description="Web server host")
     APP_URL: str = Field(default="http://localhost:8000", description="Public or local base URL")
     DATABASE_URL: str = Field(default="sqlite:///./agentcourt.db", description="Database connection string")
+    LEDGER_DB_PATH: str = Field(
+        default="./data/ledger.db",
+        description="SQLite file path for the append-only cryptographic ledger",
+    )
 
     # LLM Settings (Pluggable: Anthropic or OpenAI-compatible)
     LLM_PROVIDER: str = Field(default="anthropic", description="LLM provider: anthropic or openai")
@@ -71,6 +76,14 @@ class Settings(BaseSettings):
                 f"Refusing to start against any non-sandbox endpoint."
             )
         return SANDBOX_URL
+
+    @model_validator(mode="after")
+    def resolve_render_external_url(self) -> "Settings":
+        """Auto-use Render's injected RENDER_EXTERNAL_URL when APP_URL is left at localhost default."""
+        render_url = os.environ.get("RENDER_EXTERNAL_URL", "").strip().rstrip("/")
+        if self.APP_URL == "http://localhost:8000" and render_url:
+            self.APP_URL = render_url
+        return self
 
 
 settings = Settings()

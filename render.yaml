@@ -29,3 +29,5 @@ services:
         value: "0.15"
       - key: DATABASE_URL
         value: sqlite:///./agentcourt.db
+      - key: LEDGER_DB_PATH
+        value: ./data/ledger.db

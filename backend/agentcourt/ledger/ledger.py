@@ -6,6 +6,7 @@ import threading
 from pathlib import Path
 from typing import Any, Optional
 
+from agentcourt.config import settings
 from agentcourt.ledger.models import GENESIS_PREV_HASH, LedgerEntry, LedgerEventType
 
 
@@ -161,4 +162,4 @@ def entry_timestamp() -> int:
 
 
 # Global shared ledger instance
-default_ledger = AppendOnlyLedger(db_path="./data/ledger.db")
+default_ledger = AppendOnlyLedger(db_path=settings.LEDGER_DB_PATH)

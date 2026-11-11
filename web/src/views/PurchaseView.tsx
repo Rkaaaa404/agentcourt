@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   ExternalLink,
   ShieldCheck,
@@ -8,16 +8,45 @@ import {
   Layers,
   KeyRound,
   FileCheck,
+  CheckCircle2,
+  ShieldAlert,
 } from 'lucide-react'
 
-export default function PurchaseView() {
+interface PurchaseViewProps {
+  initialOrderId?: string | null
+  checkoutNotice?: { status: string; message?: string } | null
+  onSimulateDispute?: (seed: { orderId: string; captureId?: string; amount?: string }) => void
+}
+
+export default function PurchaseView({
+  initialOrderId,
+  checkoutNotice,
+  onSimulateDispute,
+}: PurchaseViewProps) {
   const [prompt, setPrompt] = useState(
     'USB-C docking station, at least 8 ports, HDMI 4K output, max total USD 120, from a listed merchant.'
   )
   const [policy, setPolicy] = useState<'OPTIMAL' | 'FIRST_ACCEPTABLE'>('OPTIMAL')
   const [isLoading, setIsLoading] = useState(false)
+  const [isCapturing, setIsCapturing] = useState(false)
   const [purchaseResult, setPurchaseResult] = useState<any | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!initialOrderId) return
+    const loadOrder = async () => {
+      try {
+        const resp = await fetch(`/api/orders/${encodeURIComponent(initialOrderId)}`)
+        if (resp.ok) {
+          const data = await resp.json()
+          setPurchaseResult(data)
+        }
+      } catch (err) {
+        console.error('Failed to reload order state:', err)
+      }
+    }
+    loadOrder()
+  }, [initialOrderId])
 
   const handlePurchase = async () => {
     setIsLoading(true)
@@ -48,8 +77,49 @@ export default function PurchaseView() {
     }
   }
 
+  const handleCaptureOrder = async () => {
+    if (!purchaseResult?.order_id) return
+    setIsCapturing(true)
+    setError(null)
+    try {
+      const resp = await fetch(`/api/orders/${encodeURIComponent(purchaseResult.order_id)}/capture`, {
+        method: 'POST',
+      })
+      if (!resp.ok) {
+        const data = await resp.json()
+        throw new Error(data.detail || 'Order capture failed')
+      }
+      const updated = await resp.json()
+      setPurchaseResult(updated)
+    } catch (err: any) {
+      setError(err.message || 'Error capturing PayPal order')
+    } finally {
+      setIsCapturing(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
+      {/* Checkout Return Notice */}
+      {checkoutNotice?.status === 'success' && (
+        <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-300 flex items-center gap-2.5">
+          <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+          <span>PayPal Sandbox checkout approved and captured! Order binding state is updated below.</span>
+        </div>
+      )}
+      {checkoutNotice?.status === 'cancelled' && (
+        <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-200 flex items-center gap-2.5">
+          <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" />
+          <span>Buyer cancelled approval in PayPal Sandbox. No funds were captured.</span>
+        </div>
+      )}
+      {checkoutNotice?.status === 'capture_error' && (
+        <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-300 flex items-center gap-2.5">
+          <AlertTriangle className="w-4 h-4 shrink-0 text-rose-400" />
+          <span>PayPal return capture encountered an issue: {checkoutNotice.message || 'Please retry capture below.'}</span>
+        </div>
+      )}
+
       {/* Introduction banner */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -279,7 +349,15 @@ export default function PurchaseView() {
                     <FileCheck className="w-4 h-4 text-sky-400" />
                     PayPal Sandbox Order
                   </h3>
-                  <span className="text-[11px] font-mono bg-sky-500/10 text-sky-400 border border-sky-500/20 px-2 py-0.5 rounded">
+                  <span
+                    className={`text-[11px] font-mono px-2 py-0.5 rounded border ${
+                      purchaseResult.status === 'COMPLETED'
+                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                        : purchaseResult.status === 'CANCELLED_BY_BUYER'
+                        ? 'bg-rose-500/10 text-rose-300 border-rose-500/30'
+                        : 'bg-sky-500/10 text-sky-400 border-sky-500/20'
+                    }`}
+                  >
                     {purchaseResult.status}
                   </span>
                 </div>
@@ -289,38 +367,96 @@ export default function PurchaseView() {
                     <span>Order ID:</span>
                     <span className="font-mono text-white font-medium">{purchaseResult.order_id}</span>
                   </div>
+                  {purchaseResult.capture_id && (
+                    <div className="flex justify-between text-slate-400">
+                      <span>Capture ID:</span>
+                      <span className="font-mono text-emerald-400 font-medium">{purchaseResult.capture_id}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-slate-400">
                     <span>Item:</span>
                     <span className="text-white font-medium truncate max-w-[180px]">{purchaseResult.chosen_item?.title}</span>
                   </div>
                   <div className="flex justify-between text-slate-400">
                     <span>Total Amount:</span>
-                    <span className="font-mono text-emerald-400 font-bold">${purchaseResult.chosen_item?.price} USD</span>
+                    <span className="font-mono text-emerald-400 font-bold">
+                      ${purchaseResult.captured_amount || purchaseResult.chosen_item?.price} USD
+                    </span>
                   </div>
                 </div>
 
-                <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1">
-                  <div className="text-slate-300 font-medium">Sandbox Checkout Instruction:</div>
-                  <p>Click below to open PayPal Sandbox approval link. Log in with buyer sandbox credentials and approve.</p>
-                </div>
+                {purchaseResult.capture_id ? (
+                  <div
+                    className={`p-3 rounded-xl border text-[11px] space-y-1 ${
+                      purchaseResult.binding_verified
+                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                        : 'bg-amber-500/10 border-amber-500/30 text-amber-200'
+                    }`}
+                  >
+                    <div className="font-semibold flex items-center gap-1.5">
+                      <ShieldCheck className="w-4 h-4 shrink-0" />
+                      {purchaseResult.binding_verified
+                        ? 'Capture Verified: custom_id matches SHA-256 Order Binding'
+                        : 'Order Captured (check custom_id binding)'}
+                    </div>
+                    {purchaseResult.captured_custom_id && (
+                      <div className="font-mono text-[10px] break-all opacity-80">
+                        custom_id: {purchaseResult.captured_custom_id}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1">
+                    <div className="text-slate-300 font-medium">Sandbox Checkout Flow (Create &rarr; Approve &rarr; Capture):</div>
+                    <p>
+                      1) Click <strong>Approve on PayPal Sandbox</strong> and sign in with your sandbox buyer account.
+                      2) Returning automatically captures, or click <strong>Capture Approved Order</strong> manually.
+                    </p>
+                  </div>
+                )}
               </div>
 
-              {/* Primary Approval Button */}
-              {purchaseResult.approval_url ? (
-                <a
-                  href={purchaseResult.approval_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-full py-3 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-sky-600/30 transition text-center"
-                >
-                  Approve on PayPal Sandbox
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-              ) : (
-                <div className="py-2.5 text-center text-xs text-slate-500 bg-slate-950 rounded-xl border border-slate-800">
-                  Order Registered
-                </div>
-              )}
+              {/* Action Buttons */}
+              <div className="space-y-2">
+                {purchaseResult.approval_url && !purchaseResult.capture_id && (
+                  <a
+                    href={purchaseResult.approval_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full py-2.5 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-sky-600/30 transition text-center"
+                  >
+                    1. Approve on PayPal Sandbox
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                )}
+
+                {!purchaseResult.capture_id && purchaseResult.status !== 'CANCELLED_BY_BUYER' && (
+                  <button
+                    onClick={handleCaptureOrder}
+                    disabled={isCapturing}
+                    className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition disabled:opacity-50"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                    {isCapturing ? 'Capturing via PayPal Orders v2...' : '2. Capture Approved Order'}
+                  </button>
+                )}
+
+                {onSimulateDispute && (
+                  <button
+                    onClick={() =>
+                      onSimulateDispute({
+                        orderId: purchaseResult.order_id,
+                        captureId: purchaseResult.capture_id || undefined,
+                        amount: purchaseResult.captured_amount || purchaseResult.chosen_item?.price,
+                      })
+                    }
+                    className="w-full py-2 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition"
+                  >
+                    <ShieldAlert className="w-4 h-4" />
+                    Open / Simulate Dispute for This Order
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

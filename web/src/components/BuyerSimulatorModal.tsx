@@ -1,23 +1,45 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { X, AlertCircle, ShieldAlert, CheckCircle2 } from 'lucide-react'
 
 interface BuyerSimulatorModalProps {
   isOpen: boolean
   onClose: () => void
   onDisputeCreated: (caseId: string) => void
+  initialOrderId?: string
+  initialCaptureId?: string
+  initialAmount?: string
 }
 
 export default function BuyerSimulatorModal({
   isOpen,
   onClose,
   onDisputeCreated,
+  initialOrderId,
+  initialCaptureId,
+  initialAmount,
 }: BuyerSimulatorModalProps) {
   const [orderId, setOrderId] = useState('ORDER-SANDBOX-S1-VP')
+  const [captureId, setCaptureId] = useState('')
   const [amount, setAmount] = useState('95.00')
   const [reason, setReason] = useState('MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED')
   const [notes, setNotes] = useState('Delivered unit has only 6 ports instead of 8 ports promised in listing.')
+  const [useLiveSandbox, setUseLiveSandbox] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!isOpen) return
+    if (initialOrderId) setOrderId(initialOrderId)
+    if (initialCaptureId) {
+      setCaptureId(initialCaptureId)
+      setUseLiveSandbox(true)
+    } else if (!initialOrderId) {
+      setCaptureId('')
+      setUseLiveSandbox(false)
+    }
+    if (initialAmount) setAmount(initialAmount)
+    setError(null)
+  }, [isOpen, initialOrderId, initialCaptureId, initialAmount])
 
   if (!isOpen) return null
 
@@ -41,6 +63,8 @@ export default function BuyerSimulatorModal({
           amount: parseFloat(amount),
           reason: reason,
           inspection_notes: notes,
+          buyer_transaction_id: captureId.trim() || null,
+          use_live_sandbox: useLiveSandbox && Boolean(captureId.trim()),
         }),
       })
 
@@ -76,7 +100,7 @@ export default function BuyerSimulatorModal({
                 </span>
               </h2>
               <p className="text-xs text-slate-400">
-                Simulates a buyer raising an INR/SNAD dispute against a sandbox transaction.
+                Creates a dispute on a captured sandbox transaction or labeled test fixture.
               </p>
             </div>
           </div>
@@ -144,7 +168,7 @@ export default function BuyerSimulatorModal({
                 value={orderId}
                 onChange={(e) => setOrderId(e.target.value)}
                 required
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500"
+                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500 font-mono"
               />
             </div>
 
@@ -156,10 +180,39 @@ export default function BuyerSimulatorModal({
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 required
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500"
+                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500 font-mono"
               />
             </div>
           </div>
+
+          <div>
+            <label className="block text-xs font-medium text-slate-300 mb-1">
+              PayPal Capture ID <span className="text-slate-500">(optional, for live Sandbox Disputes API)</span>
+            </label>
+            <input
+              type="text"
+              value={captureId}
+              onChange={(e) => setCaptureId(e.target.value)}
+              placeholder="e.g. 8XY12345AB678901C (auto-filled after Capture)"
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500 font-mono placeholder-slate-600"
+            />
+          </div>
+
+          {captureId.trim() && (
+            <label className="flex items-start gap-2 text-[11px] text-slate-300 bg-slate-950 p-2.5 rounded-lg border border-slate-800 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={useLiveSandbox}
+                onChange={(e) => setUseLiveSandbox(e.target.checked)}
+                className="mt-0.5 rounded border-slate-700 bg-slate-900 text-sky-500"
+              />
+              <span>
+                Attempt real <code className="text-sky-400">POST /v1/customer/disputes</code> via{' '}
+                <code className="text-sky-400">PayPal-Auth-Assertion</code> (falls back cleanly to labeled fixture if sandbox account lacks{' '}
+                <code className="text-amber-300">DISPUTE_CREATE</code> scope).
+              </span>
+            </label>
+          )}
 
           <div>
             <label className="block text-xs font-medium text-slate-300 mb-1">Dispute Reason (PayPal API)</label>
@@ -208,7 +261,7 @@ export default function BuyerSimulatorModal({
               className="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition disabled:opacity-50 shadow-md shadow-amber-600/20"
             >
               <CheckCircle2 className="w-4 h-4" />
-              {isSubmitting ? 'Simulating Dispute...' : 'Create Sandbox Dispute'}
+              {isSubmitting ? 'Creating Dispute...' : 'Create Sandbox Dispute'}
             </button>
           </div>
         </form>
@@ -216,4 +269,3 @@ export default function BuyerSimulatorModal({
     </div>
   )
 }
-

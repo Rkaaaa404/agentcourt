@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Navbar from './components/Navbar'
 import BuyerSimulatorModal from './components/BuyerSimulatorModal'
 import PurchaseView from './views/PurchaseView'
@@ -6,17 +6,47 @@ import CasesTimelineView from './views/CasesTimelineView'
 import CaseDetailView from './views/CaseDetailView'
 import EvaluationView from './views/EvaluationView'
 
+interface SimulatorSeed {
+  orderId?: string
+  captureId?: string
+  amount?: string
+}
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<'purchase' | 'cases' | 'detail' | 'eval'>('cases')
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>('case-s1-merchant-breach')
   const [isSimulatorOpen, setIsSimulatorOpen] = useState(false)
+  const [simulatorSeed, setSimulatorSeed] = useState<SimulatorSeed | undefined>(undefined)
   const [isSeeding, setIsSeeding] = useState(false)
+  const [checkoutOrderId, setCheckoutOrderId] = useState<string | null>(null)
+  const [checkoutNotice, setCheckoutNotice] = useState<{ status: string; message?: string } | null>(null)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const tab = params.get('tab')
+    const orderId = params.get('order_id')
+    const checkout = params.get('checkout')
+    const msg = params.get('msg') || undefined
+
+    if (tab === 'purchase' || tab === 'cases' || tab === 'detail' || tab === 'eval') {
+      setActiveTab(tab)
+    }
+    if (orderId) {
+      setCheckoutOrderId(orderId)
+    }
+    if (checkout) {
+      setCheckoutNotice({ status: checkout, message: msg })
+      setActiveTab('purchase')
+    }
+    if (tab || orderId || checkout) {
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+  }, [])
 
   const handleSeedDemo = async () => {
     setIsSeeding(true)
     try {
       await fetch('/api/cases/seed', { method: 'POST' })
-      // Auto-reload current view
       window.location.reload()
     } catch (err) {
       console.error('Failed to seed demo cases', err)
@@ -35,6 +65,11 @@ export default function App() {
     setActiveTab('detail')
   }
 
+  const handleOpenSimulatorForOrder = (seed?: SimulatorSeed) => {
+    setSimulatorSeed(seed)
+    setIsSimulatorOpen(true)
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-sky-500/30 selection:text-sky-200">
       {/* Top Navbar */}
@@ -42,14 +77,20 @@ export default function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         selectedCaseId={selectedCaseId}
-        onOpenSimulator={() => setIsSimulatorOpen(true)}
+        onOpenSimulator={() => handleOpenSimulatorForOrder(undefined)}
         onSeedDemo={handleSeedDemo}
         isSeeding={isSeeding}
       />
 
       {/* Main Screen Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 md:p-8">
-        {activeTab === 'purchase' && <PurchaseView />}
+        {activeTab === 'purchase' && (
+          <PurchaseView
+            initialOrderId={checkoutOrderId}
+            checkoutNotice={checkoutNotice}
+            onSimulateDispute={(seed) => handleOpenSimulatorForOrder(seed)}
+          />
+        )}
         {activeTab === 'cases' && <CasesTimelineView onSelectCase={handleSelectCase} />}
         {activeTab === 'detail' && (
           <CaseDetailView
@@ -65,6 +106,9 @@ export default function App() {
         isOpen={isSimulatorOpen}
         onClose={() => setIsSimulatorOpen(false)}
         onDisputeCreated={handleDisputeCreated}
+        initialOrderId={simulatorSeed?.orderId}
+        initialCaptureId={simulatorSeed?.captureId}
+        initialAmount={simulatorSeed?.amount}
       />
 
       {/* Footer */}
