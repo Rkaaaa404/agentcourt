@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 
-export function useInViewReveal(threshold = 0.12) {
+export function useInViewReveal(threshold = 0.12, once = false) {
   const ref = useRef<HTMLDivElement | null>(null)
   const [visible, setVisible] = useState(false)
+  const [exitDirection, setExitDirection] = useState<'up' | 'down'>('down')
 
   useEffect(() => {
     const el = ref.current
@@ -12,18 +13,23 @@ export function useInViewReveal(threshold = 0.12) {
     }
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          setVisible(true)
-          observer.disconnect()
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setVisible(true)
+            if (once) observer.disconnect()
+          } else if (!once) {
+            setVisible(false)
+            setExitDirection(entry.boundingClientRect.top < 0 ? 'up' : 'down')
+          }
         }
       },
-      { threshold }
+      { threshold, rootMargin: '-20px 0px -20px 0px' }
     )
     observer.observe(el)
     return () => observer.disconnect()
-  }, [threshold])
+  }, [threshold, once])
 
-  return { ref, visible }
+  return { ref, visible, exitDirection }
 }
 
 export function useCountUp(target: number, durationMs = 850, decimals = 0) {
@@ -47,4 +53,3 @@ export function useCountUp(target: number, durationMs = 850, decimals = 0) {
 
   return value
 }
-

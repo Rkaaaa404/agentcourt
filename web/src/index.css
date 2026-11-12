@@ -258,8 +258,10 @@ body {
   .veripact-stagger-4,
   .veripact-stagger-5,
   .veripact-modal-backdrop,
-  .veripact-modal-panel {
+  .veripact-modal-panel,
+  .veripact-scroll-reveal {
     animation: none !important;
+    transition: none !important;
     stroke-dashoffset: 0 !important;
     opacity: 1 !important;
     transform: none !important;

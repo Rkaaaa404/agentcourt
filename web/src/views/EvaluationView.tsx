@@ -11,6 +11,7 @@ import { AgGridReact } from 'ag-grid-react'
 import type { ColDef, ICellRendererParams } from 'ag-grid-community'
 import { veripactGridTheme, VERDICT_STYLES } from '../agGridSetup'
 import { useCountUp, useInViewReveal } from '../hooks/useMotion'
+import ScrollReveal from '../components/ScrollReveal'
 import { EvalResultsResponse, EvalScenarioResult } from '../types'
 
 export default function EvaluationView() {
@@ -135,7 +136,8 @@ export default function EvaluationView() {
   return (
     <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* View Header */}
-      <div className="bg-white border border-[#DCCDBB] rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm veripact-stagger-1">
+      <ScrollReveal delayMs={0}>
+        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
         <div>
           <h2 className="font-serif text-2xl font-bold text-[#541827] flex items-center gap-2.5">
             <FileText className="w-5 h-5 text-[#BF4827]" />
@@ -156,6 +158,7 @@ export default function EvaluationView() {
           Refresh Evaluation
         </button>
       </div>
+      </ScrollReveal>
 
       {error && (
         <div className="p-4 bg-[#FAEDE9] border border-[#EBC4BA] rounded-xl text-xs text-[#BF4827] flex items-center gap-2">

@@ -20,6 +20,7 @@ import { AgGridReact } from 'ag-grid-react'
 import type { ColDef, ICellRendererParams } from 'ag-grid-community'
 import { veripactGridTheme, VERDICT_STYLES } from '../agGridSetup'
 import { useCountUp, useInViewReveal } from '../hooks/useMotion'
+import ScrollReveal from '../components/ScrollReveal'
 import { CaseSummary } from '../types'
 
 interface CasesTimelineViewProps {
@@ -270,7 +271,8 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
   return (
     <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Executive KPI Strip */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <ScrollReveal delayMs={0}>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 flex items-center justify-between shadow-sm veripact-stagger-1 veripact-card-hover">
           <div>
             <span className="text-[11px] uppercase tracking-wider text-[#6E635D] font-semibold">Dispute Cases</span>
@@ -320,6 +322,7 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
           </div>
         </div>
       </div>
+      </ScrollReveal>
 
       {/* Filter & Action Toolbar */}
       <div

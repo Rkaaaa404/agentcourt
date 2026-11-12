@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   ArrowRight,
   ArrowUpRight,
@@ -21,58 +21,14 @@ import {
 import { VERDICT_STYLES } from '../agGridSetup'
 import type { CaseDetail, CaseSummary, EvalResultsResponse } from '../types'
 import { VeripactLogo, type AppTab } from '../components/Navbar'
+import { useCountUp, useInViewReveal } from '../hooks/useMotion'
+import CollaborationStrip from '../components/CollaborationStrip'
+import ScrollReveal from '../components/ScrollReveal'
 
 interface OverviewViewProps {
   onSelectCase: (caseId: string) => void
   onNavigateTab: (tab: AppTab) => void
   onOpenSimulator: () => void
-}
-
-function useCountUp(target: number, durationMs = 700) {
-  const [value, setValue] = useState(0)
-
-  useEffect(() => {
-    let rafId = 0
-    const start = performance.now()
-    const tick = (now: number) => {
-      const progress = Math.min(1, (now - start) / durationMs)
-      const eased = 1 - Math.pow(1 - progress, 3)
-      setValue(Math.round(target * eased))
-      if (progress < 1) {
-        rafId = requestAnimationFrame(tick)
-      }
-    }
-    rafId = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(rafId)
-  }, [target, durationMs])
-
-  return value
-}
-
-function useInViewReveal(threshold = 0.12) {
-  const ref = useRef<HTMLDivElement | null>(null)
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el || typeof IntersectionObserver === 'undefined') {
-      setVisible(true)
-      return
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          setVisible(true)
-          observer.disconnect()
-        }
-      },
-      { threshold }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [threshold])
-
-  return { ref, visible }
 }
 
 const CHART_SERIES = [
@@ -298,20 +254,26 @@ export default function OverviewView({
         <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-14 lg:pt-14 lg:pb-16 relative">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-10 items-center">
             {/* Left Editorial Copy */}
-            <div className="lg:col-span-5 space-y-6 animate-fade-up">
-              <div className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.14em] uppercase text-[#6E635D]">
-                <span className="w-2 h-2 rounded-full bg-[#BF4827] animate-pulse" />
-                Liability Infrastructure for Autonomous Commerce
-              </div>
+            <div className="lg:col-span-5 space-y-6">
+              <ScrollReveal delayMs={0}>
+                <div className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.14em] uppercase text-[#6E635D]">
+                  <span className="w-2 h-2 rounded-full bg-[#BF4827] animate-pulse" />
+                  Liability Infrastructure for Autonomous Commerce
+                </div>
+              </ScrollReveal>
 
-              <h1 className="font-serif editorial-expand-title text-4xl sm:text-5xl lg:text-[54px] font-semibold tracking-tight text-[#541827] leading-[1.04]">
-                When AI spends, responsibility must be clear.
-              </h1>
+              <ScrollReveal delayMs={60}>
+                <h1 className="font-serif editorial-expand-title text-4xl sm:text-5xl lg:text-[54px] font-semibold tracking-tight text-[#541827] leading-[1.04]">
+                  When AI spends, responsibility must be clear.
+                </h1>
+              </ScrollReveal>
 
-              <p className="text-[15px] sm:text-base text-[#574D48] leading-relaxed max-w-lg animate-fade-up-delay-1">
-                Veripact binds purchase mandates to PayPal orders, evaluates evidence from merchants, delivery, and
-                AI agents, and determines financial fault with a deterministic and auditable process.
-              </p>
+              <ScrollReveal delayMs={120}>
+                <p className="text-[15px] sm:text-base text-[#574D48] leading-relaxed max-w-lg">
+                  Veripact binds purchase mandates to PayPal orders, evaluates evidence from merchants, delivery, and
+                  AI agents, and determines financial fault with a deterministic and auditable process.
+                </p>
+              </ScrollReveal>
 
               <div className="flex flex-wrap items-center gap-5 pt-1 animate-fade-up-delay-2">
                 <button
@@ -631,7 +593,10 @@ export default function OverviewView({
         </div>
       </section>
 
-      {/* 2. Continuous Infinite Integrations Marquee */}
+      {/* 2. In Collaboration With PayPal & Sponsors */}
+      <CollaborationStrip />
+
+      {/* 3. Continuous Infinite Integrations Marquee */}
       <section className="border-b border-[#DCCDBB] bg-white/55 marquee-wrapper overflow-hidden py-5">
         <div className="animate-marquee flex items-center gap-6">
           {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, idx) => {

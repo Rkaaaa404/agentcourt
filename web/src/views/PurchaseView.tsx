@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import ScrollReveal from '../components/ScrollReveal'
 import {
   ExternalLink,
   ShieldCheck,
@@ -201,19 +202,20 @@ export default function PurchaseView({
       </div>
 
       {/* Introduction & Prompt Input */}
-      <div className="bg-white border border-[#DCCDBB] rounded-2xl p-6 shadow-sm veripact-stagger-2 veripact-card-hover">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <h2 className="font-serif text-2xl font-bold text-[#541827] flex items-center gap-2.5">
-              <Bot className="w-5 h-5 text-[#BF4827]" />
-              Autonomous Shopping Agent &amp; AP2 Mandate Checkout
-            </h2>
-            <p className="text-xs text-[#6E635D] max-w-2xl leading-relaxed">
-              Enter natural-language purchase constraints. The agent extracts structured constraints, evaluates merchant
-              offers, signs Ed25519 Intent &amp; Cart mandates, and binds the SHA-256 digest into PayPal Orders v2{' '}
-              <code className="text-[#541827] font-mono bg-[#F2EBE0] px-1.5 py-0.5 rounded">custom_id</code>.
-            </p>
-          </div>
+      <ScrollReveal delayMs={60}>
+        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-6 shadow-sm veripact-card-hover">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <h2 className="font-serif text-2xl font-bold text-[#541827] flex items-center gap-2.5">
+                <Bot className="w-5 h-5 text-[#BF4827]" />
+                Autonomous Shopping Agent &amp; AP2 Mandate Checkout
+              </h2>
+              <p className="text-xs text-[#6E635D] max-w-2xl leading-relaxed">
+                Enter natural-language purchase constraints. The agent extracts structured constraints, evaluates merchant
+                offers, signs Ed25519 Intent &amp; Cart mandates, and binds the SHA-256 digest into PayPal Orders v2{' '}
+                <code className="text-[#541827] font-mono bg-[#F2EBE0] px-1.5 py-0.5 rounded">custom_id</code>.
+              </p>
+            </div>
 
           {/* Policy Toggle */}
           <div className="bg-[#F8F3EB] p-1 rounded-xl border border-[#DCCDBB] flex items-center self-start text-xs">
@@ -293,6 +295,7 @@ export default function PurchaseView({
           </div>
         </div>
       </div>
+      </ScrollReveal>
 
       {error && (
         <div className="p-4 bg-[#FAEDE9] border border-[#EBC4BA] rounded-xl text-xs text-[#BF4827] flex items-center gap-2.5">

@@ -15,6 +15,7 @@ import {
   ChevronDown,
 } from 'lucide-react'
 import { VERDICT_STYLES } from '../agGridSetup'
+import ScrollReveal from '../components/ScrollReveal'
 import { CaseDetail, DeterministicCheck, VerdictType } from '../types'
 
 interface CaseDetailViewProps {
@@ -155,7 +156,8 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
   return (
     <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Top Breadcrumb & Case Bar */}
-      <div className="bg-white border border-[#DCCDBB] rounded-2xl p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-sm veripact-stagger-1">
+      <ScrollReveal delayMs={0}>
+        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-sm">
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
@@ -198,6 +200,7 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
           </span>
         </div>
       </div>
+      </ScrollReveal>
 
       {executionMessage && (
         <div className="p-4 bg-[#EDF2EE] border border-[#C5D3C9] rounded-xl text-xs text-[#52705C] flex items-center gap-2">
@@ -504,7 +507,8 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
       </div>
 
       {/* Immutable Ledger Audit Trail with Live Hash-Chain Verification */}
-      <div className="bg-white border border-[#DCCDBB] rounded-2xl p-6 shadow-sm space-y-4">
+      <ScrollReveal delayMs={80}>
+        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-6 shadow-sm space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#DCCDBB] pb-3">
           <h3 className="text-sm font-bold text-[#541827] flex items-center gap-2">
             <History className="w-4 h-4 text-[#BF4827]" />
@@ -587,6 +591,7 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
           })}
         </div>
       </div>
+      </ScrollReveal>
     </div>
   )
 }
