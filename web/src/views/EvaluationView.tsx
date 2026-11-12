@@ -10,6 +10,7 @@ import {
 import { AgGridReact } from 'ag-grid-react'
 import type { ColDef, ICellRendererParams } from 'ag-grid-community'
 import { veripactGridTheme, VERDICT_STYLES } from '../agGridSetup'
+import { useCountUp, useInViewReveal } from '../hooks/useMotion'
 import { EvalResultsResponse, EvalScenarioResult } from '../types'
 
 export default function EvaluationView() {
@@ -51,6 +52,11 @@ export default function EvaluationView() {
     () => ['ALL', ...Array.from(new Set(evalData?.results?.map((r) => r.category) || []))],
     [evalData]
   )
+
+  const animatedTotal = useCountUp(evalData?.total_scenarios || 0, 750, 0)
+  const animatedAccuracy = useCountUp(evalData?.accuracy_pct || 0, 850, 0)
+  const animatedElapsed = useCountUp(evalData?.elapsed_ms || 0, 800, 1)
+  const gridReveal = useInViewReveal(0.08)
 
   const columnDefs = useMemo<ColDef<EvalScenarioResult>[]>(
     () => [
@@ -129,7 +135,7 @@ export default function EvaluationView() {
   return (
     <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* View Header */}
-      <div className="bg-white border border-[#DCCDBB] rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+      <div className="bg-white border border-[#DCCDBB] rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm veripact-stagger-1">
         <div>
           <h2 className="font-serif text-2xl font-bold text-[#541827] flex items-center gap-2.5">
             <FileText className="w-5 h-5 text-[#BF4827]" />
@@ -161,25 +167,25 @@ export default function EvaluationView() {
       {/* KPI Cards */}
       {evalData && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 space-y-1 shadow-sm">
+          <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 space-y-1 shadow-sm veripact-stagger-1 veripact-card-hover">
             <span className="text-[11px] text-[#6E635D] uppercase tracking-wider font-semibold">Total Scenarios</span>
-            <div className="text-2xl font-extrabold text-[#541827] tabular-nums">{evalData.total_scenarios}</div>
+            <div className="text-2xl font-extrabold text-[#541827] tabular-nums">{animatedTotal}</div>
             <span className="text-[10px] text-[#52705C] font-semibold">100% Reproducible Fixtures</span>
           </div>
 
-          <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 space-y-1 shadow-sm">
+          <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 space-y-1 shadow-sm veripact-stagger-2 veripact-card-hover">
             <span className="text-[11px] text-[#6E635D] uppercase tracking-wider font-semibold">Accuracy Score</span>
-            <div className="text-2xl font-extrabold text-[#52705C] tabular-nums">{evalData.accuracy_pct}%</div>
+            <div className="text-2xl font-extrabold text-[#52705C] tabular-nums">{animatedAccuracy}%</div>
             <span className="text-[10px] text-[#6E635D]">{evalData.passed_scenarios} / {evalData.total_scenarios} Passed</span>
           </div>
 
-          <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 space-y-1 shadow-sm">
+          <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 space-y-1 shadow-sm veripact-stagger-3 veripact-card-hover">
             <span className="text-[11px] text-[#6E635D] uppercase tracking-wider font-semibold">Execution Time</span>
-            <div className="text-2xl font-extrabold text-[#BF4827] tabular-nums">{evalData.elapsed_ms} ms</div>
+            <div className="text-2xl font-extrabold text-[#BF4827] tabular-nums">{animatedElapsed} ms</div>
             <span className="text-[10px] text-[#6E635D]">Pure In-Memory Evaluation</span>
           </div>
 
-          <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 space-y-1 shadow-sm">
+          <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 space-y-1 shadow-sm veripact-stagger-4 veripact-card-hover">
             <span className="text-[11px] text-[#6E635D] uppercase tracking-wider font-semibold">Verdict Classes</span>
             <div className="text-2xl font-extrabold text-[#541827] tabular-nums">5 / 5</div>
             <span className="text-[10px] text-[#6E635D]">All Verdict Categories Covered</span>
@@ -189,13 +195,17 @@ export default function EvaluationView() {
 
       {/* Verdict Class Breakdown Cards */}
       {evalData?.class_breakdown && (
-        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-5 shadow-sm space-y-3">
+        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-5 shadow-sm space-y-3 veripact-stagger-5">
           <h3 className="text-xs font-bold text-[#541827] uppercase tracking-wider">
             Accuracy by Verdict Class
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs">
-            {Object.entries(evalData.class_breakdown).map(([clsName, stat]) => (
-              <div key={clsName} className="p-3 bg-[#F8F3EB] rounded-xl border border-[#DCCDBB] space-y-2 hover:border-[#BF4827]/70 transition">
+            {Object.entries(evalData.class_breakdown).map(([clsName, stat], idx) => (
+              <div
+                key={clsName}
+                style={{ animationDelay: `${idx * 70}ms` }}
+                className="p-3 bg-[#F8F3EB] rounded-xl border border-[#DCCDBB] space-y-2 hover:border-[#BF4827]/70 transition veripact-card-hover animate-fade-up"
+              >
                 <div className="font-mono text-[11px] text-[#292522] font-bold truncate">{clsName}</div>
                 <div className="flex justify-between text-[11px] text-[#6E635D] font-mono">
                   <span>{stat.correct}/{stat.total}</span>
@@ -214,7 +224,12 @@ export default function EvaluationView() {
       )}
 
       {/* Scenarios AG Grid */}
-      <div className="bg-white border border-[#DCCDBB] rounded-2xl overflow-hidden shadow-sm space-y-4 p-5">
+      <div
+        ref={gridReveal.ref}
+        className={`bg-white border border-[#DCCDBB] rounded-2xl overflow-hidden shadow-sm space-y-4 p-5 transition-all duration-700 ${
+          gridReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        }`}
+      >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div className="relative flex-1 max-w-sm">
             <Search className="w-4 h-4 text-[#8C7F77] absolute left-3 top-2.5" />

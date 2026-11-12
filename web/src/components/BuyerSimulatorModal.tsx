@@ -84,8 +84,8 @@ export default function BuyerSimulatorModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#292522]/40 backdrop-blur-sm">
-      <div className="bg-white border border-[#DCCDBB] rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#292522]/40 backdrop-blur-sm veripact-modal-backdrop">
+      <div className="bg-white border border-[#DCCDBB] rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl veripact-modal-panel">
         {/* Modal Header */}
         <div className="border-b border-[#DCCDBB] px-6 py-4 flex items-center justify-between bg-[#F8F3EB]">
           <div className="flex items-center gap-2.5">

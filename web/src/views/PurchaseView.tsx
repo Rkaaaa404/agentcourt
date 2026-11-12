@@ -138,34 +138,61 @@ export default function PurchaseView({
         </div>
       )}
 
-      {/* Pipeline Stepper */}
-      <div className="bg-white border border-[#DCCDBB] rounded-2xl px-5 py-4 shadow-sm">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+      {/* Pipeline Stepper with Continuous SVG Data-Packet Beam */}
+      <div className="bg-white border border-[#DCCDBB] rounded-2xl px-5 py-4 shadow-sm veripact-stagger-1 relative overflow-hidden">
+        <svg
+          className="hidden lg:block absolute inset-x-10 top-1/2 -translate-y-1/2 w-[calc(100%-5rem)] h-6 pointer-events-none"
+          viewBox="0 0 1000 24"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path id="veripactCheckoutBeam" d="M 40 12 L 960 12" stroke="#E8DDD0" strokeWidth="1.5" fill="none" />
+          <path
+            d="M 40 12 L 960 12"
+            stroke="#BF4827"
+            strokeOpacity="0.45"
+            strokeWidth="2"
+            fill="none"
+            className="animate-beam-flow"
+          />
+          <circle r="3.5" fill="#BF4827">
+            <animateMotion dur="3.4s" repeatCount="indefinite">
+              <mpath href="#veripactCheckoutBeam" />
+            </animateMotion>
+          </circle>
+        </svg>
+
+        <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
           {pipelineSteps.map((s, idx) => {
             const done = currentStep >= s.step && Boolean(purchaseResult)
             const active = currentStep === s.step
             return (
-              <div key={s.step} className="flex items-center gap-2.5">
-                <div
-                  className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-mono font-bold border transition ${
-                    done
-                      ? 'bg-[#EDF2EE] text-[#52705C] border-[#C5D3C9]'
-                      : active
-                      ? 'bg-[#FAEDE9] text-[#BF4827] border-[#EBC4BA]'
-                      : 'bg-[#F8F3EB] text-[#8C7F77] border-[#DCCDBB]'
-                  }`}
-                >
-                  {done ? '✓' : s.step}
+              <div key={s.step} className="flex items-center gap-2.5 bg-white/95 px-2 py-0.5 rounded-full">
+                <div className="relative">
+                  {active && (
+                    <span className="absolute inset-0 rounded-full bg-[#BF4827]/35 animate-ping" />
+                  )}
+                  <div
+                    className={`relative w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-mono font-bold border transition-all duration-300 ${
+                      done
+                        ? 'bg-[#EDF2EE] text-[#52705C] border-[#C5D3C9] scale-105'
+                        : active
+                        ? 'bg-[#FAEDE9] text-[#BF4827] border-[#EBC4BA] scale-110 shadow-sm'
+                        : 'bg-[#F8F3EB] text-[#8C7F77] border-[#DCCDBB]'
+                    }`}
+                  >
+                    {done ? '✓' : s.step}
+                  </div>
                 </div>
                 <span
-                  className={`text-xs font-semibold ${
+                  className={`text-xs font-semibold transition-colors ${
                     done ? 'text-[#52705C]' : active ? 'text-[#541827]' : 'text-[#8C7F77]'
                   }`}
                 >
                   {s.label}
                 </span>
                 {idx < pipelineSteps.length - 1 && (
-                  <ArrowRight className="w-3.5 h-3.5 text-[#DCCDBB] hidden lg:block ml-1" />
+                  <ArrowRight className="w-3.5 h-3.5 text-[#DCCDBB] lg:hidden ml-1" />
                 )}
               </div>
             )
@@ -174,7 +201,7 @@ export default function PurchaseView({
       </div>
 
       {/* Introduction & Prompt Input */}
-      <div className="bg-white border border-[#DCCDBB] rounded-2xl p-6 shadow-sm">
+      <div className="bg-white border border-[#DCCDBB] rounded-2xl p-6 shadow-sm veripact-stagger-2 veripact-card-hover">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
             <h2 className="font-serif text-2xl font-bold text-[#541827] flex items-center gap-2.5">
@@ -274,9 +301,27 @@ export default function PurchaseView({
         </div>
       )}
 
+      {isLoading && (
+        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-5 shadow-sm space-y-3 veripact-stagger-1">
+          <div className="flex items-center justify-between text-xs">
+            <span className="font-semibold text-[#541827] flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#BF4827] animate-ping" />
+              Autonomous Agent Executing Mandate Pipeline...
+            </span>
+            <span className="font-mono text-[11px] text-[#6E635D]">Ed25519 + PayPal Orders v2</span>
+          </div>
+          <div className="w-full h-2 rounded-full bg-[#F2EBE0] veripact-shimmer-bar" />
+          <div className="grid grid-cols-3 gap-2 text-[11px] text-[#6E635D] font-mono">
+            <span className="text-[#52705C] font-semibold">1. Parsing constraints</span>
+            <span className="text-[#BF4827] font-semibold animate-pulse">2. Signing AP2 mandates</span>
+            <span>3. Binding PayPal order</span>
+          </div>
+        </div>
+      )}
+
       {/* Results View */}
       {purchaseResult && (
-        <div className="space-y-6">
+        <div className="space-y-6 veripact-page-enter">
           {/* Regret Warning Banner if triggered */}
           {purchaseResult.candidate_trace?.is_regret_flagged && (
             <div className="p-4 bg-[#FEF3DC] border border-[#F5DEB0] rounded-2xl flex items-start gap-3 text-[#9A5B13]">

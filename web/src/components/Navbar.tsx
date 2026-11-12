@@ -45,7 +45,7 @@ export default function Navbar({
           onClick={() => setActiveTab('overview')}
           className="flex items-center gap-2.5 text-left group focus:outline-none"
         >
-          <VeripactLogo className="w-6 h-6 shrink-0" />
+          <VeripactLogo className="w-6 h-6 shrink-0 transition-transform duration-300 group-hover:scale-105" />
           <div className="flex items-center gap-2.5">
             <span className="font-serif font-bold text-lg tracking-[0.06em] uppercase text-[#541827] group-hover:text-[#BF4827] transition">
               VERIPACT
@@ -103,10 +103,10 @@ export default function Navbar({
 
           <button
             onClick={() => setActiveTab('purchase')}
-            className="px-4 py-2 bg-[#BF4827] hover:bg-[#A33B1E] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition"
+            className="group px-4 py-2 bg-[#BF4827] hover:bg-[#A33B1E] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
           >
             <span>Try Live Demo</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
           </button>
         </div>
       </div>

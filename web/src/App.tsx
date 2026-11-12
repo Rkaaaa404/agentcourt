@@ -91,28 +91,30 @@ export default function App() {
 
       {/* Main Screen Content */}
       <main className="flex-1 w-full">
-        {activeTab === 'overview' && (
-          <OverviewView
-            onSelectCase={handleSelectCase}
-            onNavigateTab={handleNavigateTab}
-            onOpenSimulator={() => handleOpenSimulatorForOrder(undefined)}
-          />
-        )}
-        {activeTab === 'purchase' && (
-          <PurchaseView
-            initialOrderId={checkoutOrderId}
-            checkoutNotice={checkoutNotice}
-            onSimulateDispute={(seed) => handleOpenSimulatorForOrder(seed)}
-          />
-        )}
-        {activeTab === 'cases' && <CasesTimelineView onSelectCase={handleSelectCase} />}
-        {activeTab === 'detail' && (
-          <CaseDetailView
-            caseId={selectedCaseId || 'case-s1-merchant-breach'}
-            onBack={() => handleNavigateTab('cases')}
-          />
-        )}
-        {activeTab === 'eval' && <EvaluationView />}
+        <div key={activeTab} className="veripact-page-enter">
+          {activeTab === 'overview' && (
+            <OverviewView
+              onSelectCase={handleSelectCase}
+              onNavigateTab={handleNavigateTab}
+              onOpenSimulator={() => handleOpenSimulatorForOrder(undefined)}
+            />
+          )}
+          {activeTab === 'purchase' && (
+            <PurchaseView
+              initialOrderId={checkoutOrderId}
+              checkoutNotice={checkoutNotice}
+              onSimulateDispute={(seed) => handleOpenSimulatorForOrder(seed)}
+            />
+          )}
+          {activeTab === 'cases' && <CasesTimelineView onSelectCase={handleSelectCase} />}
+          {activeTab === 'detail' && (
+            <CaseDetailView
+              caseId={selectedCaseId || 'case-s1-merchant-breach'}
+              onBack={() => handleNavigateTab('cases')}
+            />
+          )}
+          {activeTab === 'eval' && <EvaluationView />}
+        </div>
       </main>
 
       {/* Sandbox Buyer Simulator Modal */}

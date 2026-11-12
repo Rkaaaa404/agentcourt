@@ -155,7 +155,7 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
   return (
     <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Top Breadcrumb & Case Bar */}
-      <div className="bg-white border border-[#DCCDBB] rounded-2xl p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-sm">
+      <div className="bg-white border border-[#DCCDBB] rounded-2xl p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-sm veripact-stagger-1">
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
@@ -209,7 +209,7 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
       {/* 3-Column Evidence Pack Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Column 1: Signed Mandates & Cryptographic Hashes */}
-        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-5 space-y-4 shadow-sm">
+        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-5 space-y-4 shadow-sm veripact-stagger-2 veripact-card-hover">
           <h3 className="text-sm font-bold text-[#541827] flex items-center gap-2 border-b border-[#DCCDBB] pb-3">
             <KeyRound className="w-4 h-4 text-[#52705C]" />
             1. AP2 Cryptographic Mandates
@@ -276,7 +276,7 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
         </div>
 
         {/* Column 2: Visual Spec Diff, AI Semantic Comparison & Regret */}
-        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-5 space-y-4 shadow-sm">
+        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-5 space-y-4 shadow-sm veripact-stagger-3 veripact-card-hover">
           <h3 className="text-sm font-bold text-[#541827] flex items-center gap-2 border-b border-[#DCCDBB] pb-3">
             <FileCheck className="w-4 h-4 text-[#BF4827]" />
             2. Spec Diff &amp; AI Semantic Reasoning
@@ -397,7 +397,7 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
         </div>
 
         {/* Column 3: Arbiter Checks & Human Action Execution */}
-        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-5 space-y-4 shadow-sm">
+        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-5 space-y-4 shadow-sm veripact-stagger-4 veripact-card-hover">
           <h3 className="text-sm font-bold text-[#541827] flex items-center gap-2 border-b border-[#DCCDBB] pb-3">
             <ShieldCheck className="w-4 h-4 text-[#BF4827]" />
             3. Arbiter Verdict &amp; Action Plan
@@ -416,11 +416,16 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
               Deterministic Rule Trace (C1 - C7):
             </span>
             <div className="grid grid-cols-1 gap-1 max-h-[160px] overflow-y-auto pr-1">
-              {verdict.deterministic_checks?.map((chk: DeterministicCheck) => (
+              {verdict.deterministic_checks?.map((chk: DeterministicCheck, idx: number) => (
                 <div
                   key={chk.check_id}
                   title={chk.details}
-                  className="p-2 rounded-lg bg-[#F8F3EB] border border-[#DCCDBB] flex items-center justify-between text-[11px]"
+                  style={{ animationDelay: `${idx * 55}ms` }}
+                  className={`p-2 rounded-lg border flex items-center justify-between text-[11px] animate-fade-up transition-colors ${
+                    chk.status === 'FAIL'
+                      ? 'bg-[#FAEDE9] border-[#EBC4BA]'
+                      : 'bg-[#F8F3EB] border-[#DCCDBB] hover:border-[#BF4827]/40'
+                  }`}
                 >
                   <span className="font-mono text-[#292522] font-medium">
                     [{chk.check_id}] {chk.name}
@@ -431,6 +436,7 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
                     </span>
                   ) : chk.status === 'FAIL' ? (
                     <span className="text-[#BF4827] flex items-center gap-1 font-semibold text-[10px]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#BF4827] animate-ping" />
                       <XCircle className="w-3 h-3" /> FAIL
                     </span>
                   ) : (

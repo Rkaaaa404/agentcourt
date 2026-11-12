@@ -19,6 +19,7 @@ import '@bryntum/scheduler/stockholm-light.css'
 import { AgGridReact } from 'ag-grid-react'
 import type { ColDef, ICellRendererParams } from 'ag-grid-community'
 import { veripactGridTheme, VERDICT_STYLES } from '../agGridSetup'
+import { useCountUp, useInViewReveal } from '../hooks/useMotion'
 import { CaseSummary } from '../types'
 
 interface CasesTimelineViewProps {
@@ -149,6 +150,12 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
 
   const pendingCount = useMemo(() => cases.filter((c) => !c.executed).length, [cases])
 
+  const animatedCasesCount = useCountUp(cases.length, 800, 0)
+  const animatedExposure = useCountUp(totalExposure, 900, 2)
+  const animatedLedgerEntries = useCountUp(ledgerStatus?.total_entries || 0, 850, 0)
+  const animatedWebhookCount = useCountUp(webhookEvents.length, 750, 0)
+  const schedulerReveal = useInViewReveal(0.08)
+
   const filteredResources = useMemo(() => {
     const rows = timelineData?.resources?.rows || []
     if (filterVerdict === 'ALL') return rows
@@ -264,10 +271,10 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
     <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Executive KPI Strip */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 flex items-center justify-between shadow-sm">
+        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 flex items-center justify-between shadow-sm veripact-stagger-1 veripact-card-hover">
           <div>
             <span className="text-[11px] uppercase tracking-wider text-[#6E635D] font-semibold">Dispute Cases</span>
-            <div className="text-2xl font-extrabold text-[#541827] tabular-nums mt-1">{cases.length}</div>
+            <div className="text-2xl font-extrabold text-[#541827] tabular-nums mt-1">{animatedCasesCount}</div>
             <span className="text-[11px] text-[#9A5B13] font-medium">{pendingCount} awaiting approval</span>
           </div>
           <div className="p-2.5 rounded-xl bg-[#FAEDE9] border border-[#EBC4BA] text-[#BF4827]">
@@ -275,10 +282,10 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
           </div>
         </div>
 
-        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 flex items-center justify-between shadow-sm">
+        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 flex items-center justify-between shadow-sm veripact-stagger-2 veripact-card-hover">
           <div>
             <span className="text-[11px] uppercase tracking-wider text-[#6E635D] font-semibold">Disputed Volume</span>
-            <div className="text-2xl font-extrabold text-[#541827] tabular-nums mt-1">${totalExposure.toFixed(2)}</div>
+            <div className="text-2xl font-extrabold text-[#541827] tabular-nums mt-1">${animatedExposure.toFixed(2)}</div>
             <span className="text-[11px] text-[#6E635D]">USD across sandbox orders</span>
           </div>
           <div className="p-2.5 rounded-xl bg-[#EDF2EE] border border-[#C5D3C9] text-[#52705C]">
@@ -286,14 +293,15 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
           </div>
         </div>
 
-        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 flex items-center justify-between shadow-sm">
+        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 flex items-center justify-between shadow-sm veripact-stagger-3 veripact-card-hover">
           <div>
             <span className="text-[11px] uppercase tracking-wider text-[#6E635D] font-semibold">Hash-Chain Ledger</span>
-            <div className="text-2xl font-extrabold text-[#541827] font-mono mt-1">
+            <div className="text-2xl font-extrabold text-[#541827] font-mono mt-1 flex items-center gap-2">
               {ledgerStatus?.intact ? 'INTACT' : ledgerStatus ? 'ALERT' : '—'}
+              {ledgerStatus?.intact && <span className="w-2 h-2 rounded-full bg-[#52705C] animate-pulse" />}
             </div>
             <span className="text-[11px] text-[#52705C] font-mono">
-              {ledgerStatus ? `${ledgerStatus.total_entries} SHA-256 entries` : 'Verifying...'}
+              {ledgerStatus ? `${animatedLedgerEntries} SHA-256 entries` : 'Verifying...'}
             </span>
           </div>
           <div className="p-2.5 rounded-xl bg-[#EDF2EE] border border-[#C5D3C9] text-[#52705C]">
@@ -301,10 +309,10 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
           </div>
         </div>
 
-        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 flex items-center justify-between shadow-sm">
+        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 flex items-center justify-between shadow-sm veripact-stagger-4 veripact-card-hover">
           <div>
             <span className="text-[11px] uppercase tracking-wider text-[#6E635D] font-semibold">Webhook Events</span>
-            <div className="text-2xl font-extrabold text-[#541827] tabular-nums mt-1">{webhookEvents.length}</div>
+            <div className="text-2xl font-extrabold text-[#541827] tabular-nums mt-1">{animatedWebhookCount}</div>
             <span className="text-[11px] text-[#6E635D]">Deduplicated &amp; reconciled</span>
           </div>
           <div className="p-2.5 rounded-xl bg-[#F2EBE0] border border-[#DCCDBB] text-[#541827]">
@@ -314,7 +322,12 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
       </div>
 
       {/* Filter & Action Toolbar */}
-      <div className="bg-white border border-[#DCCDBB] rounded-2xl p-5 flex flex-col xl:flex-row xl:items-center justify-between gap-4 shadow-sm">
+      <div
+        ref={schedulerReveal.ref}
+        className={`bg-white border border-[#DCCDBB] rounded-2xl p-5 flex flex-col xl:flex-row xl:items-center justify-between gap-4 shadow-sm transition-all duration-700 ${
+          schedulerReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        }`}
+      >
         <div>
           <h2 className="font-serif text-xl font-bold text-[#541827] flex items-center gap-2">
             <Calendar className="w-5 h-5 text-[#BF4827]" />

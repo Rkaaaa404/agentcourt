@@ -168,6 +168,77 @@ body {
   letter-spacing: 0.014em;
 }
 
+@keyframes veripactModalIn {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes veripactShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(220%);
+  }
+}
+
+.veripact-page-enter {
+  animation: veripactFadeUp 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.veripact-stagger-1 {
+  animation: veripactFadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.06s both;
+}
+.veripact-stagger-2 {
+  animation: veripactFadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
+}
+.veripact-stagger-3 {
+  animation: veripactFadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
+}
+.veripact-stagger-4 {
+  animation: veripactFadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both;
+}
+.veripact-stagger-5 {
+  animation: veripactFadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.30s both;
+}
+
+.veripact-card-hover {
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.28s ease;
+}
+
+.veripact-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px -12px rgba(84, 24, 39, 0.16);
+}
+
+.veripact-modal-backdrop {
+  animation: veripactAreaFade 0.22s ease-out both;
+}
+
+.veripact-modal-panel {
+  animation: veripactModalIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.veripact-shimmer-bar {
+  position: relative;
+  overflow: hidden;
+}
+
+.veripact-shimmer-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 45%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  animation: veripactShimmer 1.6s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-up,
   .animate-fade-up-delay-1,
@@ -179,11 +250,23 @@ body {
   .animate-marquee,
   .animate-beam-flow,
   .animate-ambient-shift,
-  .animate-ping-slow {
+  .animate-ping-slow,
+  .veripact-page-enter,
+  .veripact-stagger-1,
+  .veripact-stagger-2,
+  .veripact-stagger-3,
+  .veripact-stagger-4,
+  .veripact-stagger-5,
+  .veripact-modal-backdrop,
+  .veripact-modal-panel {
     animation: none !important;
     stroke-dashoffset: 0 !important;
     opacity: 1 !important;
     transform: none !important;
+  }
+  .veripact-shimmer-bar::after {
+    animation: none !important;
+    display: none;
   }
 }
 
