@@ -59,7 +59,7 @@ AgentCourt links pre-payment mandates to post-payment PayPal Disputes through cr
   - Ed25519 digital signatures via `cryptography`.
   - Append-only cryptographic ledger with SHA-256 hash chains.
 - **AI & Arbiter**:
-  - Pluggable LLM layer (Claude Sonnet 5.5 / OpenAI GPT-4o / Deterministic Fallback).
+  - Pluggable LLM layer (Google Gemini 3.1 Pro via AI Studio by default; Claude and OpenAI-compatible providers supported; deterministic fallback).
   - Strict JSON schema enforcement and prompt-injection shielding.
 - **Frontend Dashboard**:
   - React 18, Vite, TypeScript, Tailwind CSS, Lucide icons.
@@ -114,5 +114,5 @@ AgentCourt links pre-payment mandates to post-payment PayPal Disputes through cr
 - React / Vite / TypeScript / Tailwind CSS
 - Ed25519 & RFC 8785 Canonical JSON
 - Docker & Render
-- Claude Sonnet 5.5 / OpenAI GPT-4o
+- Google Gemini 3.1 Pro (AI Studio)
 

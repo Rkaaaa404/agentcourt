@@ -91,7 +91,7 @@ flowchart TD
 
 ### 1. Clone & Configure
 ```bash
-git clone https://github.com/livai12/agentcourt.git
+git clone https://github.com/Rkaaaa404/agentcourt.git
 cd agentcourt
 cp .env.example .env
 ```
@@ -104,6 +104,9 @@ PAYPAL_CLIENT_SECRET=your_sandbox_client_secret
 PAYPAL_MERCHANT_EMAIL=your_sandbox_business_email@business.example.com
 PAYPAL_BUYER_EMAIL=your_sandbox_personal_email@personal.example.com
 PAYPAL_BUYER_PASSWORD=your_sandbox_buyer_password
+LLM_PROVIDER=gemini
+LLM_MODEL=gemini-3.1-pro-preview
+LLM_API_KEY=your_google_ai_studio_key   # optional: without it the arbiter runs deterministic-only
 ```
 
 ### 2. Verify Pre-flight Safety Check
@@ -183,7 +186,7 @@ AgentCourt's mandate specification and threat model draw from foundational resea
 AgentCourt includes a production-ready `Dockerfile` and `render.yaml` blueprint.
 
 ### Deploy Steps:
-1. Connect your GitHub repository (`https://github.com/livai12/agentcourt`) to [Render](https://dashboard.render.com).
+1. Connect your GitHub repository (`https://github.com/Rkaaaa404/agentcourt`) to [Render](https://dashboard.render.com).
 2. Select **New > Blueprint** and link the repository.
 3. Add the following Environment Variables in the Render Dashboard:
    - `PAYPAL_ENV=sandbox`
@@ -191,6 +194,7 @@ AgentCourt includes a production-ready `Dockerfile` and `render.yaml` blueprint.
    - `PAYPAL_CLIENT_SECRET=...`
    - `PAYPAL_MERCHANT_EMAIL=...`
    - `PAYPAL_BUYER_EMAIL=...`
+   - `LLM_API_KEY=...` (Google AI Studio key; `LLM_PROVIDER=gemini` and `LLM_MODEL=gemini-3.1-pro-preview` are preset in `render.yaml`)
 4. Click **Apply**. Render will automatically build the unified Docker image (Vite frontend served directly by FastAPI static files) and provide a public HTTPS URL.
 
 ---

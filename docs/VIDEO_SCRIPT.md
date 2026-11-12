@@ -90,7 +90,7 @@
 ### **[2:40 - 2:50] ACT VI: Wrap-Up & Call to Action**
 
 **Visual:**
-- Presenter camera / GitHub repo screen showing `https://github.com/livai12/agentcourt`.
+- Presenter camera / GitHub repo screen showing `https://github.com/Rkaaaa404/agentcourt`.
 - Show MIT License and Render live deployment link.
 
 **Audio (Spoken):**

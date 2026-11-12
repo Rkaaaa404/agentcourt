@@ -49,7 +49,7 @@ class Settings(BaseSettings):
     )
 
     # LLM Settings (Pluggable: Anthropic or OpenAI-compatible)
-    LLM_PROVIDER: str = Field(default="anthropic", description="LLM provider: anthropic or openai")
+    LLM_PROVIDER: str = Field(default="anthropic", description="LLM provider: anthropic, openai, or gemini")
     LLM_MODEL: str = Field(default="claude-sonnet-5-5", description="Model identifier")
     LLM_API_KEY: str = Field(default="", description="API key for chosen LLM provider")
 

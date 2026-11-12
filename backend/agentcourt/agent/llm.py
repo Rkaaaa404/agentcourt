@@ -1,4 +1,4 @@
-"""Pluggable LLM Client supporting Anthropic, OpenAI, and deterministic fallback.
+"""Pluggable LLM Client supporting Anthropic, OpenAI, Google Gemini, and deterministic fallback.
 
 Safety guarantee:
 - temperature=0
@@ -22,6 +22,9 @@ from agentcourt.config import settings
 from agentcourt.mandate.models import UserConstraints
 
 logger = logging.getLogger("agentcourt.agent.llm")
+
+# Google AI Studio exposes Gemini through an OpenAI-compatible endpoint.
+GEMINI_OPENAI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai"
 
 
 class LLMResult(BaseModel):
@@ -259,14 +262,15 @@ class AnthropicClient(BaseLLMClient):
 
 
 class OpenAIClient(BaseLLMClient):
-    """OpenAI GPT-4o / compatible client."""
+    """OpenAI-compatible chat completions client (OpenAI, Google Gemini, ...)."""
 
-    def __init__(self, api_key: str, model: str = "gpt-4o"):
+    def __init__(self, api_key: str, model: str = "gpt-4o", base_url: str = "https://api.openai.com/v1"):
         self.api_key = api_key
         self.model = model
+        self.base_url = base_url.rstrip("/")
 
     async def complete(self, system_prompt: str, user_prompt: str) -> LLMResult:
-        url = "https://api.openai.com/v1/chat/completions"
+        url = f"{self.base_url}/chat/completions"
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
@@ -298,7 +302,7 @@ class OpenAIClient(BaseLLMClient):
                         llm_used=True,
                         model=self.model,
                     )
-                logger.error("OpenAI API error: %d %s", resp.status_code, resp.text)
+                logger.error("OpenAI-compatible API error: %d %s", resp.status_code, resp.text)
         except Exception as exc:
             logger.error("OpenAI request failed: %s", exc)
 
@@ -321,5 +325,7 @@ def get_llm_client() -> BaseLLMClient:
         return AnthropicClient(api_key=api_key, model=settings.LLM_MODEL)
     elif provider in ("openai", "openai-compatible"):
         return OpenAIClient(api_key=api_key, model=settings.LLM_MODEL)
+    elif provider in ("gemini", "google"):
+        return OpenAIClient(api_key=api_key, model=settings.LLM_MODEL, base_url=GEMINI_OPENAI_BASE_URL)
 
     return DeterministicFallbackClient()
