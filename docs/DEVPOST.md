@@ -4,7 +4,7 @@
 
 > **Team:** Sehari Semalam
 >
-> **Live demo:** https://agentcourt-iryc.onrender.com · **Source:** https://github.com/Rkaaaa404/veripact
+> **Live demo:** https://veripact.onrender.com · **Source:** https://github.com/Rkaaaa404/veripact
 
 ---
 
