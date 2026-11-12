@@ -4,7 +4,7 @@
 
 > **Team:** Sehari Semalam
 >
-> **Live demo:** https://veripact.onrender.com · **Source:** https://github.com/Rkaaaa404/veripact
+> **Live demo:** https://veripact.onrender.com · **Source:** https://github.com/Rkaaaa404/veripact · **Video:** https://youtu.be/ct_kdF_KJ4A
 
 ---
 
