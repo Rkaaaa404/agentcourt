@@ -44,7 +44,7 @@ def plan_action_for_verdict(
     if verdict.verdict == VerdictType.MERCHANT_AT_FAULT:
         payload = {
             "accept_claim_type": AcceptClaimType.REFUND.value,
-            "note": f"AgentCourt Auto-Resolution: Merchant accepting buyer claim. Reason: {verdict.summary}",
+            "note": f"Veripact Auto-Resolution: Merchant accepting buyer claim. Reason: {verdict.summary}",
         }
         return PlannedPayPalAction(
             case_id=verdict.case_id,
@@ -59,7 +59,7 @@ def plan_action_for_verdict(
 
     elif verdict.verdict == VerdictType.OPERATOR_AT_FAULT:
         notes = (
-            f"AgentCourt Mandate Defense: Merchant delivered faithfully to the signed cart. "
+            f"Veripact Mandate Defense: Merchant delivered faithfully to the signed cart. "
             f"Dispute stems from an Agent Operator mandate violation ({', '.join(verdict.failed_checks)}). "
             f"Cryptographic evidence pack attached."
         )
@@ -91,7 +91,7 @@ def plan_action_for_verdict(
         if amt > Decimal("0.00") and goodwill_offer < Decimal("5.00"):
             goodwill_offer = min(amt, Decimal("5.00"))
         note = (
-            f"AgentCourt Goodwill Remedy: Transaction complied with authorized mandate, "
+            f"Veripact Goodwill Remedy: Transaction complied with authorized mandate, "
             f"but agent regret index reached {verdict.regret_score:.1%}. "
             f"Offering proportional goodwill refund of ${goodwill_offer:.2f} USD."
         )
@@ -123,7 +123,7 @@ def plan_action_for_verdict(
 
     elif verdict.verdict == VerdictType.NO_FAULT:
         notes = (
-            "AgentCourt Defense: Mandate fully complied with and delivery inspection verified against listing. "
+            "Veripact Defense: Mandate fully complied with and delivery inspection verified against listing. "
             "No defect found."
         )
         payload = {

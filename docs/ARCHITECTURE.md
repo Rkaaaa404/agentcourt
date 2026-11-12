@@ -1,8 +1,8 @@
-# AgentCourt Architecture & Security Model
+# Veripact Architecture & Security Model
 
 ## 1. System Overview
 
-AgentCourt provides an end-to-end post-payment liability resolution pipeline for agentic transactions made via PayPal.
+Veripact provides an end-to-end post-payment liability resolution pipeline for agentic transactions made via PayPal.
 
 ```mermaid
 flowchart TD
@@ -84,8 +84,8 @@ The LLM is completely bypassed, guaranteeing that prompt injections or probabili
 When an autonomous agent shops across multiple merchants, it generates candidate evaluation traces:
 $$\text{Relative Regret} = \frac{U_{\text{optimal}} - U_{\text{chosen}}}{U_{\text{optimal}}}$$
 - If the agent used an unconstrained `OPTIMAL` policy, regret is 0%.
-- If the agent used a `FIRST_ACCEPTABLE` policy or made an inferior selection resulting in $\text{Regret} > 15\%$, AgentCourt classifies the dispute as `WITHIN_MANDATE_REGRET`.
-- **Remedy**: Rather than forcing a merchant chargeback or penalizing the merchant, AgentCourt generates a goodwill customer remedy (`make-offer`).
+- If the agent used a `FIRST_ACCEPTABLE` policy or made an inferior selection resulting in $\text{Regret} > 15\%$, Veripact classifies the dispute as `WITHIN_MANDATE_REGRET`.
+- **Remedy**: Rather than forcing a merchant chargeback or penalizing the merchant, Veripact generates a goodwill customer remedy (`make-offer`).
 
 ---
 

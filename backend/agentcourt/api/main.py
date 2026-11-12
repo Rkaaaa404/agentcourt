@@ -1,4 +1,4 @@
-"""AgentCourt FastAPI Application entrypoint."""
+"""Veripact FastAPI Application entrypoint."""
 
 import sys
 from collections.abc import AsyncGenerator
@@ -33,7 +33,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 
 app = FastAPI(
-    title="AgentCourt API",
+    title="Veripact API",
     description="Post-Payment Liability Layer for Autonomous Agent Commerce",
     version="0.1.0",
     lifespan=lifespan,

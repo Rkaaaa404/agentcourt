@@ -1,6 +1,6 @@
-# Devpost Submission — AgentCourt
+# Devpost Submission — Veripact
 
-> **Tagline:** *AP2 tells you what was authorized. AgentCourt tells you who pays when it goes wrong.*
+> **Tagline:** *AP2 tells you what was authorized. Veripact tells you who pays when it goes wrong.*
 
 > **Live demo:** https://agentcourt-iryc.onrender.com · **Source:** https://github.com/Rkaaaa404/agentcourt
 
@@ -14,30 +14,30 @@ However, the industry faces an unaddressed question: **What happens after paymen
 
 When a buyer opens a PayPal dispute on an agent-initiated order—because the delivered docking station had 6 ports instead of 10, or because price drift occurred, or because the agent accepted a suboptimal offer—current dispute resolution requires slow human investigation. Merchants risk unmerited chargebacks; agent platforms face existential liability; and buyers lose trust.
 
-We built **AgentCourt** to be the missing post-payment liability resolution layer for the agent economy.
+We built **Veripact** to be the missing post-payment liability resolution layer for the agent economy.
 
 ---
 
 ## 2. What It Does
 
-AgentCourt links pre-payment mandates to post-payment PayPal Disputes through cryptographic audit trails, deterministic verification, and bounded AI adjudication:
+Veripact links pre-payment mandates to post-payment PayPal Disputes through cryptographic audit trails, deterministic verification, and bounded AI adjudication:
 
 1. **AP2-Inspired Cryptographic Mandates**:
    - The user signs an Ed25519 **Intent Mandate** specifying constraints (ports >= 8, max price $120, allowed merchants).
    - The shopping agent evaluates real merchants, selects an offer, and generates a **Cart Mandate** cryptographically linked to the Intent Mandate hash.
-   - Upon creating an order via **PayPal Orders v2**, AgentCourt binds `order_binding = sha256(intent_hash || cart_hash || paypal_order_id)` and records it into PayPal's `purchase_units[0].custom_id`.
+   - Upon creating an order via **PayPal Orders v2**, Veripact binds `order_binding = sha256(intent_hash || cart_hash || paypal_order_id)` and records it into PayPal's `purchase_units[0].custom_id`.
 
 2. **Automated Evidence Pack Assembly & Deterministic Arbiter**:
-   - When a PayPal dispute arrives via Webhooks (`CUSTOMER.DISPUTE.CREATED`), AgentCourt aggregates the Intent Mandate, Cart Mandate, Merchant Listing, Delivery Inspection, and PayPal Order data.
+   - When a PayPal dispute arrives via Webhooks (`CUSTOMER.DISPUTE.CREATED`), Veripact aggregates the Intent Mandate, Cart Mandate, Merchant Listing, Delivery Inspection, and PayPal Order data.
    - Seven deterministic rules (**C1–C7**) verify mandate integrity, signature authenticity, time validity, order binding, spend caps, and merchant authorization.
    - **Deterministic Supremacy**: If *any* deterministic check fails, the verdict is immediately `OPERATOR_AT_FAULT`. An LLM can never override a rule failure.
 
 3. **Autonomous Agent Regret Attribution**:
    - Evaluates whether the shopping agent used an `OPTIMAL` policy or settled for a `FIRST_ACCEPTABLE` offer.
-   - If relative utility regret exceeds the threshold (> 15%), AgentCourt flags `WITHIN_MANDATE_REGRET` and plans a proportional goodwill offer rather than blaming the merchant.
+   - If relative utility regret exceeds the threshold (> 15%), Veripact flags `WITHIN_MANDATE_REGRET` and plans a proportional goodwill offer rather than blaming the merchant.
 
 4. **Human-in-the-Loop PayPal Dispute Execution**:
-   - Based on the verdict, AgentCourt plans an actionable PayPal Dispute step:
+   - Based on the verdict, Veripact plans an actionable PayPal Dispute step:
      - `MERCHANT_AT_FAULT` -> `accept-claim` (full refund) or `provide-evidence`.
      - `OPERATOR_AT_FAULT` -> `accept-claim` (operator-funded refund).
      - `WITHIN_MANDATE_REGRET` -> `make-offer` (goodwill partial refund / credit).
@@ -99,7 +99,7 @@ AgentCourt links pre-payment mandates to post-payment PayPal Disputes through cr
 
 ---
 
-## 7. What's Next for AgentCourt
+## 7. What's Next for Veripact
 
 - Standardizing the `order_binding` custom attribute with the AP2 working group.
 - Automated merchant settlement routing for merchant liability claims.

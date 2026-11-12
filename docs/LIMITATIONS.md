@@ -1,14 +1,14 @@
 # Limitations & Threat Model
 
-AgentCourt is an open-source proof-of-concept built for the **PayPal AI Hackathon 2026**. This document outlines known boundaries, security scope, and system limitations.
+Veripact is an open-source proof-of-concept built for the **PayPal AI Hackathon 2026**. This document outlines known boundaries, security scope, and system limitations.
 
 ---
 
 ## 1. PayPal Sandbox Scope
 
 - **Sandbox Only**: All PayPal integrations (Orders v2, Disputes API, Webhooks, and simulated buyer assertions) are hard-coded to `https://api-m.sandbox.paypal.com`. Real money is never handled.
-- **Dispute Categories**: The PayPal Disputes API natively classifies disputes under categories such as `MERCHANDISE_OR_SERVICE_NOT_RECEIVED` (INR) and `MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED` (SNAD). There is currently no native PayPal dispute category for "Agent Hallucination" or "Suboptimal Choice / Agent Regret". AgentCourt handles these off-chain within its cryptographic ledger and maps them to PayPal's evidence submission (`provide-evidence`) or settlement flows (`accept-claim`, `make-offer`).
-- **Operator Liability Settlement**: The PayPal API does not have an automated mechanism to directly debit an AI agent operator's wallet or credit line for off-mandate violations (`OPERATOR_AT_FAULT`). AgentCourt logs the liability entry into its append-only ledger and arms the merchant with a complete defense evidence pack to prevent merchant-side loss at PayPal adjudication.
+- **Dispute Categories**: The PayPal Disputes API natively classifies disputes under categories such as `MERCHANDISE_OR_SERVICE_NOT_RECEIVED` (INR) and `MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED` (SNAD). There is currently no native PayPal dispute category for "Agent Hallucination" or "Suboptimal Choice / Agent Regret". Veripact handles these off-chain within its cryptographic ledger and maps them to PayPal's evidence submission (`provide-evidence`) or settlement flows (`accept-claim`, `make-offer`).
+- **Operator Liability Settlement**: The PayPal API does not have an automated mechanism to directly debit an AI agent operator's wallet or credit line for off-mandate violations (`OPERATOR_AT_FAULT`). Veripact logs the liability entry into its append-only ledger and arms the merchant with a complete defense evidence pack to prevent merchant-side loss at PayPal adjudication.
 
 ---
 

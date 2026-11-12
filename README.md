@@ -1,8 +1,10 @@
-# AgentCourt
+# Veripact
 
-> *"AP2 tells you what was authorized. AgentCourt tells you who pays when it goes wrong."*
+<sub>Project codename: AgentCourt (the Python package and repository keep the `agentcourt` name).</sub>
 
-**AgentCourt** is the post-payment liability resolution layer for autonomous agentic commerce, built for the **PayPal AI Hackathon 2026**.
+> *"AP2 tells you what was authorized. Veripact tells you who pays when it goes wrong."*
+
+**Veripact** is the post-payment liability resolution layer for autonomous agentic commerce, built for the **PayPal AI Hackathon 2026**.
 
 > **Live demo:** https://agentcourt-iryc.onrender.com (free tier: first load may take ~50s to wake) &nbsp;·&nbsp; **Demo video (< 3 min):** `<YOUTUBE_URL>`
 >
@@ -10,7 +12,7 @@
 
 When an AI shopping agent buys something on behalf of a user and it goes wrong, who is liable? Today's agent-payment protocols (like Google's AP2 mandates) record buyer intent and spend caps, but when an agent hallucinates, suffers price drift, accepts suboptimal offers, or receives mismatched merchandise, the liability question is left unresolved.
 
-AgentCourt bridges this gap:
+Veripact bridges this gap:
 1. **At checkout**: Binds an AP2-inspired signed intent and cart mandate to the PayPal sandbox order (`custom_id`).
 2. **At dispute**: Automatically ingests PayPal customer disputes, compiles a cryptographic evidence pack (mandate vs. merchant listing vs. delivery report vs. candidate trace), and computes deterministic liability checks and agent regret metrics.
 3. **Execution**: Presents the human merchant operator with an actionable liability verdict and request preview, executing standard settlement actions through the PayPal Disputes API (`accept-claim`, `provide-evidence`, or `make-offer`).
@@ -26,7 +28,7 @@ AgentCourt bridges this gap:
 
 ## Real vs. Simulated Boundaries
 
-In full adherence to hackathon integrity, AgentCourt maintains an honest distinction between real systems and simulated components:
+In full adherence to hackathon integrity, Veripact maintains an honest distinction between real systems and simulated components:
 
 | Component | Status | Details |
 |---|---|---|
@@ -144,7 +146,7 @@ Visit `http://localhost:5173` to explore the dashboard.
 
 ## 15-Scenario Evaluation Harness Results
 
-AgentCourt includes a rigorous 15-scenario evaluation test suite (`eval/run_eval.py`) validating all baseline, breach, security, and edge-case paths:
+Veripact includes a rigorous 15-scenario evaluation test suite (`eval/run_eval.py`) validating all baseline, breach, security, and edge-case paths:
 
 | ID | Scenario | Category | Expected Verdict | Actual Verdict | Status |
 |:---|:---|:---|:---|:---|:---:|
@@ -170,7 +172,7 @@ AgentCourt includes a rigorous 15-scenario evaluation test suite (`eval/run_eval
 
 ## Academic & Industry References
 
-AgentCourt's mandate specification and threat model draw from foundational research in agentic commerce and verifiable mandates:
+Veripact's mandate specification and threat model draw from foundational research in agentic commerce and verifiable mandates:
 
 1. **Google & PayPal Agent Payment Protocol (AP2)**:
    - *Autonomous Payment Protocol (AP2) Mandate Framework*, Google / PayPal working initiatives (2025–2026).
@@ -183,7 +185,7 @@ AgentCourt's mandate specification and threat model draw from foundational resea
 
 ## Deployment to Render
 
-AgentCourt includes a production-ready `Dockerfile` and `render.yaml` blueprint.
+Veripact includes a production-ready `Dockerfile` and `render.yaml` blueprint.
 
 ### Deploy Steps:
 1. Connect your GitHub repository (`https://github.com/Rkaaaa404/agentcourt`) to [Render](https://dashboard.render.com).
