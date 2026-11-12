@@ -7,7 +7,7 @@
 
 **Veripact** is the post-payment liability resolution layer for autonomous agentic commerce, built for the **PayPal AI Hackathon 2026**.
 
-> **Live demo:** https://veripact.onrender.com (free tier: first load may take ~50s to wake) &nbsp;·&nbsp; **Demo video (2 min):** https://youtu.be/ct_kdF_KJ4A
+> **Live demo:** https://veripact.onrender.com (free tier: first load may take ~50s to wake) &nbsp;·&nbsp; **Demo video (2 min):** https://youtu.be/J3BGgV-0Wx0
 >
 > **Try it in 60 seconds:** open **Purchase** → run the shopping agent (signed mandates + real PayPal sandbox order) → open the **Buyer Simulator** to file a dispute → go to **Cases** for the Bryntum timeline → open a case to see the evidence pack, the C1–C7 verdict and the planned PayPal Disputes action.
 
