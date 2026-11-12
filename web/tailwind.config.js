@@ -7,18 +7,22 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', '"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
+        serif: ['"Newsreader"', 'Georgia', 'Cambria', 'serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       colors: {
-        veripact: {
-          blue: '#1D6CE0',
-          blueDark: '#1558BA',
-          ice: '#EFF6FF',
-          surface: '#F8FAFC',
-          border: '#E2E8F0',
-          ink: '#0F172A',
-          muted: '#475569',
+        editorial: {
+          bg: '#F8F3EB',
+          surface: '#FFFFFF',
+          stone: '#F2EBE0',
+          border: '#DCCDBB',
+          burgundy: '#541827',
+          burgundyDeep: '#42121E',
+          terracotta: '#BF4827',
+          terracottaHover: '#A33B1E',
+          ink: '#292522',
+          muted: '#6E635D',
         }
       }
     },

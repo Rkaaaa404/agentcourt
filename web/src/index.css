@@ -8,9 +8,9 @@
 
 body {
   margin: 0;
-  background-color: #ffffff;
-  color: #0f172a;
-  font-family: "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #F8F3EB;
+  color: #292522;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -19,32 +19,32 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Crisp light scrollbars */
+/* Warm editorial scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f8fafc;
+  background: #F2EBE0;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #DCCDBB;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #b8ac9c;
 }
 
-/* Blend Bryntum Scheduler cleanly with Veripact crisp white UI */
+/* Blend Bryntum Scheduler cleanly with Veripact warm editorial surface */
 .veripact-bryntum-host .b-scheduler {
   border-radius: 0.75rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #DCCDBB;
   overflow: hidden;
   --b-panel-background: #ffffff;
-  --b-grid-header-background: #f8fafc;
-  --b-grid-cell-border-color: #e2e8f0;
-  --b-stripe-odd-color: #fafbfc;
-  font-family: "Plus Jakarta Sans", "Inter", sans-serif;
+  --b-grid-header-background: #F2EBE0;
+  --b-grid-cell-border-color: #DCCDBB;
+  --b-stripe-odd-color: #FCF9F4;
+  font-family: "Inter", sans-serif;
 }
 
 .veripact-bryntum-host .b-sch-event {
@@ -52,9 +52,9 @@ body {
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 2px 6px rgba(42, 34, 30, 0.12);
 }
 
 .veripact-bryntum-host .b-grid-row:hover .b-grid-cell {
-  background-color: rgba(29, 108, 224, 0.04);
+  background-color: rgba(180, 72, 37, 0.04);
 }

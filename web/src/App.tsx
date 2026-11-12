@@ -78,7 +78,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans selection:bg-blue-100 selection:text-blue-900">
+    <div className="min-h-screen bg-[#F8F3EB] text-[#292522] flex flex-col font-sans selection:bg-[#FAEDE9] selection:text-[#541827]">
       {/* Top Navbar */}
       <Navbar
         activeTab={activeTab}
@@ -126,19 +126,19 @@ export default function App() {
       />
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-slate-50/70 px-6 py-5">
-        <div className="max-w-[1320px] mx-auto flex flex-col md:flex-row items-center justify-between text-xs text-slate-500 gap-2">
+      <footer className="border-t border-[#DCCDBB] bg-[#F2EBE0] px-6 py-5">
+        <div className="max-w-[1320px] mx-auto flex flex-col md:flex-row items-center justify-between text-xs text-[#6E635D] gap-2">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-900">Veripact</span>
+            <span className="font-serif font-bold tracking-[0.06em] uppercase text-[#541827]">VERIPACT</span>
             <span>&bull;</span>
-            <span>Autonomous Liability &amp; Dispute Resolution for AI Commerce</span>
+            <span>Liability Infrastructure for Autonomous Commerce</span>
           </div>
           <div className="flex flex-wrap items-center gap-2.5 text-[11px]">
-            <span className="text-[#1D6CE0] font-mono font-medium">PayPal Orders v2 &amp; Disputes</span>
+            <span className="text-[#BF4827] font-mono font-medium">PayPal Orders v2 &amp; Disputes</span>
             <span>&bull;</span>
-            <span className="text-emerald-700 font-mono font-medium">Bryntum Scheduler</span>
+            <span className="text-[#52705C] font-mono font-medium">Bryntum Scheduler</span>
             <span>&bull;</span>
-            <span className="text-slate-700 font-mono font-medium">AG Grid</span>
+            <span className="text-[#541827] font-mono font-medium">AG Grid</span>
             <span>&bull;</span>
             <span>MIT License</span>
           </div>

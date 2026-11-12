@@ -8,14 +8,14 @@ ModuleRegistry.registerModules([AllCommunityModule])
 
 export const veripactGridTheme = themeQuartz.withParams({
   backgroundColor: '#ffffff',
-  foregroundColor: '#0f172a',
-  headerBackgroundColor: '#f8fafc',
-  headerTextColor: '#475569',
+  foregroundColor: '#292522',
+  headerBackgroundColor: '#F2EBE0',
+  headerTextColor: '#6e635d',
   oddRowBackgroundColor: '#ffffff',
-  borderColor: '#e2e8f0',
-  rowHoverColor: '#f8fafc',
-  selectedRowBackgroundColor: '#eff6ff',
-  fontFamily: '"Plus Jakarta Sans", "Inter", system-ui, sans-serif',
+  borderColor: '#DCCDBB',
+  rowHoverColor: '#F8F3EB',
+  selectedRowBackgroundColor: '#fdf2ee',
+  fontFamily: '"Inter", system-ui, sans-serif',
   headerFontSize: 11,
   headerFontWeight: 600,
   fontSize: 12,
@@ -25,28 +25,28 @@ export const veripactGridTheme = themeQuartz.withParams({
 
 export const VERDICT_STYLES: Record<string, { badge: string; label: string; dot: string }> = {
   MERCHANT_AT_FAULT: {
-    badge: 'bg-rose-50 text-rose-700 border-rose-200',
+    badge: 'bg-[#FAEDE9] text-[#BF4827] border-[#EBC4BA]',
     label: 'MERCHANT_AT_FAULT',
-    dot: 'bg-rose-500',
+    dot: 'bg-[#BF4827]',
   },
   OPERATOR_AT_FAULT: {
-    badge: 'bg-red-50 text-red-700 border-red-200',
+    badge: 'bg-[#FAEDE9] text-[#541827] border-[#F2BEB5]',
     label: 'OPERATOR_AT_FAULT',
-    dot: 'bg-red-500',
+    dot: 'bg-[#BF4827]',
   },
   WITHIN_MANDATE_REGRET: {
-    badge: 'bg-amber-50 text-amber-700 border-amber-200',
+    badge: 'bg-[#FEF3DC] text-[#9A5B13] border-[#F5DEB0]',
     label: 'WITHIN_MANDATE_REGRET',
-    dot: 'bg-amber-500',
+    dot: 'bg-[#C97B18]',
   },
   NO_FAULT: {
-    badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    badge: 'bg-[#EDF2EE] text-[#52705C] border-[#C5D3C9]',
     label: 'NO_FAULT',
-    dot: 'bg-emerald-500',
+    dot: 'bg-[#52705C]',
   },
   NEEDS_HUMAN: {
-    badge: 'bg-sky-50 text-sky-700 border-sky-200',
+    badge: 'bg-[#F2EBE0] text-[#541827] border-[#DCCDBB]',
     label: 'NEEDS_HUMAN',
-    dot: 'bg-sky-500',
+    dot: 'bg-[#541827]',
   },
 }

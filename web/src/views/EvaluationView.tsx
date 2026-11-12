@@ -59,7 +59,7 @@ export default function EvaluationView() {
         field: 'id',
         width: 155,
         cellRenderer: (p: ICellRendererParams<EvalScenarioResult>) => (
-          <span className="font-mono text-[11px] text-[#1D6CE0] font-semibold">{p.value}</span>
+          <span className="font-mono text-[11px] text-[#BF4827] font-semibold">{p.value}</span>
         ),
       },
       {
@@ -68,7 +68,7 @@ export default function EvaluationView() {
         minWidth: 260,
         flex: 1.5,
         cellRenderer: (p: ICellRendererParams<EvalScenarioResult>) => (
-          <span className="font-medium text-slate-900">{p.value}</span>
+          <span className="font-medium text-[#292522]">{p.value}</span>
         ),
       },
       {
@@ -76,7 +76,7 @@ export default function EvaluationView() {
         field: 'category',
         width: 150,
         cellRenderer: (p: ICellRendererParams<EvalScenarioResult>) => (
-          <span className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-[10px] font-semibold text-slate-700">
+          <span className="px-2 py-0.5 rounded-md bg-[#F8F3EB] border border-[#DCCDBB] text-[10px] font-semibold text-[#574D48]">
             {p.value}
           </span>
         ),
@@ -113,11 +113,11 @@ export default function EvaluationView() {
         width: 100,
         cellRenderer: (p: ICellRendererParams<EvalScenarioResult>) =>
           p.value ? (
-            <span className="inline-flex items-center gap-1 text-emerald-700 font-bold text-[11px]">
+            <span className="inline-flex items-center gap-1 text-[#52705C] font-bold text-[11px]">
               <CheckCircle2 className="w-3.5 h-3.5" /> PASS
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 text-rose-700 font-bold text-[11px]">
+            <span className="inline-flex items-center gap-1 text-[#BF4827] font-bold text-[11px]">
               <XCircle className="w-3.5 h-3.5" /> FAIL
             </span>
           ),
@@ -129,13 +129,13 @@ export default function EvaluationView() {
   return (
     <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* View Header */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+      <div className="bg-white border border-[#DCCDBB] rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
         <div>
-          <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2.5">
-            <FileText className="w-5 h-5 text-[#1D6CE0]" />
+          <h2 className="font-serif text-2xl font-bold text-[#541827] flex items-center gap-2.5">
+            <FileText className="w-5 h-5 text-[#BF4827]" />
             15-Scenario Adversarial Evaluation Matrix (AG Grid)
           </h2>
-          <p className="text-xs text-slate-500 mt-1 max-w-2xl">
+          <p className="text-xs text-[#6E635D] mt-1 max-w-2xl">
             Deterministic &amp; AI safety benchmark across baseline, tampered signature, price drift, replay attack,
             unauthorized merchant, prompt-injection shield, and regret scenarios.
           </p>
@@ -144,7 +144,7 @@ export default function EvaluationView() {
         <button
           onClick={fetchResults}
           disabled={isLoading}
-          className="px-4 py-2 bg-[#1D6CE0] hover:bg-[#1558BA] text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition disabled:opacity-50 self-start md:self-auto shadow-sm"
+          className="px-4 py-2 bg-[#BF4827] hover:bg-[#A33B1E] text-white rounded-xl text-xs font-semibold flex items-center gap-2 transition disabled:opacity-50 self-start md:self-auto shadow-sm"
         >
           <RotateCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
           Refresh Evaluation
@@ -152,7 +152,7 @@ export default function EvaluationView() {
       </div>
 
       {error && (
-        <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 flex items-center gap-2">
+        <div className="p-4 bg-[#FAEDE9] border border-[#EBC4BA] rounded-xl text-xs text-[#BF4827] flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
@@ -161,45 +161,45 @@ export default function EvaluationView() {
       {/* KPI Cards */}
       {evalData && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-1 shadow-sm">
-            <span className="text-[11px] text-slate-500 uppercase tracking-wider font-semibold">Total Scenarios</span>
-            <div className="text-2xl font-extrabold text-slate-900 tabular-nums">{evalData.total_scenarios}</div>
-            <span className="text-[10px] text-emerald-700 font-semibold">100% Reproducible Fixtures</span>
+          <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 space-y-1 shadow-sm">
+            <span className="text-[11px] text-[#6E635D] uppercase tracking-wider font-semibold">Total Scenarios</span>
+            <div className="text-2xl font-extrabold text-[#541827] tabular-nums">{evalData.total_scenarios}</div>
+            <span className="text-[10px] text-[#52705C] font-semibold">100% Reproducible Fixtures</span>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-1 shadow-sm">
-            <span className="text-[11px] text-slate-500 uppercase tracking-wider font-semibold">Accuracy Score</span>
-            <div className="text-2xl font-extrabold text-emerald-700 tabular-nums">{evalData.accuracy_pct}%</div>
-            <span className="text-[10px] text-slate-500">{evalData.passed_scenarios} / {evalData.total_scenarios} Passed</span>
+          <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 space-y-1 shadow-sm">
+            <span className="text-[11px] text-[#6E635D] uppercase tracking-wider font-semibold">Accuracy Score</span>
+            <div className="text-2xl font-extrabold text-[#52705C] tabular-nums">{evalData.accuracy_pct}%</div>
+            <span className="text-[10px] text-[#6E635D]">{evalData.passed_scenarios} / {evalData.total_scenarios} Passed</span>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-1 shadow-sm">
-            <span className="text-[11px] text-slate-500 uppercase tracking-wider font-semibold">Execution Time</span>
-            <div className="text-2xl font-extrabold text-[#1D6CE0] tabular-nums">{evalData.elapsed_ms} ms</div>
-            <span className="text-[10px] text-slate-500">Pure In-Memory Evaluation</span>
+          <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 space-y-1 shadow-sm">
+            <span className="text-[11px] text-[#6E635D] uppercase tracking-wider font-semibold">Execution Time</span>
+            <div className="text-2xl font-extrabold text-[#BF4827] tabular-nums">{evalData.elapsed_ms} ms</div>
+            <span className="text-[10px] text-[#6E635D]">Pure In-Memory Evaluation</span>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-1 shadow-sm">
-            <span className="text-[11px] text-slate-500 uppercase tracking-wider font-semibold">Verdict Classes</span>
-            <div className="text-2xl font-extrabold text-slate-900 tabular-nums">5 / 5</div>
-            <span className="text-[10px] text-slate-500">All Verdict Categories Covered</span>
+          <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 space-y-1 shadow-sm">
+            <span className="text-[11px] text-[#6E635D] uppercase tracking-wider font-semibold">Verdict Classes</span>
+            <div className="text-2xl font-extrabold text-[#541827] tabular-nums">5 / 5</div>
+            <span className="text-[10px] text-[#6E635D]">All Verdict Categories Covered</span>
           </div>
         </div>
       )}
 
       {/* Verdict Class Breakdown Cards */}
       {evalData?.class_breakdown && (
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3">
-          <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-5 shadow-sm space-y-3">
+          <h3 className="text-xs font-bold text-[#541827] uppercase tracking-wider">
             Accuracy by Verdict Class
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs">
             {Object.entries(evalData.class_breakdown).map(([clsName, stat]) => (
-              <div key={clsName} className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-                <div className="font-mono text-[11px] text-slate-900 font-bold truncate">{clsName}</div>
-                <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+              <div key={clsName} className="p-3 bg-[#F8F3EB] rounded-xl border border-[#DCCDBB] space-y-1">
+                <div className="font-mono text-[11px] text-[#292522] font-bold truncate">{clsName}</div>
+                <div className="flex justify-between text-[11px] text-[#6E635D] font-mono">
                   <span>{stat.correct}/{stat.total}</span>
-                  <span className="text-emerald-700 font-bold">{stat.accuracy_pct}%</span>
+                  <span className="text-[#52705C] font-bold">{stat.accuracy_pct}%</span>
                 </div>
               </div>
             ))}
@@ -208,16 +208,16 @@ export default function EvaluationView() {
       )}
 
       {/* Scenarios AG Grid */}
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm space-y-4 p-5">
+      <div className="bg-white border border-[#DCCDBB] rounded-2xl overflow-hidden shadow-sm space-y-4 p-5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div className="relative flex-1 max-w-sm">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+            <Search className="w-4 h-4 text-[#8C7F77] absolute left-3 top-2.5" />
             <input
               type="text"
               placeholder="Search scenarios, IDs, or verdicts..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 focus:outline-none focus:border-[#1D6CE0]"
+              className="w-full bg-white border border-[#DCCDBB] rounded-xl pl-9 pr-4 py-2 text-xs text-[#292522] focus:outline-none focus:border-[#BF4827]"
             />
           </div>
 
@@ -228,8 +228,8 @@ export default function EvaluationView() {
                 onClick={() => setFilterCategory(cat)}
                 className={`px-3 py-1.5 rounded-lg transition font-semibold ${
                   filterCategory === cat
-                    ? 'bg-[#1D6CE0] text-white'
-                    : 'text-slate-600 hover:text-slate-900 bg-slate-50 border border-slate-200'
+                    ? 'bg-[#BF4827] text-white'
+                    : 'text-[#6E635D] hover:text-[#292522] bg-[#F8F3EB] border border-[#DCCDBB]'
                 }`}
               >
                 {cat}
@@ -238,7 +238,7 @@ export default function EvaluationView() {
           </div>
         </div>
 
-        <div className="w-full rounded-xl overflow-hidden border border-slate-200">
+        <div className="w-full rounded-xl overflow-hidden border border-[#DCCDBB]">
           <AgGridReact<EvalScenarioResult>
             theme={veripactGridTheme}
             rowData={filteredResults}
