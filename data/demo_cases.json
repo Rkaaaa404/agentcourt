@@ -240,7 +240,7 @@
       "api_path": "/v1/customer/disputes/PP-D-1001-SANDBOX/accept-claim",
       "request_payload": {
         "accept_claim_type": "REFUND",
-        "note": "AgentCourt Auto-Resolution: Merchant accepting buyer claim. Reason: Merchant at fault: Physical delivery contradicts signed listing specifications. Details: Delivered ports count (6) is less than listing spec (8)"
+        "note": "Veripact Auto-Resolution: Merchant accepting buyer claim. Reason: Merchant at fault: Physical delivery contradicts signed listing specifications. Details: Delivered ports count (6) is less than listing spec (8)"
       },
       "rationale": "Delivery report contradicted listing specifications. Full refund recommended for buyer.",
       "off_paypal_ledger_entry": null,
@@ -486,7 +486,7 @@
         "evidences": [
           {
             "evidence_type": "OTHER",
-            "notes": "AgentCourt Mandate Defense: Merchant delivered faithfully to the signed cart. Dispute stems from an Agent Operator mandate violation (C5). Cryptographic evidence pack attached."
+            "notes": "Veripact Mandate Defense: Merchant delivered faithfully to the signed cart. Dispute stems from an Agent Operator mandate violation (C5). Cryptographic evidence pack attached."
           }
         ]
       },
@@ -768,7 +768,7 @@
           "value": "17.25"
         },
         "offer_type": "REFUND",
-        "note": "AgentCourt Goodwill Remedy: Transaction complied with authorized mandate, but agent regret index reached 21.3%. Offering proportional goodwill refund of $17.25 USD."
+        "note": "Veripact Goodwill Remedy: Transaction complied with authorized mandate, but agent regret index reached 21.3%. Offering proportional goodwill refund of $17.25 USD."
       },
       "rationale": "Mandate was respected, but agent selected a suboptimal offer. Propose proportional goodwill partial refund via make-offer without penalizing merchant.",
       "off_paypal_ledger_entry": {

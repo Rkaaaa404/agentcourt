@@ -1,7 +1,7 @@
 """Tests for configuration and sandbox-only safety constraints."""
 
 import pytest
-from agentcourt.config import SANDBOX_URL, Settings
+from veripact.config import SANDBOX_URL, Settings
 from pydantic import ValidationError
 
 
@@ -24,6 +24,6 @@ def test_config_rejects_live_url():
 
 
 def test_config_uses_render_external_url(monkeypatch):
-    monkeypatch.setenv("RENDER_EXTERNAL_URL", "https://agentcourt.onrender.com/")
+    monkeypatch.setenv("RENDER_EXTERNAL_URL", "https://veripact.onrender.com/")
     s = Settings(PAYPAL_ENV="sandbox", PAYPAL_BASE_URL=SANDBOX_URL)
-    assert s.APP_URL == "https://agentcourt.onrender.com"
+    assert s.APP_URL == "https://veripact.onrender.com"

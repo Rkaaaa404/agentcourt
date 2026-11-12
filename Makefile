@@ -3,7 +3,7 @@
 PYTHON ?= python
 
 help:
-	@echo "AgentCourt Makefile targets:"
+	@echo "Veripact Makefile targets:"
 	@echo "  make dev          - Run backend and frontend concurrently"
 	@echo "  make test         - Run backend pytest suite"
 	@echo "  make lint         - Run ruff linter and format check"
@@ -31,7 +31,7 @@ seed:
 	$(PYTHON) scripts/seed_demo.py
 
 dev-backend:
-	uvicorn backend.agentcourt.api.main:app --reload --port 8000
+	uvicorn backend.veripact.api.main:app --reload --port 8000
 
 dev-frontend:
 	cd web && npm run dev

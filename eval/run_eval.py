@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Offline 15-Scenario Evaluation Harness for AgentCourt.
+"""Offline 15-Scenario Evaluation Harness for Veripact.
 
 Executes all scenarios purely through the Arbiter without network calls.
 Outputs structured metrics to eval/results.json and prints a GitHub-flavored Markdown table.
@@ -17,7 +17,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "backend"))
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from agentcourt.arbiter import ArbiterEngine
+from veripact.arbiter import ArbiterEngine
 
 from eval.scenarios import generate_evaluation_scenarios
 
@@ -26,7 +26,7 @@ RESULTS_FILE = Path(__file__).resolve().parent / "results.json"
 
 async def run_evaluation() -> int:
     print("=" * 80)
-    print("AgentCourt Offline Evaluation Harness (15 Scenarios)")
+    print("Veripact Offline Evaluation Harness (15 Scenarios)")
     print("=" * 80)
 
     engine = ArbiterEngine()

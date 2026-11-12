@@ -24,8 +24,8 @@ from dotenv import load_dotenv
 
 load_dotenv(PROJECT_ROOT / ".env")
 
-from agentcourt.config import settings
-from agentcourt.payments import (
+from veripact.config import settings
+from veripact.payments import (
     DisputeCreateRequest,
     DisputeReason,
     OrderCreateRequest,
@@ -36,7 +36,7 @@ from agentcourt.payments import (
 
 async def run_gonogo() -> int:
     print("=" * 65)
-    print("AgentCourt PayPal Sandbox Go/No-Go Verification")
+    print("Veripact PayPal Sandbox Go/No-Go Verification")
     print(f"Target Base URL: {settings.PAYPAL_BASE_URL}")
     print("=" * 65)
 
@@ -59,7 +59,7 @@ async def run_gonogo() -> int:
         order_req = OrderCreateRequest(
             amount=Decimal("15.00"),
             currency="USD",
-            item_name="AgentCourt Sandbox Verification Item",
+            item_name="Veripact Sandbox Verification Item",
             custom_id=test_binding,
             return_url="http://localhost:8000/api/checkout/success",
             cancel_url="http://localhost:8000/api/checkout/cancel",
@@ -101,7 +101,7 @@ async def run_gonogo() -> int:
                 amount=Decimal("15.00"),
                 currency="USD",
                 reason=DisputeReason.MERCHANDISE_OR_SERVICE_NOT_RECEIVED,
-                note="AgentCourt automated sandbox go/no-go verification test.",
+                note="Veripact automated sandbox go/no-go verification test.",
             )
             dispute = await client.create_dispute(dispute_req)
             print(f"  -> SUCCESS! Dispute ID: {dispute.dispute_id}, Status: {dispute.status}")

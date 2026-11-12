@@ -1,2 +1,2 @@
-"""AgentCourt evaluation package."""
+"""Veripact evaluation package."""
 

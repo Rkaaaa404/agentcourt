@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Seed realistic demo scenarios for AgentCourt.
+"""Seed realistic demo scenarios for Veripact.
 
 Generates the 3 hackathon flagship scenarios (S1, S2, S3) with complete
 cryptographic mandates, candidate traces, arbiter verdicts, and timeline records.
@@ -17,17 +17,17 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "backend"))
 
-from agentcourt.agent.catalog import CatalogItem
-from agentcourt.agent.scoring import (
+from veripact.agent.catalog import CatalogItem
+from veripact.agent.scoring import (
     SelectionPolicy,
     evaluate_catalog_and_select,
 )
-from agentcourt.api.cases import CaseRecord, register_case
-from agentcourt.arbiter import ArbiterEngine, EvidencePack
-from agentcourt.executor import plan_action_for_verdict
-from agentcourt.ledger import LedgerEventType, default_ledger
-from agentcourt.mandate.crypto import generate_keypair
-from agentcourt.mandate.models import (
+from veripact.api.cases import CaseRecord, register_case
+from veripact.arbiter import ArbiterEngine, EvidencePack
+from veripact.executor import plan_action_for_verdict
+from veripact.ledger import LedgerEventType, default_ledger
+from veripact.mandate.crypto import generate_keypair
+from veripact.mandate.models import (
     CartItem,
     CartMandate,
     IntentMandate,
@@ -442,7 +442,7 @@ def seed_all_cases() -> list[CaseRecord]:
 
 def main() -> int:
     print("=" * 60)
-    print("AgentCourt Demo Seeding Script")
+    print("Veripact Demo Seeding Script")
     print("=" * 60)
     cases = seed_all_cases()
     for c in cases:

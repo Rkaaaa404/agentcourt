@@ -4,8 +4,8 @@ from decimal import Decimal
 
 import pytest
 import respx
-from agentcourt.config import Settings
-from agentcourt.payments import (
+from veripact.config import Settings
+from veripact.payments import (
     AcceptClaimType,
     AdjudicationOutcome,
     DisputeCreateRequest,

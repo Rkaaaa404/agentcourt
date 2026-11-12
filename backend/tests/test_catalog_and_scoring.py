@@ -2,13 +2,13 @@
 
 from decimal import Decimal
 
-from agentcourt.agent.catalog import get_all_catalog_items, load_merchants
-from agentcourt.agent.scoring import (
+from veripact.agent.catalog import get_all_catalog_items, load_merchants
+from veripact.agent.scoring import (
     SelectionPolicy,
     calculate_utility,
     evaluate_catalog_and_select,
 )
-from agentcourt.mandate.models import UserConstraints
+from veripact.mandate.models import UserConstraints
 
 
 def test_catalog_load():

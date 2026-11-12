@@ -1,6 +1,7 @@
 # Veripact
 
-<sub>Project codename: AgentCourt (the Python package and repository keep the `agentcourt` name).</sub>
+**Team Sehari Semalam** · PayPal AI Hackathon 2026
+
 
 > *"AP2 tells you what was authorized. Veripact tells you who pays when it goes wrong."*
 
@@ -93,8 +94,8 @@ flowchart TD
 
 ### 1. Clone & Configure
 ```bash
-git clone https://github.com/Rkaaaa404/agentcourt.git
-cd agentcourt
+git clone https://github.com/Rkaaaa404/veripact.git
+cd veripact
 cp .env.example .env
 ```
 
@@ -132,7 +133,7 @@ pytest backend/tests/ -v
 python scripts/seed_demo.py
 
 # Terminal 1: Backend API
-uvicorn backend.agentcourt.api.main:app --reload --port 8000
+uvicorn backend.veripact.api.main:app --reload --port 8000
 
 # Terminal 2: Web UI
 cd web
@@ -188,7 +189,7 @@ Veripact's mandate specification and threat model draw from foundational researc
 Veripact includes a production-ready `Dockerfile` and `render.yaml` blueprint.
 
 ### Deploy Steps:
-1. Connect your GitHub repository (`https://github.com/Rkaaaa404/agentcourt`) to [Render](https://dashboard.render.com).
+1. Connect your GitHub repository (`https://github.com/Rkaaaa404/veripact`) to [Render](https://dashboard.render.com).
 2. Select **New > Blueprint** and link the repository.
 3. Add the following Environment Variables in the Render Dashboard:
    - `PAYPAL_ENV=sandbox`

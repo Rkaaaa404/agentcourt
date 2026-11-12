@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Environment and configuration checker for AgentCourt.
+"""Environment and configuration checker for Veripact.
 
 Verifies that:
 1. Hardcoded sandbox-only constraints are respected.
@@ -25,20 +25,20 @@ except ImportError:
 
 def main() -> int:
     print("=" * 60)
-    print("AgentCourt Environment & Safety Pre-flight Check")
+    print("Veripact Environment & Safety Pre-flight Check")
     print("=" * 60)
 
     # 1. Check Safety Violations First
     paypal_env = os.environ.get("PAYPAL_ENV", "sandbox").strip().lower()
     if paypal_env != "sandbox":
         print(f"[FATAL SAFETY VIOLATION] PAYPAL_ENV is set to '{paypal_env}'.")
-        print("AgentCourt strictly permits 'sandbox' only. Aborting immediately.")
+        print("Veripact strictly permits 'sandbox' only. Aborting immediately.")
         return 1
 
     paypal_url = os.environ.get("PAYPAL_BASE_URL", "https://api-m.sandbox.paypal.com").strip().rstrip("/")
     if paypal_url != "https://api-m.sandbox.paypal.com":
         print(f"[FATAL SAFETY VIOLATION] PAYPAL_BASE_URL is set to '{paypal_url}'.")
-        print("AgentCourt strictly hardcodes 'https://api-m.sandbox.paypal.com'. Aborting.")
+        print("Veripact strictly hardcodes 'https://api-m.sandbox.paypal.com'. Aborting.")
         return 1
 
     print("[OK] Safety constraints verified: SANDBOX ONLY.")

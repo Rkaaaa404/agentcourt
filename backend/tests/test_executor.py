@@ -3,15 +3,15 @@
 from decimal import Decimal
 
 import pytest
-from agentcourt.arbiter.models import ArbiterVerdict, VerdictType
-from agentcourt.executor import (
+from veripact.arbiter.models import ArbiterVerdict, VerdictType
+from veripact.executor import (
     ActionExecutor,
     ExecutionError,
     PlannedActionType,
     is_action_permitted,
     plan_action_for_verdict,
 )
-from agentcourt.payments.models import (
+from veripact.payments.models import (
     AcceptClaimType,
     AdjudicationOutcome,
     CaptureResponse,
@@ -22,7 +22,7 @@ from agentcourt.payments.models import (
     OrderResponse,
     RequireEvidenceAction,
 )
-from agentcourt.payments.port import PaymentsPort
+from veripact.payments.port import PaymentsPort
 
 
 class MockExecutorPayments(PaymentsPort):

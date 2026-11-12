@@ -4,17 +4,17 @@ import time
 from decimal import Decimal
 from typing import Any
 
-from agentcourt.agent.catalog import CatalogItem
-from agentcourt.agent.scoring import (
+from veripact.agent.catalog import CatalogItem
+from veripact.agent.scoring import (
     CandidateTrace,
     SelectionPolicy,
     evaluate_catalog_and_select,
 )
-from agentcourt.arbiter.models import EvidencePack, VerdictType
-from agentcourt.mandate.crypto import (
+from veripact.arbiter.models import EvidencePack, VerdictType
+from veripact.mandate.crypto import (
     generate_keypair,
 )
-from agentcourt.mandate.models import (
+from veripact.mandate.models import (
     CartItem,
     CartMandate,
     IntentMandate,

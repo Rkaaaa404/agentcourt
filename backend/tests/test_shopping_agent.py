@@ -3,9 +3,9 @@
 from decimal import Decimal
 
 import pytest
-from agentcourt.agent import SelectionPolicy, ShoppingAgent
-from agentcourt.ledger import default_ledger
-from agentcourt.payments.models import (
+from veripact.agent import SelectionPolicy, ShoppingAgent
+from veripact.ledger import default_ledger
+from veripact.payments.models import (
     AcceptClaimType,
     AdjudicationOutcome,
     CaptureResponse,
@@ -16,7 +16,7 @@ from agentcourt.payments.models import (
     OrderResponse,
     RequireEvidenceAction,
 )
-from agentcourt.payments.port import PaymentsPort
+from veripact.payments.port import PaymentsPort
 
 
 class MockPayments(PaymentsPort):

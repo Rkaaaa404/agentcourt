@@ -2,7 +2,7 @@
 
 from decimal import Decimal
 
-from agentcourt.mandate.crypto import (
+from veripact.mandate.crypto import (
     canonical_hash,
     canonical_json_bytes,
     canonical_json_str,

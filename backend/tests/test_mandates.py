@@ -3,8 +3,8 @@
 import time
 from decimal import Decimal
 
-from agentcourt.mandate.crypto import generate_keypair
-from agentcourt.mandate.models import (
+from veripact.mandate.crypto import generate_keypair
+from veripact.mandate.models import (
     CartItem,
     CartMandate,
     IntentMandate,

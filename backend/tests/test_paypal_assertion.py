@@ -3,7 +3,7 @@
 import base64
 import json
 
-from agentcourt.payments.paypal_client import create_auth_assertion
+from veripact.payments.paypal_client import create_auth_assertion
 
 
 def test_create_auth_assertion():

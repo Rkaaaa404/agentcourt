@@ -1,7 +1,7 @@
 """Unit tests for ArbiterEngine adjudication logic."""
 
 import pytest
-from agentcourt.arbiter import ArbiterEngine, VerdictType
+from veripact.arbiter import ArbiterEngine, VerdictType
 
 from eval.scenarios import generate_evaluation_scenarios
 

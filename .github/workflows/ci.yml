@@ -1,4 +1,4 @@
-name: AgentCourt CI
+name: Veripact CI
 
 on:
   push:
@@ -31,7 +31,7 @@ jobs:
 
       - name: Run Pytest
         run: |
-          pytest backend/tests/ -v --cov=backend/agentcourt
+          pytest backend/tests/ -v --cov=backend/veripact
 
       - name: Run Offline Eval
         run: |

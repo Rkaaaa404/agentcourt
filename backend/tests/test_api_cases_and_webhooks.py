@@ -4,10 +4,10 @@ import time
 from decimal import Decimal
 
 import pytest
-from agentcourt.api.cases import CaseRecord, register_case
-from agentcourt.api.main import app
-from agentcourt.arbiter import ArbiterVerdict, EvidencePack, VerdictType
-from agentcourt.executor import plan_action_for_verdict
+from veripact.api.cases import CaseRecord, register_case
+from veripact.api.main import app
+from veripact.arbiter import ArbiterVerdict, EvidencePack, VerdictType
+from veripact.executor import plan_action_for_verdict
 from httpx import ASGITransport, AsyncClient
 
 from eval.scenarios import _create_base_pack
@@ -94,7 +94,7 @@ async def test_cases_endpoints(sample_case):
 
 @pytest.mark.asyncio
 async def test_webhooks_endpoint(monkeypatch):
-    from agentcourt.config import settings
+    from veripact.config import settings
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
@@ -146,8 +146,8 @@ async def test_checkout_cancel_callback():
 
 @pytest.mark.asyncio
 async def test_seed_and_auto_seed_inside_event_loop(monkeypatch):
-    from agentcourt.api import cases as cases_mod
-    from agentcourt.api.store import default_store
+    from veripact.api import cases as cases_mod
+    from veripact.api.store import default_store
 
     monkeypatch.setattr(default_store, "load_all_cases", lambda: [])
     cases_mod.CASES_REGISTRY.clear()

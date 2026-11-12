@@ -27,4 +27,4 @@ Veripact incorporates AI at specific, bounded runtime stages where natural langu
 - **Role**: Used in a final pre-submission audit pass: adding the Google Gemini provider, fixing the retired default LLM model ID, repairing documentation links, and aligning the sponsor and AI-tool disclosures with what the code actually does.
 
 ### APIMatic Context Plugin
-- **Status**: Not used in this build. Veripact calls the PayPal REST APIs directly via `httpx` (`backend/agentcourt/payments/paypal_client.py`).
+- **Status**: Not used in this build. Veripact calls the PayPal REST APIs directly via `httpx` (`backend/veripact/payments/paypal_client.py`).

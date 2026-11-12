@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: agentcourt
+    name: agentcourt  # Render service id kept so the live URL (agentcourt-iryc.onrender.com) stays stable
     runtime: docker
     plan: free
     healthCheckPath: /healthz
@@ -28,6 +28,6 @@ services:
       - key: REGRET_THRESHOLD
         value: "0.15"
       - key: DATABASE_URL
-        value: sqlite:///./agentcourt.db
+        value: sqlite:///./veripact.db
       - key: LEDGER_DB_PATH
         value: ./data/ledger.db

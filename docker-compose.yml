@@ -1,9 +1,9 @@
 services:
-  agentcourt:
+  veripact:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: agentcourt
+    container_name: veripact
     ports:
       - "8000:8000"
     env_file:
@@ -11,8 +11,8 @@ services:
     environment:
       - PAYPAL_ENV=sandbox
     volumes:
-      - agentcourt_data:/app/data
+      - veripact_data:/app/data
     restart: unless-stopped
 
 volumes:
-  agentcourt_data:
+  veripact_data:

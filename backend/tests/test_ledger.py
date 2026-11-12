@@ -1,6 +1,6 @@
 """Tests for append-only hash-chained ledger and tamper verification."""
 
-from agentcourt.ledger import GENESIS_PREV_HASH, AppendOnlyLedger, LedgerEventType
+from veripact.ledger import GENESIS_PREV_HASH, AppendOnlyLedger, LedgerEventType
 
 
 def test_ledger_append_and_integrity():

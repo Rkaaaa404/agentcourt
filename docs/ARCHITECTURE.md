@@ -91,7 +91,7 @@ $$\text{Relative Regret} = \frac{U_{\text{optimal}} - U_{\text{chosen}}}{U_{\tex
 
 ## 5. Cryptographic Ledger & Audit Trail
 
-The internal ledger (`backend/agentcourt/ledger/ledger.py`) implements a tamper-evident hash chain:
+The internal ledger (`backend/veripact/ledger/ledger.py`) implements a tamper-evident hash chain:
 $$\text{Hash}_0 = \text{SHA-256}(\text{Genesis})$$
 $$\text{Hash}_i = \text{SHA-256}(\text{Index}_i \parallel \text{Timestamp}_i \parallel \text{EventType}_i \parallel \text{PayloadHash}_i \parallel \text{Hash}_{i-1})$$
 Any retroactive modification of ledger events invalidates the chain integrity check (`verify_integrity() -> False`).
