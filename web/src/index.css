@@ -140,7 +140,14 @@ body {
   animation: veripactMarquee 32s linear infinite;
 }
 
-.marquee-wrapper:hover .animate-marquee {
+.animate-marquee-slow {
+  display: flex;
+  width: max-content;
+  animation: veripactMarquee 48s linear infinite;
+}
+
+.marquee-wrapper:hover .animate-marquee,
+.marquee-wrapper:hover .animate-marquee-slow {
   animation-play-state: paused;
 }
 
@@ -248,6 +255,7 @@ body {
   .animate-area-fade,
   .animate-float-slow,
   .animate-marquee,
+  .animate-marquee-slow,
   .animate-beam-flow,
   .animate-ambient-shift,
   .animate-ping-slow,
