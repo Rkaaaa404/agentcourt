@@ -255,7 +255,7 @@ export default function PurchaseView({
             <button
               onClick={handlePurchase}
               disabled={isLoading}
-              className="absolute right-3 bottom-3 px-4 py-2 bg-[#BF4827] hover:bg-[#A33B1E] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition disabled:opacity-50 shadow-sm"
+              className="absolute right-3 bottom-3 px-4 py-2 bg-[#BF4827] hover:bg-[#A33B1E] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 shadow-sm animate-glow-pulse"
             >
               {isLoading ? (
                 <>
@@ -288,10 +288,38 @@ export default function PurchaseView({
                 setPrompt('USB-C docking station, 8+ ports, max $120')
                 setPolicy('FIRST_ACCEPTABLE')
               }}
-              className="px-2.5 py-1 bg-[#FEF3DC] hover:bg-[#FDE8BD] text-[#9A5B13] border border-[#F5DEB0] rounded-lg font-medium transition"
+              className="px-2.5 py-1 bg-[#FEF3DC] hover:bg-[#FDE8BD] text-[#9A5B13] border border-[#F5DEB0] rounded-lg font-medium transition hover:-translate-y-0.5"
             >
               First-Acceptable Policy (Triggers S3 Regret)
             </button>
+          </div>
+
+          {/* Live Continuous Cryptographic Binding Stream */}
+          <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-[#DCCDBB]/70 text-[11px] font-mono text-[#6E635D]">
+            <div className="flex items-center gap-2">
+              <svg viewBox="0 0 24 24" className="w-4 h-4 animate-radar-spin text-[#52705C]" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" strokeDasharray="4 3" />
+                <circle cx="12" cy="12" r="2.5" fill="currentColor" />
+              </svg>
+              <span>Ed25519 Keypair Ready &bull; SHA-256 Digest Linker Active</span>
+            </div>
+            <div className="flex items-center gap-2 text-[#541827]">
+              <span>Intent</span>
+              <svg viewBox="0 0 48 10" className="w-10 h-2.5 overflow-visible" aria-hidden="true">
+                <path d="M 2 5 L 46 5" stroke="#BF4827" strokeWidth="1.5" className="animate-beam-flow" />
+                <circle r="2.5" fill="#BF4827">
+                  <animateMotion dur="1.8s" repeatCount="indefinite" path="M 2 5 L 46 5" />
+                </circle>
+              </svg>
+              <span>Cart</span>
+              <svg viewBox="0 0 48 10" className="w-10 h-2.5 overflow-visible" aria-hidden="true">
+                <path d="M 2 5 L 46 5" stroke="#52705C" strokeWidth="1.5" className="animate-beam-flow" />
+                <circle r="2.5" fill="#52705C">
+                  <animateMotion dur="1.8s" begin="0.9s" repeatCount="indefinite" path="M 2 5 L 46 5" />
+                </circle>
+              </svg>
+              <span className="text-[#003087] font-bold">PayPal Order</span>
+            </div>
           </div>
         </div>
       </div>

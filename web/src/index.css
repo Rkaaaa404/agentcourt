@@ -195,6 +195,47 @@ body {
   }
 }
 
+@keyframes veripactRadarSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes veripactFloatReverse {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(6px) translateX(-4px);
+  }
+}
+
+@keyframes veripactGlowPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(191, 72, 39, 0.18);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(191, 72, 39, 0);
+  }
+}
+
+.animate-radar-spin {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: veripactRadarSpin 14s linear infinite;
+}
+
+.animate-float-reverse {
+  animation: veripactFloatReverse 7s ease-in-out infinite;
+}
+
+.animate-glow-pulse {
+  animation: veripactGlowPulse 2.4s ease-out infinite;
+}
+
 .veripact-page-enter {
   animation: veripactFadeUp 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -259,6 +300,9 @@ body {
   .animate-beam-flow,
   .animate-ambient-shift,
   .animate-ping-slow,
+  .animate-radar-spin,
+  .animate-float-reverse,
+  .animate-glow-pulse,
   .veripact-page-enter,
   .veripact-stagger-1,
   .veripact-stagger-2,

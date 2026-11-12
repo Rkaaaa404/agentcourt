@@ -1059,9 +1059,19 @@ export default function OverviewView({
 
           {/* Right Expandable Why Veripact */}
           <div className="lg:col-span-6 space-y-5">
-            <h2 className="font-serif editorial-expand-title text-3xl font-semibold tracking-tight text-[#541827]">
-              Why Veripact
-            </h2>
+            <div className="flex items-center justify-between gap-4">
+              <h2 className="font-serif editorial-expand-title text-3xl font-semibold tracking-tight text-[#541827]">
+                Why Veripact
+              </h2>
+              {/* Live Rotating Cryptographic Seal SVG */}
+              <div className="flex items-center gap-2 text-[10px] font-mono text-[#52705C] bg-[#EDF2EE] border border-[#C5D3C9] px-2.5 py-1 rounded-full">
+                <svg viewBox="0 0 24 24" className="w-4 h-4 animate-radar-spin" fill="none" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9" stroke="#52705C" strokeWidth="1.6" strokeDasharray="4 3" />
+                  <circle cx="12" cy="12" r="3" fill="#52705C" />
+                </svg>
+                <span>HASH-CHAIN ACTIVE</span>
+              </div>
+            </div>
 
             <div className="space-y-3">
               {[
@@ -1153,7 +1163,11 @@ export default function OverviewView({
       {/* 6. Bottom Deep Oxblood Burgundy Banner */}
       <section className="relative overflow-hidden bg-gradient-to-r from-[#3D101B] via-[#541827] to-[#681F31] text-white">
         <div
-          className="absolute right-0 top-0 bottom-0 w-44 bg-[#BF4827]/20 -skew-x-12 translate-x-12 pointer-events-none"
+          className="absolute -left-16 -bottom-16 w-56 h-56 rounded-full bg-[#BF4827]/20 blur-2xl animate-float-reverse pointer-events-none"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute right-0 top-0 bottom-0 w-44 bg-[#BF4827]/20 -skew-x-12 translate-x-12 animate-ambient-shift pointer-events-none"
           aria-hidden="true"
         />
         <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-9 relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">

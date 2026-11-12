@@ -67,14 +67,15 @@ export default function Navbar({
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 transition whitespace-nowrap ${
+                  className={`px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-all duration-200 whitespace-nowrap ${
                     active
-                      ? 'bg-white text-[#541827] shadow-sm border border-[#DCCDBB] font-semibold'
-                      : 'text-[#6E635D] hover:text-[#292522] hover:bg-white/70'
+                      ? 'bg-white text-[#541827] shadow-sm border border-[#DCCDBB] font-semibold scale-[1.02]'
+                      : 'text-[#6E635D] hover:text-[#292522] hover:bg-white/70 hover:-translate-y-0.5'
                   }`}
                 >
-                  {item.icon}
+                  <span className={active ? 'text-[#BF4827]' : ''}>{item.icon}</span>
                   <span>{item.label}</span>
+                  {active && <span className="w-1.5 h-1.5 rounded-full bg-[#BF4827] animate-pulse ml-0.5" />}
                 </button>
               )
             })}

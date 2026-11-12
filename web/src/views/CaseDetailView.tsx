@@ -157,7 +157,8 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
     <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Top Breadcrumb & Case Bar */}
       <ScrollReveal delayMs={0}>
-        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-sm">
+        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-5 space-y-3 shadow-sm">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
@@ -199,6 +200,31 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
             {c.status}
           </span>
         </div>
+          </div>
+
+          {/* Continuous Cryptographic Binding Flow */}
+          <div className="pt-2.5 border-t border-[#DCCDBB]/70 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-[#6E635D]">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#52705C] animate-pulse" />
+              <span>Evidence Chain:</span>
+              <span className="text-[#541827] font-semibold">IntentMandate</span>
+              <svg viewBox="0 0 40 10" className="w-8 h-2.5 overflow-visible" aria-hidden="true">
+                <path d="M 2 5 L 38 5" stroke="#52705C" strokeWidth="1.5" className="animate-beam-flow" />
+                <circle r="2.2" fill="#52705C">
+                  <animateMotion dur="1.6s" repeatCount="indefinite" path="M 2 5 L 38 5" />
+                </circle>
+              </svg>
+              <span className="text-[#541827] font-semibold">C1–C7 Guardrails</span>
+              <svg viewBox="0 0 40 10" className="w-8 h-2.5 overflow-visible" aria-hidden="true">
+                <path d="M 2 5 L 38 5" stroke="#BF4827" strokeWidth="1.5" className="animate-beam-flow" />
+                <circle r="2.2" fill="#BF4827">
+                  <animateMotion dur="1.6s" begin="0.8s" repeatCount="indefinite" path="M 2 5 L 38 5" />
+                </circle>
+              </svg>
+              <span className="text-[#003087] font-bold">PayPal Settlement</span>
+            </div>
+            <span className="text-[10px] text-[#8C7F77]">Tamper-evident audit verified</span>
+          </div>
       </div>
       </ScrollReveal>
 

@@ -21,6 +21,18 @@ export default function App() {
   const [isSeeding, setIsSeeding] = useState(false)
   const [checkoutOrderId, setCheckoutOrderId] = useState<string | null>(null)
   const [checkoutNotice, setCheckoutNotice] = useState<{ status: string; message?: string } | null>(null)
+  const [scrollProgress, setScrollProgress] = useState(0)
+
+  useEffect(() => {
+    const onScroll = () => {
+      const doc = document.documentElement
+      const total = doc.scrollHeight - window.innerHeight
+      setScrollProgress(total > 0 ? Math.min(100, Math.max(0, (window.scrollY / total) * 100)) : 0)
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [activeTab])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -79,6 +91,14 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F8F3EB] text-[#292522] flex flex-col font-sans selection:bg-[#FAEDE9] selection:text-[#541827]">
+      {/* Top Scroll Progress Indicator */}
+      <div className="fixed top-0 left-0 right-0 h-[2.5px] z-50 pointer-events-none bg-transparent">
+        <div
+          className="h-full bg-gradient-to-r from-[#541827] via-[#BF4827] to-[#52705C] transition-[width] duration-150 ease-out"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+
       {/* Top Navbar */}
       <Navbar
         activeTab={activeTab}

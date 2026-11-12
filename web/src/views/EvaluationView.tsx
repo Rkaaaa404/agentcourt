@@ -176,10 +176,27 @@ export default function EvaluationView() {
             <span className="text-[10px] text-[#52705C] font-semibold">100% Reproducible Fixtures</span>
           </div>
 
-          <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 space-y-1 shadow-sm veripact-stagger-2 veripact-card-hover">
-            <span className="text-[11px] text-[#6E635D] uppercase tracking-wider font-semibold">Accuracy Score</span>
-            <div className="text-2xl font-extrabold text-[#52705C] tabular-nums">{animatedAccuracy}%</div>
-            <span className="text-[10px] text-[#6E635D]">{evalData.passed_scenarios} / {evalData.total_scenarios} Passed</span>
+          <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 flex items-center justify-between shadow-sm veripact-stagger-2 veripact-card-hover">
+            <div className="space-y-1">
+              <span className="text-[11px] text-[#6E635D] uppercase tracking-wider font-semibold">Accuracy Score</span>
+              <div className="text-2xl font-extrabold text-[#52705C] tabular-nums">{animatedAccuracy}%</div>
+              <span className="text-[10px] text-[#6E635D]">{evalData.passed_scenarios} / {evalData.total_scenarios} Passed</span>
+            </div>
+            <svg viewBox="0 0 44 44" className="w-12 h-12 -rotate-90 shrink-0" aria-hidden="true">
+              <circle cx="22" cy="22" r="17" fill="none" stroke="#E6DCD0" strokeWidth="4" />
+              <circle
+                cx="22"
+                cy="22"
+                r="17"
+                fill="none"
+                stroke="#52705C"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeDasharray="106.8"
+                strokeDashoffset={106.8 - (106.8 * animatedAccuracy) / 100}
+                className="transition-all duration-700 ease-out"
+              />
+            </svg>
           </div>
 
           <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 space-y-1 shadow-sm veripact-stagger-3 veripact-card-hover">
@@ -216,7 +233,7 @@ export default function EvaluationView() {
                 </div>
                 <div className="w-full h-1.5 rounded-full bg-[#E6DCD0] overflow-hidden">
                   <div
-                    className="h-full bg-[#52705C] rounded-full transition-all duration-700 ease-out"
+                    className="h-full bg-[#52705C] rounded-full transition-all duration-700 ease-out veripact-shimmer-bar"
                     style={{ width: `${stat.accuracy_pct}%` }}
                   />
                 </div>

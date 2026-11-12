@@ -273,25 +273,39 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
       {/* Executive KPI Strip */}
       <ScrollReveal delayMs={0}>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 flex items-center justify-between shadow-sm veripact-stagger-1 veripact-card-hover">
+        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 flex items-center justify-between shadow-sm veripact-stagger-1 veripact-card-hover relative overflow-hidden">
           <div>
             <span className="text-[11px] uppercase tracking-wider text-[#6E635D] font-semibold">Dispute Cases</span>
             <div className="text-2xl font-extrabold text-[#541827] tabular-nums mt-1">{animatedCasesCount}</div>
             <span className="text-[11px] text-[#9A5B13] font-medium">{pendingCount} awaiting approval</span>
           </div>
-          <div className="p-2.5 rounded-xl bg-[#FAEDE9] border border-[#EBC4BA] text-[#BF4827]">
-            <ShieldAlert className="w-5 h-5" />
+          <div className="flex flex-col items-end gap-1.5">
+            <div className="p-2.5 rounded-xl bg-[#FAEDE9] border border-[#EBC4BA] text-[#BF4827]">
+              <ShieldAlert className="w-5 h-5" />
+            </div>
+            <svg viewBox="0 0 60 18" className="w-14 h-4 overflow-visible" aria-hidden="true">
+              <path d="M 2 14 C 15 14, 20 6, 32 9 C 42 12, 48 4, 56 4" fill="none" stroke="#BF4827" strokeWidth="1.8" className="animate-draw-path" />
+              <circle cx="56" cy="4" r="3" fill="#BF4827" className="animate-ping-slow" />
+              <circle cx="56" cy="4" r="2" fill="#BF4827" />
+            </svg>
           </div>
         </div>
 
-        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 flex items-center justify-between shadow-sm veripact-stagger-2 veripact-card-hover">
+        <div className="bg-white border border-[#DCCDBB] rounded-2xl p-4 flex items-center justify-between shadow-sm veripact-stagger-2 veripact-card-hover relative overflow-hidden">
           <div>
             <span className="text-[11px] uppercase tracking-wider text-[#6E635D] font-semibold">Disputed Volume</span>
             <div className="text-2xl font-extrabold text-[#541827] tabular-nums mt-1">${animatedExposure.toFixed(2)}</div>
             <span className="text-[11px] text-[#6E635D]">USD across sandbox orders</span>
           </div>
-          <div className="p-2.5 rounded-xl bg-[#EDF2EE] border border-[#C5D3C9] text-[#52705C]">
-            <DollarSign className="w-5 h-5" />
+          <div className="flex flex-col items-end gap-1.5">
+            <div className="p-2.5 rounded-xl bg-[#EDF2EE] border border-[#C5D3C9] text-[#52705C]">
+              <DollarSign className="w-5 h-5" />
+            </div>
+            <svg viewBox="0 0 60 18" className="w-14 h-4 overflow-visible" aria-hidden="true">
+              <path d="M 2 15 C 14 12, 24 14, 34 8 C 44 4, 50 6, 56 3" fill="none" stroke="#52705C" strokeWidth="1.8" className="animate-draw-path" />
+              <circle cx="56" cy="3" r="3" fill="#52705C" className="animate-ping-slow" />
+              <circle cx="56" cy="3" r="2" fill="#52705C" />
+            </svg>
           </div>
         </div>
 
@@ -306,8 +320,11 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
               {ledgerStatus ? `${animatedLedgerEntries} SHA-256 entries` : 'Verifying...'}
             </span>
           </div>
-          <div className="p-2.5 rounded-xl bg-[#EDF2EE] border border-[#C5D3C9] text-[#52705C]">
-            <ShieldCheck className="w-5 h-5" />
+          <div className="relative p-2.5 rounded-xl bg-[#EDF2EE] border border-[#C5D3C9] text-[#52705C]">
+            <ShieldCheck className="w-5 h-5 relative z-10" />
+            <svg viewBox="0 0 36 36" className="absolute -inset-1 w-12 h-12 animate-radar-spin opacity-45 pointer-events-none" fill="none" aria-hidden="true">
+              <circle cx="18" cy="18" r="16" stroke="#52705C" strokeWidth="1.2" strokeDasharray="4 4" />
+            </svg>
           </div>
         </div>
 
@@ -317,7 +334,9 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
             <div className="text-2xl font-extrabold text-[#541827] tabular-nums mt-1">{animatedWebhookCount}</div>
             <span className="text-[11px] text-[#6E635D]">Deduplicated &amp; reconciled</span>
           </div>
-          <div className="p-2.5 rounded-xl bg-[#F2EBE0] border border-[#DCCDBB] text-[#541827]">
+          <div className="relative p-2.5 rounded-xl bg-[#F2EBE0] border border-[#DCCDBB] text-[#541827]">
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#BF4827] animate-ping" />
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#BF4827]" />
             <Webhook className="w-5 h-5" />
           </div>
         </div>
