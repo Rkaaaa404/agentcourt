@@ -15,10 +15,10 @@ import {
 } from 'lucide-react'
 import { BryntumScheduler } from '@bryntum/scheduler-react'
 import '@bryntum/scheduler/scheduler.css'
-import '@bryntum/scheduler/stockholm-dark.css'
+import '@bryntum/scheduler/stockholm-light.css'
 import { AgGridReact } from 'ag-grid-react'
 import type { ColDef, ICellRendererParams } from 'ag-grid-community'
-import { agentCourtGridTheme, VERDICT_STYLES } from '../agGridSetup'
+import { veripactGridTheme, VERDICT_STYLES } from '../agGridSetup'
 import { CaseSummary } from '../types'
 
 interface CasesTimelineViewProps {
@@ -179,7 +179,7 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
         minWidth: 195,
         flex: 1.2,
         cellRenderer: (p: ICellRendererParams<CaseSummary>) => (
-          <span className="font-mono font-semibold text-white">{p.value}</span>
+          <span className="font-mono font-semibold text-slate-900">{p.value}</span>
         ),
       },
       {
@@ -188,15 +188,15 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
         minWidth: 145,
         flex: 1,
         cellRenderer: (p: ICellRendererParams<CaseSummary>) => (
-          <span className="font-mono text-slate-300">{p.value}</span>
+          <span className="font-mono text-slate-600">{p.value}</span>
         ),
       },
       {
         headerName: 'Amount',
         field: 'disputed_amount',
-        width: 115,
+        width: 120,
         cellRenderer: (p: ICellRendererParams<CaseSummary>) => (
-          <span className="font-mono font-semibold text-emerald-400">
+          <span className="font-mono font-semibold text-slate-900 tabular-nums">
             ${p.value} {p.data?.currency}
           </span>
         ),
@@ -204,7 +204,7 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
       {
         headerName: 'Arbiter Verdict',
         field: 'verdict',
-        minWidth: 190,
+        minWidth: 195,
         flex: 1.1,
         cellRenderer: (p: ICellRendererParams<CaseSummary>) => {
           const st = VERDICT_STYLES[p.value] || VERDICT_STYLES.NEEDS_HUMAN
@@ -221,7 +221,7 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
         field: 'action_type',
         width: 155,
         cellRenderer: (p: ICellRendererParams<CaseSummary>) => (
-          <span className="font-mono text-[11px] text-sky-300 bg-slate-900 px-2 py-0.5 rounded border border-slate-700/80">
+          <span className="font-mono text-[11px] text-[#1D6CE0] bg-[#EFF6FF] px-2.5 py-0.5 rounded-md border border-blue-200">
             {p.value}
           </span>
         ),
@@ -233,12 +233,12 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
         flex: 1,
         cellRenderer: (p: ICellRendererParams<CaseSummary>) =>
           p.value ? (
-            <span className="inline-flex items-center gap-1 text-emerald-400 font-medium text-xs">
+            <span className="inline-flex items-center gap-1 text-emerald-700 font-semibold text-xs">
               <CheckCircle2 className="w-3.5 h-3.5" />
               {p.data?.execution_mode === 'paypal_sandbox' ? 'Settled (Sandbox)' : 'Settled (Fallback)'}
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 text-amber-300 font-medium text-xs">
+            <span className="inline-flex items-center gap-1 text-amber-700 font-semibold text-xs">
               <Clock className="w-3.5 h-3.5" />
               {p.data?.lifecycle_stage || 'INQUIRY'} (Pending)
             </span>
@@ -251,7 +251,7 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
         sortable: false,
         filter: false,
         cellRenderer: () => (
-          <span className="text-sky-400 font-semibold inline-flex items-center gap-1 text-xs">
+          <span className="text-[#1D6CE0] font-semibold inline-flex items-center gap-1 text-xs">
             Inspect <ArrowUpRight className="w-3.5 h-3.5" />
           </span>
         ),
@@ -261,66 +261,66 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
   )
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Executive KPI Strip */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl p-4 flex items-center justify-between">
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
           <div>
-            <span className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Dispute Cases</span>
-            <div className="text-2xl font-bold text-white font-mono mt-1">{cases.length}</div>
-            <span className="text-[11px] text-amber-300">{pendingCount} awaiting human approval</span>
+            <span className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">Dispute Cases</span>
+            <div className="text-2xl font-extrabold text-slate-900 tabular-nums mt-1">{cases.length}</div>
+            <span className="text-[11px] text-amber-700 font-medium">{pendingCount} awaiting approval</span>
           </div>
-          <div className="p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400">
+          <div className="p-2.5 rounded-xl bg-[#EFF6FF] border border-blue-100 text-[#1D6CE0]">
             <ShieldAlert className="w-5 h-5" />
           </div>
         </div>
 
-        <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl p-4 flex items-center justify-between">
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
           <div>
-            <span className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Disputed Volume</span>
-            <div className="text-2xl font-bold text-emerald-400 font-mono mt-1">${totalExposure.toFixed(2)}</div>
-            <span className="text-[11px] text-slate-400">USD across sandbox orders</span>
+            <span className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">Disputed Volume</span>
+            <div className="text-2xl font-extrabold text-slate-900 tabular-nums mt-1">${totalExposure.toFixed(2)}</div>
+            <span className="text-[11px] text-slate-500">USD across sandbox orders</span>
           </div>
-          <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+          <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700">
             <DollarSign className="w-5 h-5" />
           </div>
         </div>
 
-        <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl p-4 flex items-center justify-between">
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
           <div>
-            <span className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Hash-Chain Ledger</span>
-            <div className="text-2xl font-bold text-white font-mono mt-1">
+            <span className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">Hash-Chain Ledger</span>
+            <div className="text-2xl font-extrabold text-slate-900 font-mono mt-1">
               {ledgerStatus?.intact ? 'INTACT' : ledgerStatus ? 'ALERT' : '—'}
             </div>
-            <span className="text-[11px] text-emerald-400 font-mono">
-              {ledgerStatus ? `${ledgerStatus.total_entries} sealed SHA-256 entries` : 'Verifying...'}
+            <span className="text-[11px] text-emerald-700 font-mono">
+              {ledgerStatus ? `${ledgerStatus.total_entries} SHA-256 entries` : 'Verifying...'}
             </span>
           </div>
-          <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+          <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700">
             <ShieldCheck className="w-5 h-5" />
           </div>
         </div>
 
-        <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl p-4 flex items-center justify-between">
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
           <div>
-            <span className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Webhook Events</span>
-            <div className="text-2xl font-bold text-purple-300 font-mono mt-1">{webhookEvents.length}</div>
-            <span className="text-[11px] text-slate-400">Deduplicated &amp; reconciled</span>
+            <span className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">Webhook Events</span>
+            <div className="text-2xl font-extrabold text-slate-900 tabular-nums mt-1">{webhookEvents.length}</div>
+            <span className="text-[11px] text-slate-500">Deduplicated &amp; reconciled</span>
           </div>
-          <div className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
+          <div className="p-2.5 rounded-xl bg-[#EFF6FF] border border-blue-100 text-[#1D6CE0]">
             <Webhook className="w-5 h-5" />
           </div>
         </div>
       </div>
 
       {/* Filter & Action Toolbar */}
-      <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl p-5 flex flex-col xl:flex-row xl:items-center justify-between gap-4 shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col xl:flex-row xl:items-center justify-between gap-4 shadow-sm">
         <div>
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-sky-400" />
+          <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-[#1D6CE0]" />
             Dispute Lifecycle Scheduler (Bryntum) &amp; Case Registry (AG Grid)
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             Track inquiry windows, automated evidence preparation blocks, and PayPal response due dates in real time.
           </p>
         </div>
@@ -329,7 +329,7 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
           <button
             onClick={handleSimulateDeadlineShift}
             disabled={isShifting || cases.length === 0}
-            className="px-3 py-1.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-200 border border-purple-500/30 text-xs font-semibold flex items-center gap-1.5 transition disabled:opacity-50"
+            className="px-3 py-1.5 rounded-xl bg-[#EFF6FF] hover:bg-blue-100 text-[#1D6CE0] border border-blue-200 text-xs font-semibold flex items-center gap-1.5 transition disabled:opacity-50"
           >
             <Zap className={`w-3.5 h-3.5 ${isShifting ? 'animate-pulse' : ''}`} />
             {isShifting ? 'Escalating...' : 'Simulate Webhook Deadline Shift'}
@@ -338,25 +338,27 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
           <button
             onClick={handleSyncPayPal}
             disabled={isSyncing}
-            className="px-3 py-1.5 rounded-xl bg-sky-600/15 hover:bg-sky-600/25 text-sky-300 border border-sky-500/30 text-xs font-medium flex items-center gap-1.5 transition disabled:opacity-50"
+            className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold flex items-center gap-1.5 transition disabled:opacity-50"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 text-[#1D6CE0] ${isSyncing ? 'animate-spin' : ''}`} />
             {isSyncing ? 'Syncing...' : 'Sync Sandbox Disputes'}
           </button>
 
           {/* Filter Pills */}
-          <div className="flex flex-wrap items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
+          <div className="flex flex-wrap items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200 text-xs">
             {[
-              { id: 'ALL', label: `All (${cases.length})`, active: 'bg-sky-600 text-white' },
-              { id: 'MERCHANT_AT_FAULT', label: 'Merchant', active: 'bg-amber-600 text-white' },
-              { id: 'OPERATOR_AT_FAULT', label: 'Operator', active: 'bg-purple-600 text-white' },
-              { id: 'WITHIN_MANDATE_REGRET', label: 'Regret', active: 'bg-cyan-600 text-white' },
+              { id: 'ALL', label: `All (${cases.length})` },
+              { id: 'MERCHANT_AT_FAULT', label: 'Merchant' },
+              { id: 'OPERATOR_AT_FAULT', label: 'Operator' },
+              { id: 'WITHIN_MANDATE_REGRET', label: 'Regret' },
             ].map((pill) => (
               <button
                 key={pill.id}
                 onClick={() => setFilterVerdict(pill.id)}
-                className={`px-2.5 py-1 rounded-lg transition font-medium ${
-                  filterVerdict === pill.id ? pill.active : 'text-slate-400 hover:text-white'
+                className={`px-2.5 py-1 rounded-lg transition font-semibold ${
+                  filterVerdict === pill.id
+                    ? 'bg-[#1D6CE0] text-white shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {pill.label}
@@ -367,39 +369,39 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
       </div>
 
       {isLoading && (
-        <div className="p-4 bg-[#0b1120] border border-slate-800 rounded-xl text-xs text-sky-400 flex items-center gap-2">
-          <div className="w-3.5 h-3.5 border-2 border-sky-400 border-t-transparent rounded-full animate-spin" />
+        <div className="p-4 bg-white border border-slate-200 rounded-xl text-xs text-[#1D6CE0] flex items-center gap-2 shadow-sm">
+          <div className="w-3.5 h-3.5 border-2 border-[#1D6CE0] border-t-transparent rounded-full animate-spin" />
           <span>Synchronizing Bryntum Scheduler &amp; AG Grid registry...</span>
         </div>
       )}
 
       {syncMessage && (
-        <div className="p-4 bg-emerald-500/10 border border-emerald-500/25 rounded-xl text-xs text-emerald-300 flex items-center gap-2.5">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
+        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-center gap-2.5">
+          <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
           <span>{syncMessage}</span>
         </div>
       )}
 
       {error && (
-        <div className="p-4 bg-rose-500/10 border border-rose-500/25 rounded-xl text-xs text-rose-300 flex items-center gap-2.5">
-          <AlertCircle className="w-4 h-4 shrink-0" />
+        <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800 flex items-center gap-2.5">
+          <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Real Bryntum Scheduler Component */}
-      <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl p-5 shadow-lg shadow-black/20 space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-800 pb-3 gap-3">
+      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-100 pb-3 gap-3">
           <div className="flex items-center gap-3">
-            <span className="text-sm font-bold text-white flex items-center gap-2">
-              <Clock className="w-4 h-4 text-sky-400" />
+            <span className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <Clock className="w-4 h-4 text-[#1D6CE0]" />
               Bryntum Scheduler — Case Lifecycle &amp; Deadlines
             </span>
-            <div className="flex items-center bg-slate-950 border border-slate-800 rounded-lg p-0.5 text-[11px]">
+            <div className="flex items-center bg-slate-50 border border-slate-200 rounded-lg p-0.5 text-[11px]">
               <button
                 onClick={() => setViewPreset('dayAndWeek')}
                 className={`px-2 py-0.5 rounded-md transition ${
-                  viewPreset === 'dayAndWeek' ? 'bg-slate-800 text-white font-semibold' : 'text-slate-400'
+                  viewPreset === 'dayAndWeek' ? 'bg-white text-slate-900 font-semibold shadow-sm' : 'text-slate-500'
                 }`}
               >
                 Day / Week
@@ -407,7 +409,7 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
               <button
                 onClick={() => setViewPreset('hourAndDay')}
                 className={`px-2 py-0.5 rounded-md transition ${
-                  viewPreset === 'hourAndDay' ? 'bg-slate-800 text-white font-semibold' : 'text-slate-400'
+                  viewPreset === 'hourAndDay' ? 'bg-white text-slate-900 font-semibold shadow-sm' : 'text-slate-500'
                 }`}
               >
                 Hour / Day
@@ -415,24 +417,24 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-400">
+          <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-600">
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-slate-500" /> Inquiry Window
+              <span className="w-2.5 h-2.5 rounded-full bg-slate-400" /> Inquiry Window
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-400" /> Evidence Prep
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500" /> Evidence Prep
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-rose-500" /> Seller Due Date
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" /> Executed
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Executed
             </span>
           </div>
         </div>
 
         <div
-          className="agentcourt-bryntum-host w-full"
+          className="veripact-bryntum-host w-full"
           style={{ height: Math.max(270, filteredResources.length * 56 + 100) }}
         >
           {timelineData && (
@@ -464,34 +466,34 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
       </div>
 
       {/* AG Grid Dispute Cases Registry */}
-      <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl overflow-hidden shadow-lg shadow-black/20">
-        <div className="px-5 py-4 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-950/50">
+      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+        <div className="px-5 py-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/70">
           <div>
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-amber-400" />
+            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <ShieldAlert className="w-4 h-4 text-[#1D6CE0]" />
               Dispute Cases Registry (AG Grid) &mdash; {filteredCases.length} Cases
             </h3>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-slate-500">
               Sort, filter, or click any row to open the full cryptographic evidence pack and AI semantic comparison.
             </p>
           </div>
 
           <div className="relative w-full sm:w-64">
-            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-2.5" />
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
             <input
               type="text"
               value={quickFilter}
               onChange={(e) => setQuickFilter(e.target.value)}
               placeholder="Quick filter cases..."
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white focus:outline-none focus:border-sky-500"
+              className="w-full bg-white border border-slate-200 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-[#1D6CE0]"
             />
           </div>
         </div>
 
         <div className="p-4">
-          <div className="w-full rounded-xl overflow-hidden border border-slate-800">
+          <div className="w-full rounded-xl overflow-hidden border border-slate-200">
             <AgGridReact<CaseSummary>
-              theme={agentCourtGridTheme}
+              theme={veripactGridTheme}
               rowData={filteredCases}
               columnDefs={agColumnDefs}
               quickFilterText={quickFilter}
@@ -514,10 +516,10 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
 
       {/* Recent PayPal Webhook Activity */}
       {webhookEvents.length > 0 && (
-        <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl p-5 space-y-3">
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-3 shadow-sm">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-              <Webhook className="w-4 h-4 text-purple-400" />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+              <Webhook className="w-4 h-4 text-[#1D6CE0]" />
               Recent PayPal Webhook Audit Stream ({webhookEvents.length})
             </h3>
             <span className="text-[11px] font-mono text-slate-500">POST /api/webhooks/paypal</span>
@@ -526,17 +528,17 @@ export default function CasesTimelineView({ onSelectCase }: CasesTimelineViewPro
             {webhookEvents.slice(0, 6).map((w) => (
               <div
                 key={w.event_id}
-                className="p-3 rounded-xl bg-slate-950 border border-slate-800/80 flex items-center justify-between gap-2"
+                className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2"
               >
                 <div className="min-w-0">
-                  <div className="font-mono text-[11px] font-semibold text-white truncate">{w.event_type}</div>
+                  <div className="font-mono text-[11px] font-semibold text-slate-900 truncate">{w.event_type}</div>
                   <div className="font-mono text-[10px] text-slate-500 truncate">{w.event_id}</div>
                 </div>
                 <span
                   className={`shrink-0 text-[10px] font-mono px-2 py-0.5 rounded-full border ${
                     w.verified
-                      ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
-                      : 'bg-slate-800 text-slate-300 border-slate-700'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      : 'bg-white text-slate-600 border-slate-200'
                   }`}
                 >
                   {w.verified ? 'Verified' : 'Simulated'}

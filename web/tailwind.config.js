@@ -7,20 +7,18 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', '"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       colors: {
-        court: {
-          dark: '#030712',
-          surface: '#0B1120',
-          card: '#0F172A',
-          border: '#1E293B',
-          primary: '#0EA5E9',
-          accent: '#38BDF8',
-          success: '#10B981',
-          warning: '#F59E0B',
-          danger: '#EF4444',
+        veripact: {
+          blue: '#1D6CE0',
+          blueDark: '#1558BA',
+          ice: '#EFF6FF',
+          surface: '#F8FAFC',
+          border: '#E2E8F0',
+          ink: '#0F172A',
+          muted: '#475569',
         }
       }
     },

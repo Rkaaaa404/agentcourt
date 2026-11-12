@@ -1,51 +1,52 @@
 import {
   AllCommunityModule,
   ModuleRegistry,
-  colorSchemeDarkBlue,
   themeQuartz,
 } from 'ag-grid-community'
 
 ModuleRegistry.registerModules([AllCommunityModule])
 
-export const agentCourtGridTheme = themeQuartz.withPart(colorSchemeDarkBlue).withParams({
-  backgroundColor: '#050a16',
-  headerBackgroundColor: '#0b1222',
-  oddRowBackgroundColor: '#081020',
-  borderColor: '#1e293b',
-  rowHoverColor: 'rgba(14, 165, 233, 0.08)',
-  selectedRowBackgroundColor: 'rgba(14, 165, 233, 0.14)',
-  fontFamily: '"Inter", system-ui, sans-serif',
+export const veripactGridTheme = themeQuartz.withParams({
+  backgroundColor: '#ffffff',
+  foregroundColor: '#0f172a',
+  headerBackgroundColor: '#f8fafc',
+  headerTextColor: '#475569',
+  oddRowBackgroundColor: '#ffffff',
+  borderColor: '#e2e8f0',
+  rowHoverColor: '#f8fafc',
+  selectedRowBackgroundColor: '#eff6ff',
+  fontFamily: '"Plus Jakarta Sans", "Inter", system-ui, sans-serif',
   headerFontSize: 11,
+  headerFontWeight: 600,
   fontSize: 12,
-  rowHeight: 46,
-  headerHeight: 40,
+  rowHeight: 50,
+  headerHeight: 42,
 })
 
 export const VERDICT_STYLES: Record<string, { badge: string; label: string; dot: string }> = {
   MERCHANT_AT_FAULT: {
-    badge: 'bg-amber-500/15 text-amber-300 border-amber-500/35',
+    badge: 'bg-rose-50 text-rose-700 border-rose-200',
     label: 'MERCHANT_AT_FAULT',
-    dot: 'bg-amber-400',
+    dot: 'bg-rose-500',
   },
   OPERATOR_AT_FAULT: {
-    badge: 'bg-purple-500/15 text-purple-300 border-purple-500/35',
+    badge: 'bg-red-50 text-red-700 border-red-200',
     label: 'OPERATOR_AT_FAULT',
-    dot: 'bg-purple-400',
+    dot: 'bg-red-500',
   },
   WITHIN_MANDATE_REGRET: {
-    badge: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/35',
+    badge: 'bg-amber-50 text-amber-700 border-amber-200',
     label: 'WITHIN_MANDATE_REGRET',
-    dot: 'bg-cyan-400',
+    dot: 'bg-amber-500',
   },
   NO_FAULT: {
-    badge: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/35',
+    badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
     label: 'NO_FAULT',
-    dot: 'bg-emerald-400',
+    dot: 'bg-emerald-500',
   },
   NEEDS_HUMAN: {
-    badge: 'bg-orange-500/15 text-orange-300 border-orange-500/35',
+    badge: 'bg-sky-50 text-sky-700 border-sky-200',
     label: 'NEEDS_HUMAN',
-    dot: 'bg-orange-400',
+    dot: 'bg-sky-500',
   },
 }
-

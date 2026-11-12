@@ -103,26 +103,28 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
 
   if (isLoading) {
     return (
-      <div className="py-20 text-center space-y-3">
-        <div className="w-8 h-8 border-2 border-sky-500 border-t-transparent rounded-full animate-spin mx-auto" />
-        <p className="text-xs text-slate-400">Loading cryptographic evidence pack...</p>
+      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center space-y-3">
+        <div className="w-8 h-8 border-2 border-[#1D6CE0] border-t-transparent rounded-full animate-spin mx-auto" />
+        <p className="text-xs text-slate-500">Loading cryptographic evidence pack...</p>
       </div>
     )
   }
 
   if (error || !detail) {
     return (
-      <div className="p-6 bg-[#0b1120] border border-slate-800 rounded-2xl space-y-4">
-        <div className="text-xs text-rose-400 flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4" />
-          <span>{error || 'Case not found'}</span>
+      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="p-6 bg-white border border-slate-200 rounded-2xl space-y-4 shadow-sm">
+          <div className="text-xs text-rose-700 flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4" />
+            <span>{error || 'Case not found'}</span>
+          </div>
+          <button
+            onClick={onBack}
+            className="px-3.5 py-1.5 bg-[#1D6CE0] hover:bg-[#1558BA] text-xs text-white rounded-lg font-semibold transition"
+          >
+            Return to Cases
+          </button>
         </div>
-        <button
-          onClick={onBack}
-          className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-white rounded-lg transition"
-        >
-          Return to Cases
-        </button>
       </div>
     )
   }
@@ -152,29 +154,29 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
   }
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Top Breadcrumb & Case Bar */}
-      <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-lg shadow-black/20">
+      <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 shadow-sm">
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
-            className="p-2 bg-slate-950 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl border border-slate-800 transition"
+            className="p-2 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 rounded-xl border border-slate-200 transition"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
             <div className="flex flex-wrap items-center gap-2.5">
-              <h2 className="text-lg font-bold text-white font-mono">{c.case_id}</h2>
-              <span className="text-xs font-mono text-slate-300 bg-slate-950 px-2.5 py-0.5 rounded-lg border border-slate-800">
+              <h2 className="text-lg font-extrabold text-slate-900 font-mono">{c.case_id}</h2>
+              <span className="text-xs font-mono text-slate-600 bg-slate-50 px-2.5 py-0.5 rounded-lg border border-slate-200">
                 PayPal Dispute: {c.dispute_id}
               </span>
-              <span className="text-[11px] font-mono text-sky-300 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20">
+              <span className="text-[11px] font-mono text-[#1D6CE0] bg-[#EFF6FF] px-2.5 py-0.5 rounded-full border border-blue-200 font-semibold">
                 {c.lifecycle_stage}
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-1">
-              Disputed Amount: <strong className="text-emerald-400 font-mono">${c.disputed_amount} {c.currency}</strong> &bull; Reason:{' '}
-              <span className="font-mono text-slate-300">{ep.dispute_reason}</span>
+            <p className="text-xs text-slate-500 mt-1">
+              Disputed Amount: <strong className="text-slate-900 font-mono">${c.disputed_amount} {c.currency}</strong> &bull; Reason:{' '}
+              <span className="font-mono text-slate-700">{ep.dispute_reason}</span>
             </p>
           </div>
         </div>
@@ -182,25 +184,25 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
         <div className="flex flex-wrap items-center gap-2.5">
           {c.source_mode && (
             <span
-              className={`text-[10px] font-mono px-2.5 py-1 rounded-full border ${
+              className={`text-[10px] font-mono font-semibold px-2.5 py-1 rounded-full border ${
                 c.source_mode === 'PAYPAL_SANDBOX'
-                  ? 'bg-sky-500/10 text-sky-300 border-sky-500/30'
-                  : 'bg-slate-800 text-slate-300 border-slate-700'
+                  ? 'bg-[#EFF6FF] text-[#1D6CE0] border-blue-200'
+                  : 'bg-slate-100 text-slate-700 border-slate-200'
               }`}
             >
               {c.source_mode === 'PAYPAL_SANDBOX' ? 'PayPal Sandbox Live' : 'Simulated Fixture'}
             </span>
           )}
           {renderVerdictBadge(verdict.verdict)}
-          <span className="text-xs font-mono px-3 py-1 bg-slate-950 border border-slate-800 rounded-full text-slate-300">
+          <span className="text-xs font-mono px-3 py-1 bg-slate-50 border border-slate-200 rounded-full text-slate-700">
             {c.status}
           </span>
         </div>
       </div>
 
       {executionMessage && (
-        <div className="p-4 bg-emerald-500/10 border border-emerald-500/25 rounded-xl text-xs text-emerald-300 flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
+        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
           <span>{executionMessage}</span>
         </div>
       )}
@@ -208,85 +210,85 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
       {/* 3-Column Evidence Pack Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Column 1: Signed Mandates & Cryptographic Hashes */}
-        <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl p-5 space-y-4 shadow-sm">
-          <h3 className="text-sm font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
-            <KeyRound className="w-4 h-4 text-emerald-400" />
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
+          <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+            <KeyRound className="w-4 h-4 text-emerald-600" />
             1. AP2 Cryptographic Mandates
           </h3>
 
-          <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2 text-xs">
-            <div className="flex justify-between items-center font-semibold text-slate-200">
+          <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-xs">
+            <div className="flex justify-between items-center font-semibold text-slate-900">
               <span>IntentMandate (Buyer)</span>
-              <span className="text-[10px] text-emerald-400 flex items-center gap-1 font-mono">
+              <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1 font-mono">
                 <ShieldCheck className="w-3.5 h-3.5" /> Ed25519 Signed
               </span>
             </div>
-            <div className="text-[11px] text-slate-400 italic">
+            <div className="text-[11px] text-slate-600 italic">
               &ldquo;{ep.mandate_pack.intent.user_request}&rdquo;
             </div>
-            <div className="grid grid-cols-2 gap-1 text-[11px] pt-1 border-t border-slate-800/60">
+            <div className="grid grid-cols-2 gap-1 text-[11px] pt-1 border-t border-slate-200">
               <span className="text-slate-500">Spend Cap:</span>
-              <span className="font-mono text-emerald-400 font-bold">${ep.mandate_pack.intent.spend_cap}</span>
+              <span className="font-mono text-emerald-700 font-bold">${ep.mandate_pack.intent.spend_cap}</span>
               <span className="text-slate-500">Nonce:</span>
-              <span className="font-mono text-slate-300 truncate">{ep.mandate_pack.intent.nonce}</span>
+              <span className="font-mono text-slate-700 truncate">{ep.mandate_pack.intent.nonce}</span>
             </div>
             <div className="text-[10px] font-mono text-slate-500 truncate pt-1">
               Hash: {ep.mandate_pack.cart.intent_hash}
             </div>
           </div>
 
-          <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2 text-xs">
-            <div className="flex justify-between items-center font-semibold text-slate-200">
+          <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-xs">
+            <div className="flex justify-between items-center font-semibold text-slate-900">
               <span>CartMandate (Agent)</span>
-              <span className="text-[10px] text-emerald-400 flex items-center gap-1 font-mono">
+              <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1 font-mono">
                 <ShieldCheck className="w-3.5 h-3.5" /> Ed25519 Signed
               </span>
             </div>
-            <div className="text-[11px] text-slate-200 font-medium">
+            <div className="text-[11px] text-slate-800 font-semibold">
               {ep.mandate_pack.cart.items?.[0]?.title || 'Selected Offer'}
             </div>
-            <div className="grid grid-cols-2 gap-1 text-[11px] pt-1 border-t border-slate-800/60">
+            <div className="grid grid-cols-2 gap-1 text-[11px] pt-1 border-t border-slate-200">
               <span className="text-slate-500">Signed Total:</span>
-              <span className="font-mono text-emerald-400 font-bold">${ep.mandate_pack.cart.total_amount}</span>
+              <span className="font-mono text-emerald-700 font-bold">${ep.mandate_pack.cart.total_amount}</span>
               <span className="text-slate-500">Captured Total:</span>
               <span
                 className={`font-mono font-bold ${
                   Number(ep.captured_amount) > Number(ep.mandate_pack.cart.total_amount)
-                    ? 'text-rose-400'
-                    : 'text-emerald-400'
+                    ? 'text-rose-700'
+                    : 'text-emerald-700'
                 }`}
               >
                 ${ep.captured_amount}
               </span>
               <span className="text-slate-500">Merchant:</span>
-              <span className="font-mono text-slate-300">{ep.mandate_pack.cart.merchant_id}</span>
+              <span className="font-mono text-slate-700">{ep.mandate_pack.cart.merchant_id}</span>
             </div>
           </div>
 
-          <div className="p-3.5 bg-slate-950/80 rounded-xl border border-sky-500/25 text-xs space-y-1.5">
-            <div className="flex items-center justify-between font-semibold text-sky-400 text-xs">
+          <div className="p-3.5 bg-[#EFF6FF]/60 rounded-xl border border-blue-200 text-xs space-y-1.5">
+            <div className="flex items-center justify-between font-bold text-[#1D6CE0] text-xs">
               <span>PayPal Order Binding (custom_id)</span>
-              <span className="text-[10px] font-mono text-slate-400">{ep.paypal_order_id}</span>
+              <span className="text-[10px] font-mono text-slate-500">{ep.paypal_order_id}</span>
             </div>
-            <div className="text-[10px] font-mono text-slate-400 break-all bg-slate-900 p-2 rounded border border-slate-800">
+            <div className="text-[10px] font-mono text-slate-700 break-all bg-white p-2 rounded-lg border border-slate-200">
               {ep.captured_custom_id || 'NONE'}
             </div>
           </div>
         </div>
 
         {/* Column 2: Visual Spec Diff, AI Semantic Comparison & Regret */}
-        <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl p-5 space-y-4 shadow-sm">
-          <h3 className="text-sm font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
-            <FileCheck className="w-4 h-4 text-sky-400" />
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
+          <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+            <FileCheck className="w-4 h-4 text-[#1D6CE0]" />
             2. Spec Diff &amp; AI Semantic Reasoning
           </h3>
 
           {/* Side-by-side Spec Diff */}
           <div className="grid grid-cols-2 gap-2.5 text-center text-[11px]">
-            <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
               <span className="text-slate-500 block">Signed Listing Spec</span>
-              <span className="font-bold text-white font-mono text-base block">{promisedPorts} Ports</span>
-              <span className="text-[10px] text-slate-400 block">
+              <span className="font-bold text-slate-900 font-mono text-base block">{promisedPorts} Ports</span>
+              <span className="text-[10px] text-slate-500 block">
                 HDMI 4K: {promisedHdmi ? 'Yes' : 'No'}
               </span>
             </div>
@@ -294,28 +296,28 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
             <div
               className={`p-3 rounded-xl border space-y-1 ${
                 portsDelta !== null && portsDelta < 0
-                  ? 'bg-rose-500/10 border-rose-500/35'
-                  : 'bg-slate-950 border-slate-800'
+                  ? 'bg-rose-50 border-rose-200'
+                  : 'bg-slate-50 border-slate-200'
               }`}
             >
-              <span className="text-slate-400 block">Delivered Inspection</span>
+              <span className="text-slate-600 block">Delivered Inspection</span>
               <div className="flex items-center justify-center gap-1.5">
                 <span
                   className={`font-bold font-mono text-base ${
-                    portsDelta !== null && portsDelta < 0 ? 'text-rose-400' : 'text-emerald-400'
+                    portsDelta !== null && portsDelta < 0 ? 'text-rose-700' : 'text-emerald-700'
                   }`}
                 >
                   {deliveredPorts ?? 'N/A'} Ports
                 </span>
                 {portsDelta !== null && portsDelta !== 0 && (
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 border border-rose-200 font-bold">
                     {portsDelta > 0 ? `+${portsDelta}` : portsDelta}
                   </span>
                 )}
               </div>
               <span
                 className={`text-[10px] block ${
-                  deliveredHdmi === false && promisedHdmi ? 'text-rose-300 font-semibold' : 'text-slate-400'
+                  deliveredHdmi === false && promisedHdmi ? 'text-rose-700 font-semibold' : 'text-slate-500'
                 }`}
               >
                 HDMI 4K: {deliveredHdmi === undefined ? 'N/A' : deliveredHdmi ? 'Yes' : 'Missing'}
@@ -323,71 +325,71 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
             </div>
           </div>
 
-          <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+          <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
             <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">
               Warehouse Inspector Notes:
             </span>
-            <p className="text-slate-300 text-[11px]">
+            <p className="text-slate-700 text-[11px]">
               {ep.delivery_report?.inspection_notes || 'Inspection completed according to standard protocol.'}
             </p>
           </div>
 
           {/* Semantic Comparison & Prompt-Injection Shield */}
-          <div className="p-3.5 bg-slate-950 rounded-xl border border-purple-500/25 space-y-2 text-xs">
+          <div className="p-3.5 bg-[#EFF6FF]/50 rounded-xl border border-blue-200 space-y-2 text-xs">
             <div className="flex items-center justify-between">
-              <span className="font-semibold text-purple-300 flex items-center gap-1.5">
+              <span className="font-bold text-[#1D6CE0] flex items-center gap-1.5">
                 <Brain className="w-3.5 h-3.5" />
                 AI Semantic Discrepancy
               </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-300">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-700">
                 {sem?.llm_used ? sem.model : 'Deterministic Classifier'}
               </span>
             </div>
             {sem ? (
               <div className="space-y-1.5 text-[11px]">
                 <div className="flex flex-wrap gap-2 font-mono text-[10px]">
-                  <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-300">
+                  <span className="px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-700">
                     ports_match: <strong>{sem.ports_match}</strong>
                   </span>
-                  <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-300">
+                  <span className="px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-700">
                     hdmi_match: <strong>{sem.hdmi_match}</strong>
                   </span>
                 </div>
                 {sem.discrepancies && sem.discrepancies.length > 0 && (
-                  <ul className="list-disc list-inside text-amber-200/90 space-y-0.5">
+                  <ul className="list-disc list-inside text-amber-800 space-y-0.5">
                     {sem.discrepancies.map((d, i) => (
                       <li key={i}>{d}</li>
                     ))}
                   </ul>
                 )}
                 {sem.quote && (
-                  <div className="text-[10px] text-slate-400 italic border-l-2 border-purple-500/40 pl-2">
+                  <div className="text-[10px] text-slate-600 italic border-l-2 border-[#1D6CE0] pl-2">
                     &ldquo;{sem.quote}&rdquo;
                   </div>
                 )}
               </div>
             ) : (
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-slate-600">
                 Bypassed by Deterministic Supremacy (C1–C7 protocol/operator checks failed before LLM stage).
               </p>
             )}
           </div>
 
           {/* Regret Meter */}
-          <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2 text-xs">
+          <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-xs">
             <div className="flex items-center justify-between">
-              <span className="font-semibold text-slate-200">Agent Regret Index:</span>
-              <span className={`font-mono font-bold ${verdict.is_regret_flagged ? 'text-cyan-400' : 'text-slate-400'}`}>
+              <span className="font-semibold text-slate-800">Agent Regret Index:</span>
+              <span className={`font-mono font-bold ${verdict.is_regret_flagged ? 'text-amber-700' : 'text-slate-600'}`}>
                 {(verdict.regret_score * 100).toFixed(1)}%
               </span>
             </div>
-            <div className="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+            <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
               <div
                 style={{ width: `${Math.min(100, verdict.regret_score * 100)}%` }}
-                className={`h-full ${verdict.is_regret_flagged ? 'bg-cyan-500' : 'bg-slate-600'}`}
+                className={`h-full ${verdict.is_regret_flagged ? 'bg-amber-500' : 'bg-[#1D6CE0]'}`}
               />
             </div>
-            <p className="text-[10px] text-slate-400">
+            <p className="text-[10px] text-slate-500">
               {verdict.is_regret_flagged
                 ? 'Regret threshold (15%) exceeded. A significantly superior offer was available.'
                 : 'Within acceptable tolerance. No severe regret detected.'}
@@ -396,18 +398,18 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
         </div>
 
         {/* Column 3: Arbiter Checks & Human Action Execution */}
-        <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl p-5 space-y-4 shadow-sm">
-          <h3 className="text-sm font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
-            <ShieldCheck className="w-4 h-4 text-purple-400" />
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
+          <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+            <ShieldCheck className="w-4 h-4 text-[#1D6CE0]" />
             3. Arbiter Verdict &amp; Action Plan
           </h3>
 
-          <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2 text-xs">
+          <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-xs">
             <div className="flex items-center justify-between">
-              <span className="text-slate-400 font-medium">Rendered Verdict:</span>
+              <span className="text-slate-600 font-medium">Rendered Verdict:</span>
               {renderVerdictBadge(verdict.verdict)}
             </div>
-            <p className="text-slate-300 text-[11px] leading-relaxed">{verdict.summary}</p>
+            <p className="text-slate-700 text-[11px] leading-relaxed">{verdict.summary}</p>
           </div>
 
           <div className="space-y-1.5 text-xs">
@@ -419,45 +421,45 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
                 <div
                   key={chk.check_id}
                   title={chk.details}
-                  className="p-2 rounded-lg bg-slate-950 border border-slate-800/80 flex items-center justify-between text-[11px]"
+                  className="p-2 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between text-[11px]"
                 >
-                  <span className="font-mono text-slate-300 font-medium">
+                  <span className="font-mono text-slate-800 font-medium">
                     [{chk.check_id}] {chk.name}
                   </span>
                   {chk.status === 'PASS' ? (
-                    <span className="text-emerald-400 flex items-center gap-1 font-semibold text-[10px]">
+                    <span className="text-emerald-700 flex items-center gap-1 font-semibold text-[10px]">
                       <CheckCircle2 className="w-3 h-3" /> PASS
                     </span>
                   ) : chk.status === 'FAIL' ? (
-                    <span className="text-rose-400 flex items-center gap-1 font-semibold text-[10px]">
+                    <span className="text-rose-700 flex items-center gap-1 font-semibold text-[10px]">
                       <XCircle className="w-3 h-3" /> FAIL
                     </span>
                   ) : (
-                    <span className="text-slate-500 text-[10px]">SKIP</span>
+                    <span className="text-slate-400 text-[10px]">SKIP</span>
                   )}
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="p-3.5 bg-slate-950 rounded-xl border border-sky-500/30 space-y-2 text-xs">
-            <div className="flex items-center justify-between font-semibold text-slate-200">
-              <span className="flex items-center gap-1.5 text-sky-400">
+          <div className="p-3.5 bg-[#EFF6FF]/60 rounded-xl border border-blue-200 space-y-2 text-xs">
+            <div className="flex items-center justify-between font-semibold text-slate-900">
+              <span className="flex items-center gap-1.5 text-[#1D6CE0]">
                 <Terminal className="w-3.5 h-3.5" /> Planned PayPal Action
               </span>
-              <span className="font-mono text-[10px] bg-sky-500/10 text-sky-300 px-2 py-0.5 rounded border border-sky-500/20">
+              <span className="font-mono text-[10px] bg-white text-[#1D6CE0] px-2 py-0.5 rounded border border-blue-200 font-semibold">
                 {action.action_type}
               </span>
             </div>
-            <div className="text-[10px] font-mono text-slate-400">
+            <div className="text-[10px] font-mono text-slate-600">
               {action.http_method} {action.api_path}
             </div>
-            <pre className="text-[10px] font-mono bg-slate-900 p-2 rounded text-slate-300 overflow-x-auto max-h-28">
+            <pre className="text-[10px] font-mono bg-white p-2.5 rounded-lg border border-slate-200 text-slate-800 overflow-x-auto max-h-28">
               {JSON.stringify(action.request_payload, null, 2)}
             </pre>
 
             {action.off_paypal_ledger_entry && (
-              <div className="text-[10px] text-purple-400 border-t border-slate-800 pt-1.5 flex items-center gap-1">
+              <div className="text-[10px] text-[#1D6CE0] border-t border-blue-200 pt-1.5 flex items-center gap-1">
                 <span>Off-PayPal consequence:</span>
                 <span className="font-mono font-semibold">{action.off_paypal_ledger_entry.event}</span>
               </div>
@@ -465,9 +467,9 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
 
             {((c.allowed_links && c.allowed_links.length > 0) ||
               (c.allowed_response_options && c.allowed_response_options.length > 0)) && (
-              <div className="text-[10px] text-slate-400 border-t border-slate-800 pt-1.5">
+              <div className="text-[10px] text-slate-600 border-t border-blue-200 pt-1.5">
                 HATEOAS Permitted:{' '}
-                <span className="font-mono text-sky-300">
+                <span className="font-mono text-[#1D6CE0] font-semibold">
                   {[...(c.allowed_links || []), ...(c.allowed_response_options || [])].join(', ')}
                 </span>
               </div>
@@ -476,7 +478,7 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
 
           <div>
             {c.executed ? (
-              <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-center text-xs text-emerald-400 font-semibold flex items-center justify-center gap-2">
+              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-xs text-emerald-700 font-semibold flex items-center justify-center gap-2">
                 <CheckCircle2 className="w-4 h-4" />
                 {c.execution_mode === 'paypal_sandbox'
                   ? 'Action Executed at PayPal Sandbox'
@@ -486,7 +488,7 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
               <button
                 onClick={handleApproveAction}
                 disabled={isExecuting}
-                className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 transition disabled:opacity-50"
+                className="w-full py-3 bg-[#1D6CE0] hover:bg-[#1558BA] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm shadow-blue-600/20 transition disabled:opacity-50"
               >
                 <Send className="w-4 h-4" />
                 {isExecuting ? 'Executing with PayPal Sandbox...' : 'Approve and Execute Action'}
@@ -497,17 +499,17 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
       </div>
 
       {/* Immutable Ledger Audit Trail with Live Hash-Chain Verification */}
-      <div className="bg-[#0b1120] border border-slate-800/90 rounded-2xl p-6 shadow-sm space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
-          <h3 className="text-sm font-bold text-white flex items-center gap-2">
-            <History className="w-4 h-4 text-sky-400" />
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+          <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <History className="w-4 h-4 text-[#1D6CE0]" />
             Cryptographic Ledger Audit Trail ({detail.ledger_events?.length || 0} Case Events)
           </h3>
 
           <button
             onClick={handleVerifyLedger}
             disabled={isVerifyingLedger}
-            className="px-3 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-700/80 text-xs font-medium text-sky-300 flex items-center gap-1.5 transition self-start sm:self-auto"
+            className="px-3.5 py-1.5 rounded-xl bg-[#EFF6FF] hover:bg-blue-100 border border-blue-200 text-xs font-semibold text-[#1D6CE0] flex items-center gap-1.5 transition self-start sm:self-auto"
           >
             <Lock className="w-3.5 h-3.5" />
             {isVerifyingLedger ? 'Verifying SHA-256 Chain...' : 'Verify Full Hash-Chain Integrity'}
@@ -518,8 +520,8 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
           <div
             className={`p-3 rounded-xl border text-xs flex flex-wrap items-center justify-between gap-2 ${
               ledgerVerifyResult.intact
-                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-                : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                : 'bg-rose-50 border-rose-200 text-rose-800'
             }`}
           >
             <span className="font-semibold flex items-center gap-1.5">
@@ -529,7 +531,7 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
                 : `Tamper Detected: ${ledgerVerifyResult.error}`}
             </span>
             {ledgerVerifyResult.latest_hash && (
-              <span className="font-mono text-[10px] opacity-80">
+              <span className="font-mono text-[10px] opacity-85">
                 Tip: {ledgerVerifyResult.latest_hash.slice(0, 24)}...
               </span>
             )}
@@ -542,17 +544,17 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
             return (
               <div
                 key={ev.index}
-                className="bg-slate-950 border border-slate-800/80 rounded-xl text-xs overflow-hidden"
+                className="bg-slate-50 border border-slate-200 rounded-xl text-xs overflow-hidden"
               >
                 <button
                   type="button"
                   onClick={() => setExpandedEventIdx(isExpanded ? null : ev.index)}
-                  className="w-full p-3 flex flex-col md:flex-row md:items-center justify-between gap-2 text-left hover:bg-slate-900/50 transition"
+                  className="w-full p-3 flex flex-col md:flex-row md:items-center justify-between gap-2 text-left hover:bg-slate-100/70 transition"
                 >
                   <div className="flex items-center gap-2.5">
                     <span className="font-mono text-slate-500 text-[10px]">#{ev.index}</span>
-                    <span className="font-semibold text-white">{ev.event_type}</span>
-                    <span className="text-[10px] text-slate-400 font-mono">
+                    <span className="font-bold text-slate-900">{ev.event_type}</span>
+                    <span className="text-[10px] text-slate-500 font-mono">
                       {new Date(ev.timestamp * 1000).toLocaleTimeString()}
                     </span>
                   </div>
@@ -562,9 +564,9 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
                   </div>
                 </button>
                 {isExpanded && (
-                  <div className="px-3 pb-3 pt-1 border-t border-slate-800/70 space-y-1">
+                  <div className="px-3 pb-3 pt-2 border-t border-slate-200 space-y-1 bg-white">
                     <div className="text-[10px] font-mono text-slate-500">prev_hash: {ev.prev_hash}</div>
-                    <pre className="text-[10px] font-mono bg-slate-900 p-2 rounded text-slate-300 overflow-x-auto">
+                    <pre className="text-[10px] font-mono bg-slate-50 border border-slate-200 p-2 rounded text-slate-800 overflow-x-auto">
                       {JSON.stringify(ev.payload, null, 2)}
                     </pre>
                   </div>
