@@ -10,9 +10,9 @@ AgentCourt incorporates AI at specific, bounded runtime stages where natural lan
 
 | Task | Model / Provider | Role | Safety Guarantee |
 |---|---|---|---|
-| **Intent Extraction** | Claude 3.5 Sonnet / OpenAI GPT-4o (`LLM_PROVIDER`) | Parses raw user shopping prompts into structured JSON constraints (item attributes, price ceiling, merchant filters). | Pydantic schema validation; invalid outputs are rejected. |
-| **Semantic Comparison** | Claude 3.5 Sonnet / OpenAI GPT-4o (`LLM_PROVIDER`) | Compares signed merchant listing specs against simulated warehouse delivery reports. | Strict JSON schema output (`match`, `mismatch`, `unclear`); prompt-injection shielding. |
-| **Verdict Explanation** | Claude 3.5 Sonnet / OpenAI GPT-4o (`LLM_PROVIDER`) | Generates transparent narrative explaining why the merchant or operator is at fault. | Explanatory only; deterministic rules C1–C7 dictate the executable action. |
+| **Intent Extraction** | Claude Sonnet 5.5 / OpenAI GPT-4o (`LLM_PROVIDER`) | Parses raw user shopping prompts into structured JSON constraints (item attributes, price ceiling, merchant filters). | Pydantic schema validation; invalid outputs are rejected. |
+| **Semantic Comparison** | Claude Sonnet 5.5 / OpenAI GPT-4o (`LLM_PROVIDER`) | Compares signed merchant listing specs against simulated warehouse delivery reports. | Strict JSON schema output (`match`, `mismatch`, `unclear`); prompt-injection shielding. |
+| **Verdict Explanation** | Claude Sonnet 5.5 / OpenAI GPT-4o (`LLM_PROVIDER`) | Generates transparent narrative explaining why the merchant or operator is at fault. | Explanatory only; deterministic rules C1–C7 dictate the executable action. |
 
 *Note: If no LLM API key is provided, AgentCourt automatically operates in deterministic-only mode, flagging all verdicts with `llm_used: false`.*
 
@@ -23,6 +23,8 @@ AgentCourt incorporates AI at specific, bounded runtime stages where natural lan
 ### Google Antigravity
 - **Role**: AI-assisted development environment and pair-programming assistant used for codebase architecture, implementation, typing, testing, and continuous verification.
 
+### Claude Code (Anthropic)
+- **Role**: Used in a final pre-submission audit pass: fixing the retired default LLM model ID, repairing documentation links, and aligning the sponsor and AI-tool disclosures with what the code actually does.
+
 ### APIMatic Context Plugin
-- **Status**: Optional sponsor integration (not yet executed in this environment).
-- **Planned Usage**: To qualify for the APIMatic sponsor track, install the PayPal Server SDK Context Plugin (`npx context-plugins install https://github.com/paypaldev/server-sdk-context-plugin-preview`), validate/generate PayPal REST API context notes, record the generated artifacts here, and submit the APIMatic claim form prior to deadline.
+- **Status**: Not used in this build. AgentCourt calls the PayPal REST APIs directly via `httpx` (`backend/agentcourt/payments/paypal_client.py`).

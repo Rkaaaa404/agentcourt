@@ -59,11 +59,12 @@ AgentCourt links pre-payment mandates to post-payment PayPal Disputes through cr
   - Ed25519 digital signatures via `cryptography`.
   - Append-only cryptographic ledger with SHA-256 hash chains.
 - **AI & Arbiter**:
-  - Pluggable LLM layer (Claude 3.5 Sonnet / OpenAI GPT-4o / Deterministic Fallback).
+  - Pluggable LLM layer (Claude Sonnet 5.5 / OpenAI GPT-4o / Deterministic Fallback).
   - Strict JSON schema enforcement and prompt-injection shielding.
 - **Frontend Dashboard**:
   - React 18, Vite, TypeScript, Tailwind CSS, Lucide icons.
   - **Bryntum Scheduler** trial package (`@bryntum/scheduler` / `@bryntum/scheduler-react`) for high-performance interactive dispute timeline scheduling.
+  - **AG Grid** (`ag-grid-react`) for the sortable/filterable Dispute Cases Registry and the 15-scenario Evaluation Matrix.
 - **Deployment**:
   - Multi-stage Docker container deployed on **Render**.
 
@@ -109,8 +110,9 @@ AgentCourt links pre-payment mandates to post-payment PayPal Disputes through cr
 - Python 3.12 / FastAPI
 - PayPal Orders v2 & Disputes API
 - Bryntum Scheduler
+- AG Grid
 - React / Vite / TypeScript / Tailwind CSS
 - Ed25519 & RFC 8785 Canonical JSON
 - Docker & Render
-- Claude 3.5 Sonnet / OpenAI GPT-4o
+- Claude Sonnet 5.5 / OpenAI GPT-4o
 

@@ -1,6 +1,7 @@
 # Environment and Secrets
 .env
 *.env.local
+context/
 
 # Python
 __pycache__/

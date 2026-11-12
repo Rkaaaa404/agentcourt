@@ -4,6 +4,10 @@
 
 **AgentCourt** is the post-payment liability resolution layer for autonomous agentic commerce, built for the **PayPal AI Hackathon 2026**.
 
+> **Live demo:** `<RENDER_URL>` &nbsp;·&nbsp; **Demo video (< 3 min):** `<YOUTUBE_URL>`
+>
+> **Try it in 60 seconds:** open **Purchase** → run the shopping agent (signed mandates + real PayPal sandbox order) → open the **Buyer Simulator** to file a dispute → go to **Cases** for the Bryntum timeline → open a case to see the evidence pack, the C1–C7 verdict and the planned PayPal Disputes action.
+
 When an AI shopping agent buys something on behalf of a user and it goes wrong, who is liable? Today's agent-payment protocols (like Google's AP2 mandates) record buyer intent and spend caps, but when an agent hallucinates, suffers price drift, accepts suboptimal offers, or receives mismatched merchandise, the liability question is left unresolved.
 
 AgentCourt bridges this gap:
@@ -16,7 +20,7 @@ AgentCourt bridges this gap:
 ## Creation Date & License
 
 - **Project Created**: 9 November 2026 (during the PayPal AI Hackathon)
-- **License**: MIT License (see [LICENSE](file:///LICENSE))
+- **License**: MIT License (see [LICENSE](LICENSE))
 
 ---
 
@@ -193,11 +197,11 @@ AgentCourt includes a production-ready `Dockerfile` and `render.yaml` blueprint.
 
 ## Documentation
 
-- [Devpost Submission Document](file:///docs/DEVPOST.md)
-- [Video Recording Script (< 3 mins)](file:///docs/VIDEO_SCRIPT.md)
-- [Architecture & Security Model](file:///docs/ARCHITECTURE.md)
-- [System Limitations & Threat Model](file:///docs/LIMITATIONS.md)
-- [AI & Sponsor Tools Integration](file:///docs/AI_TOOLS.md)
+- [Devpost Submission Document](docs/DEVPOST.md)
+- [Video Recording Script (< 3 mins)](docs/VIDEO_SCRIPT.md)
+- [Architecture & Security Model](docs/ARCHITECTURE.md)
+- [System Limitations & Threat Model](docs/LIMITATIONS.md)
+- [AI & Sponsor Tools Integration](docs/AI_TOOLS.md)
 
 ---
 
@@ -207,4 +211,4 @@ AgentCourt includes a production-ready `Dockerfile` and `render.yaml` blueprint.
 - **AG Grid**: Interactive sortable/filterable Dispute Cases Registry and 15-Scenario Evaluation Matrix powered by `ag-grid-react`.
 - **Bryntum Scheduler**: High-performance interactive dispute case lifecycle timeline view (with inquiry windows, evidence preparation buffers, response due-date markers, and webhook deadline shifts).
 - **Render**: Cloud deployment via `Dockerfile` and `render.yaml` Blueprint.
-- **APIMatic**: API context specification and integration validation (see [AI_TOOLS.md](file:///docs/AI_TOOLS.md)).
+- **APIMatic**: Optional; the PayPal Context Plugin was not used in this build (see [AI_TOOLS.md](docs/AI_TOOLS.md)).
