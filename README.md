@@ -1,105 +1,127 @@
+<div align="center">
+
+<a href="https://youtu.be/J3BGgV-0Wx0"><img src="docs/img/hero.png" alt="Veripact" width="760"></a>
+
 # Veripact
 
-**Team Sehari Semalam** · PayPal AI Hackathon 2026
+**Your AI agent bought the wrong thing. Who pays?**
 
+[Live demo](https://veripact.onrender.com) · [2-minute video](https://youtu.be/J3BGgV-0Wx0) · [Devpost write-up](docs/DEVPOST.md)
 
-> *"AP2 tells you what was authorized. Veripact tells you who pays when it goes wrong."*
+![PayPal sandbox](https://img.shields.io/badge/PayPal-sandbox-003087?logo=paypal&logoColor=white)
+![Gemini](https://img.shields.io/badge/Gemini-3.1%20Pro-4285F4?logo=google&logoColor=white)
+![Eval](https://img.shields.io/badge/eval-15%2F15-22c55e)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
-**Veripact** is the post-payment liability resolution layer for autonomous agentic commerce, built for the **PayPal AI Hackathon 2026**.
+Team Sehari Semalam · PayPal AI Hackathon 2026
 
-> **Live demo:** https://veripact.onrender.com (free tier: first load may take ~50s to wake) &nbsp;·&nbsp; **Demo video (2 min):** https://youtu.be/J3BGgV-0Wx0
->
-> **Try it in 60 seconds:** open **Purchase** → run the shopping agent (signed mandates + real PayPal sandbox order) → open the **Buyer Simulator** to file a dispute → go to **Cases** for the Bryntum timeline → open a case to see the evidence pack, the C1–C7 verdict and the planned PayPal Disputes action.
-
-When an AI shopping agent buys something on behalf of a user and it goes wrong, who is liable? Today's agent-payment protocols (like Google's AP2 mandates) record buyer intent and spend caps, but when an agent hallucinates, suffers price drift, accepts suboptimal offers, or receives mismatched merchandise, the liability question is left unresolved.
-
-Veripact bridges this gap:
-1. **At checkout**: Binds an AP2-inspired signed intent and cart mandate to the PayPal sandbox order (`custom_id`).
-2. **At dispute**: Automatically ingests PayPal customer disputes, compiles a cryptographic evidence pack (mandate vs. merchant listing vs. delivery report vs. candidate trace), and computes deterministic liability checks and agent regret metrics.
-3. **Execution**: Presents the human merchant operator with an actionable liability verdict and request preview, executing standard settlement actions through the PayPal Disputes API (`accept-claim`, `provide-evidence`, or `make-offer`).
+</div>
 
 ---
 
-## Creation Date & License
+## The story in four lines
 
-- **Project Created**: 9 November 2026 (during the PayPal AI Hackathon)
-- **License**: MIT License (see [LICENSE](LICENSE))
+You ask an agent for a USB-C dock with at least 8 ports, under $120.
+It finds one, pays with PayPal, and the box shows up.
+The dock has 6 ports.
+Now the merchant, the company running the agent, and you all point at each other.
 
----
+AP2-style mandates record what you authorized. They don't say who's at fault when the purchase goes wrong. Veripact does.
 
-## Real vs. Simulated Boundaries
+## How it works
 
-In full adherence to hackathon integrity, Veripact maintains an honest distinction between real systems and simulated components:
+**1. Checkout.** Gemini turns your request into structured constraints. You sign an intent mandate, the agent signs a cart mandate (both Ed25519), and Veripact creates a real PayPal Orders v2 sandbox order. A hash of both mandates goes into the order's `custom_id`, so a mandate can't be reused on a different order.
 
-| Component | Status | Details |
+<img src="docs/img/binding.png" alt="Mandates hashed into the PayPal custom_id" width="720">
+
+**2. Dispute.** The buyer opens a PayPal dispute. Veripact receives it through a signature-verified webhook and builds an evidence pack: the signed mandates, the merchant listing, the delivery report, the PayPal order, and the agent's candidate trace.
+
+**3. Verdict.** Seven plain-code checks run first (C1–C7: signatures, expiry, intent hash, order binding, spend cap, allowed merchant, constraints). If those pass, Gemini compares the listing with the delivery report. The model can never overrule a failed check, and text hidden in listings that tries to give it instructions gets ignored.
+
+**4. Action.** Veripact proposes a PayPal Disputes call (`accept-claim`, `provide-evidence` or `make-offer`). Nothing runs until a person clicks approve. Each step is written to a hash-chained ledger.
+
+<table>
+<tr>
+<td><img src="docs/img/purchase_after.png" alt="Agent checkout"></td>
+<td><img src="docs/img/detail.png" alt="Case detail with verdict"></td>
+</tr>
+<tr>
+<td align="center">Agent checkout with a real sandbox order</td>
+<td align="center">Evidence pack, C1–C7 trace and verdict</td>
+</tr>
+</table>
+
+## Try it in 60 seconds
+
+Open https://veripact.onrender.com. It's on Render's free tier, so the first load can take about 50 seconds.
+
+1. **Purchase**: run the shopping agent. You get signed mandates and a real PayPal sandbox order.
+2. **Simulate Dispute**: pick "S1: Port Mismatch" and file it.
+3. **Cases**: see the dispute on the Bryntum timeline and in the AG Grid registry.
+4. Open the case for the evidence, the verdict and the planned PayPal action.
+
+## What's real and what's simulated
+
+| Part | Real or simulated | Notes |
 |---|---|---|
-| **PayPal Orders v2** | **REAL** | Real PayPal Sandbox API calls (`POST /v2/checkout/orders`, `capture`) with `custom_id` hash binding. |
-| **PayPal Disputes API** | **REAL** | Real PayPal Sandbox Customer Disputes API lifecycle (`create`, `show`, `accept-claim`, `provide-evidence`, `make-offer`, `escalate`, `require-evidence`, `adjudicate`). |
-| **PayPal Webhook Verification** | **REAL** | Cryptographic verification via `/v1/notifications/verify-webhook-signature`. |
-| **Refunds Fallback Settlement** | **REAL** | Settle disputes via `/v2/payments/captures/{id}/refund` if dispute creation is gated. |
-| **Deterministic Arbiter** | **REAL** | Pure-function checks (C1–C7) validating Ed25519 signatures, spend caps, hashes, and candidate regret. |
-| **Constrained LLM Reasoning** | **REAL** | Schema-validated semantic comparison between signed listings and delivery reports. Cannot override deterministic rule failures. |
-| **Merchant Catalog** | *Simulated* | Fictional merchants (`data/merchants.json`) providing USB-C docking stations. |
-| **Delivery Reports** | *Simulated* | Mocked warehouse delivery inspections representing what the buyer actually received. |
-| **Sandbox Buyer Simulator** | *Simulated* | Issues buyer dispute requests with `PayPal-Auth-Assertion` unsigned JWTs in the sandbox. |
+| PayPal Orders v2 | Real | Sandbox `create` and `capture`, with the `custom_id` binding |
+| PayPal Disputes API | Real | `create`, `show`, `accept-claim`, `provide-evidence`, `make-offer`, `escalate`, `require-evidence`, `adjudicate` |
+| Webhook verification | Real | `/v1/notifications/verify-webhook-signature` |
+| Refund fallback | Real | `/v2/payments/captures/{id}/refund` when dispute creation is blocked in the sandbox |
+| Arbiter checks C1–C7 | Real | Pure functions over signatures, caps, hashes and regret |
+| Gemini comparison | Real | Schema-validated output; can't override a failed check |
+| Merchant catalog | Simulated | Made-up dock sellers in `data/merchants.json` |
+| Delivery reports | Simulated | Stand-ins for what the buyer actually received |
+| Buyer simulator | Simulated | Files sandbox disputes with `PayPal-Auth-Assertion` headers |
 
----
-
-## Architecture Diagram
+## Architecture
 
 ```mermaid
 flowchart TD
-    subgraph Agentic_Purchase["1. Agentic Purchase Layer"]
-        U["User Prompt\n(e.g. USB-C dock)"] --> A["Shopping Agent\n(Constrained LLM + Catalog Search)"]
-        A --> M["Mandate Generation\n(IntentMandate + CartMandate)"]
-        M --> S["Ed25519 Signing\n& SHA-256 Binding"]
-        S --> PO["PayPal Orders v2 API\n(custom_id = order_binding)"]
-        PO --> BA["Human Buyer Approval\n(PayPal Sandbox)"]
-        BA --> PC["Order Capture"]
+    subgraph Purchase["1. Purchase"]
+        U["User prompt"] --> A["Shopping agent<br/>(Gemini + catalog search)"]
+        A --> M["Intent + cart mandates"]
+        M --> S["Ed25519 signing<br/>SHA-256 binding"]
+        S --> PO["PayPal Orders v2<br/>custom_id = binding"]
+        PO --> PC["Buyer approves, order captured"]
     end
 
-    subgraph Dispute_Ingestion["2. Dispute Ingestion & Evidence Pack"]
-        D["PayPal Sandbox Dispute\n(INR / SNAD)"] --> WH["Webhook Receiver / Poller"]
-        WH --> EP["Evidence Pack Assembly:\n- Signed Mandates\n- Merchant Listing\n- Delivery Report\n- PayPal Order Data\n- Candidate Trace"]
+    subgraph Ingest["2. Dispute intake"]
+        D["PayPal dispute"] --> WH["Webhook receiver / poller"]
+        WH --> EP["Evidence pack"]
     end
 
-    subgraph Arbiter_Engine["3. Dual-Layer Arbiter"]
-        EP --> DET["Deterministic Engine (C1-C7):\n- Signatures, Expiry, Hash Match\n- Spend Cap, Allowed Merchant\n- Agent Regret Index"]
-        DET -->|Passes C1-C7| LLM["Constrained LLM Classifier:\n- Listing vs Delivery Mismatch\n- Prompt Injection Shielded"]
-        DET -->|Fails C1-C7| OP["Verdict: OPERATOR_AT_FAULT"]
-        LLM -->|Mismatch Found| MF["Verdict: MERCHANT_AT_FAULT"]
-        LLM -->|No Mismatch + High Regret| RG["Verdict: WITHIN_MANDATE_REGRET"]
-        LLM -->|All Valid| NF["Verdict: NO_FAULT"]
+    subgraph Arbiter["3. Arbiter"]
+        EP --> DET["Checks C1-C7"]
+        DET -->|fail| OP["OPERATOR_AT_FAULT"]
+        DET -->|pass| LLM["Gemini: listing vs delivery"]
+        LLM -->|mismatch| MF["MERCHANT_AT_FAULT"]
+        LLM -->|high regret| RG["WITHIN_MANDATE_REGRET"]
+        LLM -->|all good| NF["NO_FAULT"]
     end
 
-    subgraph Resolution["4. Human-in-the-Loop Execution"]
-        OP --> EX["Planned PayPal Action Preview"]
-        MF --> EX
-        RG --> EX
-        NF --> EX
-        EX --> HA["Human Operator Click:\n'Approve and Execute'"]
-        HA --> PP["PayPal Disputes API Call:\n- accept-claim (Refund)\n- provide-evidence (Defend)\n- make-offer (Goodwill)"]
-        HA --> LG["Immutable Append-Only Ledger Entry"]
+    subgraph Act["4. Human approval"]
+        OP & MF & RG & NF --> EX["Planned PayPal action"]
+        EX --> HA["Operator clicks approve"]
+        HA --> PP["PayPal Disputes API call"]
+        HA --> LG["Ledger entry"]
     end
 ```
 
----
+More detail in [ARCHITECTURE.md](docs/ARCHITECTURE.md) and [LIMITATIONS.md](docs/LIMITATIONS.md).
 
-## Quick Start (Local Setup in under 5 minutes)
+## Run it locally
 
-### Prerequisites
-- Python 3.12+ (or Python 3.13)
-- Node.js 20+
-- A PayPal Developer Sandbox account ([developer.paypal.com](https://developer.paypal.com))
+You need Python 3.12+, Node 20+ and a [PayPal developer sandbox](https://developer.paypal.com) account.
 
-### 1. Clone & Configure
 ```bash
 git clone https://github.com/Rkaaaa404/veripact.git
 cd veripact
 cp .env.example .env
 ```
 
-Edit `.env` with your Sandbox credentials:
+Fill in `.env`:
+
 ```ini
 PAYPAL_ENV=sandbox
 PAYPAL_CLIENT_ID=your_sandbox_client_id
@@ -109,113 +131,76 @@ PAYPAL_BUYER_EMAIL=your_sandbox_personal_email@personal.example.com
 PAYPAL_BUYER_PASSWORD=your_sandbox_buyer_password
 LLM_PROVIDER=gemini
 LLM_MODEL=gemini-3.1-pro-preview
-LLM_API_KEY=your_google_ai_studio_key   # optional: without it the arbiter runs deterministic-only
+LLM_API_KEY=your_google_ai_studio_key   # optional; without it only the C1-C7 checks run
 ```
 
-### 2. Verify Pre-flight Safety Check
-```bash
-python scripts/check_env.py
-```
+Then:
 
-### 3. Run Offline Evaluation Harness (15 Scenarios)
 ```bash
-python eval/run_eval.py
-```
+python scripts/check_env.py      # sanity-check your config
+python eval/run_eval.py          # 15 offline scenarios
+pytest backend/tests/ -v         # unit tests, PayPal calls mocked
 
-### 4. Run Unit Tests (Mocked Sandbox Endpoints)
-```bash
-pytest backend/tests/ -v
-```
-
-### 5. Run Locally
-```bash
-# Seed demo cases for initial state
-python scripts/seed_demo.py
-
-# Terminal 1: Backend API
+python scripts/seed_demo.py      # demo cases
 uvicorn backend.veripact.api.main:app --reload --port 8000
 
-# Terminal 2: Web UI
-cd web
-npm install
-npm run dev
+# second terminal
+cd web && npm install && npm run dev
 ```
 
-Visit `http://localhost:5173` to explore the dashboard.
+Open http://localhost:5173.
+
+## The 15 test scenarios
+
+`eval/run_eval.py` throws 15 cases at the arbiter. All 15 pass.
+
+| # | Scenario | Expected verdict | Result |
+|:--|:--|:--|:-:|
+| 01 | Valid purchase | `NO_FAULT` | pass |
+| 02 | Delivered 6 ports instead of 10 | `MERCHANT_AT_FAULT` | pass |
+| 03 | Captured total higher than signed cart | `OPERATOR_AT_FAULT` | pass |
+| 04 | Captured amount over the spend cap | `OPERATOR_AT_FAULT` | pass |
+| 05 | Tampered mandate signature | `OPERATOR_AT_FAULT` | pass |
+| 06 | Expired mandate | `OPERATOR_AT_FAULT` | pass |
+| 07 | Cart not linked to the intent hash | `OPERATOR_AT_FAULT` | pass |
+| 08 | Mandate replayed onto another order | `OPERATOR_AT_FAULT` | pass |
+| 09 | Unauthorized merchant | `OPERATOR_AT_FAULT` | pass |
+| 10 | Cart breaks the intent constraints | `OPERATOR_AT_FAULT` | pass |
+| 11 | Agent picked a worse deal (28% regret) | `WITHIN_MANDATE_REGRET` | pass |
+| 12 | Small regret (5%) | `NO_FAULT` | pass |
+| 13 | Prompt injection hidden in a listing | `NO_FAULT` | pass |
+| 14 | Unclear delivery report | `NEEDS_HUMAN` | pass |
+| 15 | Missing candidate trace | `NO_FAULT` | pass |
+
+## Deploy your own on Render
+
+The repo ships a `Dockerfile` and a `render.yaml` blueprint. One container serves both the FastAPI backend and the built Vite frontend.
+
+1. In [Render](https://dashboard.render.com), choose **New > Blueprint** and point it at this repo.
+2. Set `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_MERCHANT_EMAIL`, `PAYPAL_BUYER_EMAIL` and `LLM_API_KEY` (a Google AI Studio key). The Gemini provider and model are already set in `render.yaml`.
+3. Click **Apply**.
+
+## Built with
+
+- **PayPal**: Orders v2, the Disputes API, webhook signature verification, and sandbox auth-assertion headers
+- **Google Gemini 3.1 Pro**: request parsing and listing-vs-delivery comparison
+- **Bryntum Scheduler**: the dispute timeline, with inquiry windows, evidence prep and response deadlines
+- **AG Grid**: the case registry and eval matrix (`ag-grid-react`)
+- **Render**: hosting
+- FastAPI, React and Vite
+
+APIMatic's PayPal plugin wasn't used in this build. [AI_TOOLS.md](docs/AI_TOOLS.md) lists every AI tool we used and what for.
+
+## Background reading
+
+- Google, [Agent Payments Protocol (AP2)](https://github.com/google-agentic-commerce/AP2), 2025
+- Microsoft Research, *Magentic Marketplace*, 2025: a testbed for agents buying and selling against each other
+- [RFC 8785](https://www.rfc-editor.org/rfc/rfc8785), JSON Canonicalization Scheme, which we use to sign mandates deterministically
+
+## Docs
+
+[Devpost write-up](docs/DEVPOST.md) · [Architecture](docs/ARCHITECTURE.md) · [Limitations](docs/LIMITATIONS.md) · [AI tools](docs/AI_TOOLS.md) · [Video script](docs/VIDEO_SCRIPT.md)
 
 ---
 
-## 15-Scenario Evaluation Harness Results
-
-Veripact includes a rigorous 15-scenario evaluation test suite (`eval/run_eval.py`) validating all baseline, breach, security, and edge-case paths:
-
-| ID | Scenario | Category | Expected Verdict | Actual Verdict | Status |
-|:---|:---|:---|:---|:---|:---:|
-| `SCENARIO_01_VAL` | Valid Purchase & Compliance | Baseline | `NO_FAULT` | `NO_FAULT` | **PASS** |
-| `SCENARIO_02_ATT` | Merchant Attribute Mismatch (Delivered 6 ports instead of 10) | Merchant Breach | `MERCHANT_AT_FAULT` | `MERCHANT_AT_FAULT` | **PASS** |
-| `SCENARIO_03_PRI` | Price Drift: Captured Total Exceeds Signed Cart | Operator Breach | `OPERATOR_AT_FAULT` | `OPERATOR_AT_FAULT` | **PASS** |
-| `SCENARIO_04_SPE` | Spend Cap Breach: Captured Amount Exceeds Authorized Cap | Operator Breach | `OPERATOR_AT_FAULT` | `OPERATOR_AT_FAULT` | **PASS** |
-| `SCENARIO_05_TAM` | Tampered Mandate Signature | Operator Breach | `OPERATOR_AT_FAULT` | `OPERATOR_AT_FAULT` | **PASS** |
-| `SCENARIO_06_EXP` | Expired Mandate Execution | Operator Breach | `OPERATOR_AT_FAULT` | `OPERATOR_AT_FAULT` | **PASS** |
-| `SCENARIO_07_UNL` | Cart Unlinked From Intent Hash | Operator Breach | `OPERATOR_AT_FAULT` | `OPERATOR_AT_FAULT` | **PASS** |
-| `SCENARIO_08_REP` | Replayed Mandate onto Foreign Order (C4 Binding Mismatch) | Operator Breach | `OPERATOR_AT_FAULT` | `OPERATOR_AT_FAULT` | **PASS** |
-| `SCENARIO_09_UNA` | Agent Purchased from Unauthorized Merchant | Operator Breach | `OPERATOR_AT_FAULT` | `OPERATOR_AT_FAULT` | **PASS** |
-| `SCENARIO_10_CAR` | Cart Attributes Violate Intent Constraints | Operator Breach | `OPERATOR_AT_FAULT` | `OPERATOR_AT_FAULT` | **PASS** |
-| `SCENARIO_11_REG` | Agent Suboptimal Choice: Regret (28%) > 15% | Innovation / Regret | `WITHIN_MANDATE_REGRET` | `WITHIN_MANDATE_REGRET` | **PASS** |
-| `SCENARIO_12_REG` | Minimal Regret (5% <= 15%): No Fault | Innovation / Regret | `NO_FAULT` | `NO_FAULT` | **PASS** |
-| `SCENARIO_13_PRO` | Adversarial Prompt Injection in Listing Shielded | Security / AI Safety | `NO_FAULT` | `NO_FAULT` | **PASS** |
-| `SCENARIO_14_UNC` | Unclear / Incomplete Delivery Report | Human Fallback | `NEEDS_HUMAN` | `NEEDS_HUMAN` | **PASS** |
-| `SCENARIO_15_MIS` | Missing Candidate Trace (Degraded Gracefully) | Resilience | `NO_FAULT` | `NO_FAULT` | **PASS** |
-
-**Summary**: 15/15 scenarios passed (**100.0% accuracy**).
-
----
-
-## Academic & Industry References
-
-Veripact's mandate specification and threat model draw from foundational research in agentic commerce and verifiable mandates:
-
-1. **Google & PayPal Agent Payment Protocol (AP2)**:
-   - *Autonomous Payment Protocol (AP2) Mandate Framework*, Google / PayPal working initiatives (2025–2026).
-   - Everest Group Research Note: *Autonomous Agent Payments & Mandate Attributions* (2025).
-2. **Multi-Agent Markets & Adversarial Commerce**:
-   - Microsoft Research: *Magentic Marketplace: Evaluating Autonomous Agents in Multi-Party Economic Games* (2025).
-   - RFC 8785: *JSON Canonicalization Scheme (JCS)* for deterministic JSON signature generation.
-
----
-
-## Deployment to Render
-
-Veripact includes a production-ready `Dockerfile` and `render.yaml` blueprint.
-
-### Deploy Steps:
-1. Connect your GitHub repository (`https://github.com/Rkaaaa404/veripact`) to [Render](https://dashboard.render.com).
-2. Select **New > Blueprint** and link the repository.
-3. Add the following Environment Variables in the Render Dashboard:
-   - `PAYPAL_ENV=sandbox`
-   - `PAYPAL_CLIENT_ID=...`
-   - `PAYPAL_CLIENT_SECRET=...`
-   - `PAYPAL_MERCHANT_EMAIL=...`
-   - `PAYPAL_BUYER_EMAIL=...`
-   - `LLM_API_KEY=...` (Google AI Studio key; `LLM_PROVIDER=gemini` and `LLM_MODEL=gemini-3.1-pro-preview` are preset in `render.yaml`)
-4. Click **Apply**. Render will automatically build the unified Docker image (Vite frontend served directly by FastAPI static files) and provide a public HTTPS URL.
-
----
-
-## Documentation
-
-- [Devpost Submission Document](docs/DEVPOST.md)
-- [Video Recording Script (< 3 mins)](docs/VIDEO_SCRIPT.md)
-- [Architecture & Security Model](docs/ARCHITECTURE.md)
-- [System Limitations & Threat Model](docs/LIMITATIONS.md)
-- [AI & Sponsor Tools Integration](docs/AI_TOOLS.md)
-
----
-
-## Sponsor Technologies & Integrations
-
-- **PayPal**: Comprehensive Orders v2, Customer Disputes API lifecycle, Webhooks signature verification, and sandbox simulation assertion headers.
-- **AG Grid**: Interactive sortable/filterable Dispute Cases Registry and 15-Scenario Evaluation Matrix powered by `ag-grid-react`.
-- **Bryntum Scheduler**: High-performance interactive dispute case lifecycle timeline view (with inquiry windows, evidence preparation buffers, response due-date markers, and webhook deadline shifts).
-- **Render**: Cloud deployment via `Dockerfile` and `render.yaml` Blueprint.
-- **APIMatic**: Optional; the PayPal Context Plugin was not used in this build (see [AI_TOOLS.md](docs/AI_TOOLS.md)).
+Started 9 November 2026 during the PayPal AI Hackathon. MIT licensed, see [LICENSE](LICENSE).
