@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: agentcourt  # Render service id kept so the live URL (agentcourt-iryc.onrender.com) stays stable
+    name: veripact
     runtime: docker
     plan: free
     healthCheckPath: /healthz
