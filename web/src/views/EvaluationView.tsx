@@ -195,11 +195,17 @@ export default function EvaluationView() {
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs">
             {Object.entries(evalData.class_breakdown).map(([clsName, stat]) => (
-              <div key={clsName} className="p-3 bg-[#F8F3EB] rounded-xl border border-[#DCCDBB] space-y-1">
+              <div key={clsName} className="p-3 bg-[#F8F3EB] rounded-xl border border-[#DCCDBB] space-y-2 hover:border-[#BF4827]/70 transition">
                 <div className="font-mono text-[11px] text-[#292522] font-bold truncate">{clsName}</div>
                 <div className="flex justify-between text-[11px] text-[#6E635D] font-mono">
                   <span>{stat.correct}/{stat.total}</span>
                   <span className="text-[#52705C] font-bold">{stat.accuracy_pct}%</span>
+                </div>
+                <div className="w-full h-1.5 rounded-full bg-[#E6DCD0] overflow-hidden">
+                  <div
+                    className="h-full bg-[#52705C] rounded-full transition-all duration-700 ease-out"
+                    style={{ width: `${stat.accuracy_pct}%` }}
+                  />
                 </div>
               </div>
             ))}

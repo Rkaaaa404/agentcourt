@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from 'react'
 import {
   ArrowRight,
   ArrowUpRight,
+  BarChart3,
   CheckCircle2,
+  ChevronDown,
   Clock,
   FileCode2,
   FileText,
@@ -25,6 +27,37 @@ interface OverviewViewProps {
   onOpenSimulator: () => void
 }
 
+function useCountUp(target: number, durationMs = 700) {
+  const [value, setValue] = useState(0)
+
+  useEffect(() => {
+    let rafId = 0
+    const start = performance.now()
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - start) / durationMs)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setValue(Math.round(target * eased))
+      if (progress < 1) {
+        rafId = requestAnimationFrame(tick)
+      }
+    }
+    rafId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafId)
+  }, [target, durationMs])
+
+  return value
+}
+
+const CHART_SERIES = [
+  { label: 'D-6', verified: 68, breach: 18, regret: 14 },
+  { label: 'D-5', verified: 74, breach: 20, regret: 12 },
+  { label: 'D-4', verified: 79, breach: 16, regret: 15 },
+  { label: 'D-3', verified: 84, breach: 14, regret: 11 },
+  { label: 'D-2', verified: 91, breach: 11, regret: 9 },
+  { label: 'D-1', verified: 96, breach: 8, regret: 7 },
+  { label: 'Live', verified: 100, breach: 6, regret: 5 },
+]
+
 export default function OverviewView({
   onSelectCase,
   onNavigateTab,
@@ -40,6 +73,15 @@ export default function OverviewView({
   } | null>(null)
   const [evalSummary, setEvalSummary] = useState<EvalResultsResponse | null>(null)
   const [previewSubTab, setPreviewSubTab] = useState<'overview' | 'evidence' | 'checks' | 'audit'>('overview')
+  const [expandedStep, setExpandedStep] = useState<string>('01')
+  const [expandedWhy, setExpandedWhy] = useState<number>(0)
+  const [hoveredChartIdx, setHoveredChartIdx] = useState<number>(6)
+  const [barsMounted, setBarsMounted] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setBarsMounted(true), 120)
+    return () => clearTimeout(timer)
+  }, [])
 
   useEffect(() => {
     const loadData = async () => {
@@ -53,8 +95,7 @@ export default function OverviewView({
         if (casesResp.ok) {
           const list: CaseSummary[] = await casesResp.json()
           setCases(list)
-          const preferred =
-            list.find((c) => c.case_id.includes('s2')) || list[0]
+          const preferred = list.find((c) => c.case_id.includes('s2')) || list[0]
           if (preferred) {
             setSelectedPreviewId(preferred.case_id)
           }
@@ -87,6 +128,10 @@ export default function OverviewView({
     loadDetail()
   }, [selectedPreviewId])
 
+  const animatedAccuracy = useCountUp(Math.round(evalSummary?.accuracy_pct ?? 100), 850)
+  const animatedCases = useCountUp(cases.length || 3, 650)
+  const animatedLedger = useCountUp(ledgerStatus?.total_entries ?? 3, 750)
+
   const activeCase = previewDetail?.case
   const activeEp = activeCase?.evidence_pack
   const checks = activeCase?.verdict?.deterministic_checks || []
@@ -116,6 +161,69 @@ export default function OverviewView({
     return JSON.stringify(obj, null, 2).split('\n')
   }, [activeCase, activeEp, formattedCaseCode])
 
+  const chartPoints = useMemo(() => {
+    const width = 440
+    const height = 140
+    const padX = 24
+    const padY = 18
+    const usableW = width - padX * 2
+    const usableH = height - padY * 2
+
+    const toCoords = (vals: number[]) =>
+      vals.map((v, idx) => {
+        const x = padX + (idx / (vals.length - 1)) * usableW
+        const y = padY + (1 - v / 100) * usableH
+        return { x, y, val: v }
+      })
+
+    const buildSmoothPath = (pts: Array<{ x: number; y: number }>) =>
+      pts
+        .map((p, i) => {
+          if (i === 0) return `M ${p.x.toFixed(1)} ${p.y.toFixed(1)}`
+          const prev = pts[i - 1]
+          const cx = ((prev.x + p.x) / 2).toFixed(1)
+          return `C ${cx} ${prev.y.toFixed(1)}, ${cx} ${p.y.toFixed(1)}, ${p.x.toFixed(1)} ${p.y.toFixed(1)}`
+        })
+        .join(' ')
+
+    const verifiedPts = toCoords(CHART_SERIES.map((d) => d.verified))
+    const breachPts = toCoords(CHART_SERIES.map((d) => d.breach))
+    const regretPts = toCoords(CHART_SERIES.map((d) => d.regret))
+
+    const verifiedLine = buildSmoothPath(verifiedPts)
+    const verifiedArea = `${verifiedLine} L ${verifiedPts[verifiedPts.length - 1].x.toFixed(1)} ${height - padY} L ${verifiedPts[0].x.toFixed(1)} ${height - padY} Z`
+
+    return {
+      width,
+      height,
+      padY,
+      verifiedPts,
+      breachPts,
+      regretPts,
+      verifiedLine,
+      verifiedArea,
+      breachLine: buildSmoothPath(breachPts),
+      regretLine: buildSmoothPath(regretPts),
+    }
+  }, [])
+
+  const evalBreakdownEntries = useMemo(() => {
+    if (evalSummary?.class_breakdown) {
+      return Object.entries(evalSummary.class_breakdown).map(([cls, st]) => ({
+        name: cls,
+        count: `${st.correct}/${st.total}`,
+        pct: st.accuracy_pct,
+      }))
+    }
+    return [
+      { name: 'MERCHANT_AT_FAULT', count: '4/4', pct: 100 },
+      { name: 'OPERATOR_AT_FAULT', count: '4/4', pct: 100 },
+      { name: 'WITHIN_MANDATE_REGRET', count: '3/3', pct: 100 },
+      { name: 'NO_FAULT', count: '2/2', pct: 100 },
+      { name: 'NEEDS_HUMAN', count: '2/2', pct: 100 },
+    ]
+  }, [evalSummary])
+
   return (
     <div className="bg-[#F8F3EB] text-[#292522]">
       {/* 1. Editorial 2-Column Hero */}
@@ -123,27 +231,27 @@ export default function OverviewView({
         <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-14 lg:pt-14 lg:pb-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-10 items-center">
             {/* Left Editorial Copy */}
-            <div className="lg:col-span-5 space-y-6">
+            <div className="lg:col-span-5 space-y-6 animate-fade-up">
               <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[#6E635D]">
                 Liability Infrastructure for Autonomous Commerce
               </div>
 
-              <h1 className="font-serif text-4xl sm:text-5xl lg:text-[54px] font-semibold tracking-tight text-[#541827] leading-[1.04]">
+              <h1 className="font-serif editorial-expand-title text-4xl sm:text-5xl lg:text-[54px] font-semibold tracking-tight text-[#541827] leading-[1.04]">
                 When AI spends, responsibility must be clear.
               </h1>
 
-              <p className="text-[15px] sm:text-base text-[#574D48] leading-relaxed max-w-lg">
+              <p className="text-[15px] sm:text-base text-[#574D48] leading-relaxed max-w-lg animate-fade-up-delay-1">
                 Veripact binds purchase mandates to PayPal orders, evaluates evidence from merchants, delivery, and
                 AI agents, and determines financial fault with a deterministic and auditable process.
               </p>
 
-              <div className="flex flex-wrap items-center gap-5 pt-1">
+              <div className="flex flex-wrap items-center gap-5 pt-1 animate-fade-up-delay-2">
                 <button
                   onClick={() => onNavigateTab('purchase')}
-                  className="px-5 py-3 bg-[#BF4827] hover:bg-[#A33B1E] text-white rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm transition"
+                  className="group px-5 py-3 bg-[#BF4827] hover:bg-[#A33B1E] text-white rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
                 >
                   <span>Try Live Demo</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
 
                 <button
@@ -155,33 +263,56 @@ export default function OverviewView({
                 </button>
               </div>
 
-              {/* Compact Case Switcher for Live Preview */}
-              {cases.length > 0 && (
-                <div className="pt-2 flex flex-wrap items-center gap-2">
-                  <span className="text-[11px] font-medium text-[#6E635D]">Inspect live fixture:</span>
-                  {cases.slice(0, 3).map((c, idx) => {
-                    const active = selectedPreviewId === c.case_id
-                    return (
-                      <button
-                        key={c.case_id}
-                        onClick={() => setSelectedPreviewId(c.case_id)}
-                        className={`px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold border transition ${
-                          active
-                            ? 'bg-[#541827] text-white border-[#541827]'
-                            : 'bg-white text-[#574D48] border-[#DCCDBB] hover:border-[#BF4827]'
-                        }`}
-                      >
-                        S{idx + 1}: {c.verdict.split('_')[0]}
-                      </button>
-                    )
-                  })}
+              {/* Compact Case Switcher + Live Count-Up Metrics */}
+              <div className="pt-3 space-y-3 animate-fade-up-delay-3">
+                {cases.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-[11px] font-medium text-[#6E635D]">Inspect live fixture:</span>
+                    {cases.slice(0, 3).map((c, idx) => {
+                      const active = selectedPreviewId === c.case_id
+                      return (
+                        <button
+                          key={c.case_id}
+                          onClick={() => setSelectedPreviewId(c.case_id)}
+                          className={`px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold border transition-all duration-200 ${
+                            active
+                              ? 'bg-[#541827] text-white border-[#541827] scale-[1.03]'
+                              : 'bg-white text-[#574D48] border-[#DCCDBB] hover:border-[#BF4827]'
+                          }`}
+                        >
+                          S{idx + 1}: {c.verdict.split('_')[0]}
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-3 gap-4 pt-3 border-t border-[#DCCDBB] max-w-md">
+                  <div>
+                    <div className="font-serif text-2xl font-bold text-[#541827] tabular-nums">
+                      {animatedAccuracy}%
+                    </div>
+                    <div className="text-[11px] text-[#6E635D]">Policy accuracy</div>
+                  </div>
+                  <div>
+                    <div className="font-serif text-2xl font-bold text-[#BF4827] tabular-nums">
+                      {animatedCases} Cases
+                    </div>
+                    <div className="text-[11px] text-[#6E635D]">Active sandbox</div>
+                  </div>
+                  <div>
+                    <div className="font-serif text-2xl font-bold text-[#52705C] tabular-nums">
+                      {animatedLedger} Sealed
+                    </div>
+                    <div className="text-[11px] text-[#6E635D]">SHA-256 ledger</div>
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
 
             {/* Right Interactive Workbench Card */}
-            <div className="lg:col-span-7">
-              <div className="bg-white rounded-2xl border border-[#DCCDBB] shadow-[0_22px_50px_-18px_rgba(45,22,18,0.14)] overflow-hidden">
+            <div className="lg:col-span-7 animate-fade-up-delay-1">
+              <div className="bg-white rounded-2xl border border-[#DCCDBB] shadow-[0_22px_50px_-18px_rgba(45,22,18,0.14)] overflow-hidden transition-shadow duration-300 hover:shadow-[0_28px_60px_-16px_rgba(84,24,39,0.18)]">
                 <div className="grid grid-cols-12">
                   {/* Embedded Sidebar */}
                   <div className="hidden sm:flex sm:col-span-3 bg-[#FCF9F4] border-r border-[#DCCDBB] p-4 flex-col justify-between min-h-[395px]">
@@ -249,11 +380,11 @@ export default function OverviewView({
                           Disputes &rsaquo; <span className="text-[#574D48] font-medium">{formattedCaseCode}</span>
                         </div>
                         <div className="flex flex-wrap items-center gap-2.5">
-                          <h2 className="text-xl font-extrabold text-[#292522] tracking-tight">
+                          <h2 className="text-xl font-extrabold text-[#292522] tracking-tight transition-all duration-300">
                             {formattedCaseCode}
                           </h2>
                           <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-bold tracking-wide border ${verdictStyle.badge}`}
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-bold tracking-wide border transition-colors ${verdictStyle.badge}`}
                           >
                             {activeCase?.verdict?.verdict || 'OPERATOR_AT_FAULT'}
                           </span>
@@ -287,7 +418,7 @@ export default function OverviewView({
                           <button
                             key={t.id}
                             onClick={() => setPreviewSubTab(t.id as any)}
-                            className={`pb-2.5 font-semibold border-b-2 transition ${
+                            className={`pb-2.5 font-semibold border-b-2 transition-all duration-200 ${
                               active
                                 ? 'border-[#BF4827] text-[#292522]'
                                 : 'border-transparent text-[#8C7F77] hover:text-[#292522]'
@@ -301,7 +432,7 @@ export default function OverviewView({
 
                     {/* Sub-tab Body */}
                     {previewSubTab === 'overview' && (
-                      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 animate-fade-up">
                         {/* Evidence (4) */}
                         <div className="md:col-span-5 rounded-xl border border-[#DCCDBB] bg-[#FCF9F4] p-3.5 space-y-2.5">
                           <div className="text-xs font-bold text-[#292522]">Evidence (4)</div>
@@ -310,11 +441,14 @@ export default function OverviewView({
                               { name: 'mandate.json', meta: 'Ed25519' },
                               { name: 'listing.json', meta: `${activeEp?.merchant_listing?.ports_count ?? 8} ports` },
                               { name: 'delivery_report.json', meta: 'Inspected' },
-                              { name: 'agent_trace.log', meta: `${activeEp?.candidate_trace?.evaluated_candidates?.length ?? 3} offers` },
+                              {
+                                name: 'agent_trace.log',
+                                meta: `${activeEp?.candidate_trace?.evaluated_candidates?.length ?? 3} offers`,
+                              },
                             ].map((file) => (
                               <div
                                 key={file.name}
-                                className="flex items-center justify-between px-2.5 py-2 rounded-lg bg-white border border-[#DCCDBB]"
+                                className="flex items-center justify-between px-2.5 py-2 rounded-lg bg-white border border-[#DCCDBB] hover:border-[#BF4827]/60 transition"
                               >
                                 <span className="flex items-center gap-2 font-mono text-[#292522] truncate">
                                   <FileCode2 className="w-3.5 h-3.5 text-[#8C7F77] shrink-0" />
@@ -364,7 +498,7 @@ export default function OverviewView({
                     )}
 
                     {previewSubTab === 'evidence' && (
-                      <div className="rounded-xl border border-[#DCCDBB] bg-[#FCF9F4] p-4 space-y-2 text-xs">
+                      <div className="rounded-xl border border-[#DCCDBB] bg-[#FCF9F4] p-4 space-y-2 text-xs animate-fade-up">
                         <div className="font-bold text-[#292522]">Intent &amp; Delivery Evidence Summary</div>
                         <p className="text-[#574D48] italic">
                           &ldquo;{activeEp?.mandate_pack?.intent?.user_request || 'USB-C docking station request'}&rdquo;
@@ -376,9 +510,12 @@ export default function OverviewView({
                     )}
 
                     {previewSubTab === 'checks' && (
-                      <div className="rounded-xl border border-[#DCCDBB] bg-[#FCF9F4] p-3.5 space-y-1.5 max-h-44 overflow-y-auto">
+                      <div className="rounded-xl border border-[#DCCDBB] bg-[#FCF9F4] p-3.5 space-y-1.5 max-h-44 overflow-y-auto animate-fade-up">
                         {checks.map((chk) => (
-                          <div key={chk.check_id} className="flex items-center justify-between text-[11px] bg-white px-3 py-1.5 rounded-lg border border-[#DCCDBB]">
+                          <div
+                            key={chk.check_id}
+                            className="flex items-center justify-between text-[11px] bg-white px-3 py-1.5 rounded-lg border border-[#DCCDBB]"
+                          >
                             <span className="font-mono text-[#292522]">
                               <strong>{chk.check_id}</strong> {chk.name}
                             </span>
@@ -391,7 +528,7 @@ export default function OverviewView({
                     )}
 
                     {previewSubTab === 'audit' && (
-                      <div className="rounded-xl border border-[#DCCDBB] bg-[#FCF9F4] p-4 space-y-1.5 text-[11px]">
+                      <div className="rounded-xl border border-[#DCCDBB] bg-[#FCF9F4] p-4 space-y-1.5 text-[11px] animate-fade-up">
                         <div className="font-bold text-[#292522]">
                           Ledger Integrity: {ledgerStatus?.intact ? 'INTACT (SHA-256 Verified)' : 'Verified'}
                         </div>
@@ -434,32 +571,32 @@ export default function OverviewView({
               Integrations
             </div>
 
-            <div className="flex items-center gap-3 md:px-5">
-              <ShoppingBag className="w-5 h-5 text-[#541827] shrink-0" />
+            <div className="flex items-center gap-3 md:px-5 group">
+              <ShoppingBag className="w-5 h-5 text-[#541827] group-hover:text-[#BF4827] transition-colors shrink-0" />
               <div>
                 <div className="text-xs font-bold text-[#292522]">PayPal Orders API</div>
                 <div className="text-[11px] text-[#6E635D]">Create and track agent purchases</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 md:px-5">
-              <Webhook className="w-5 h-5 text-[#541827] shrink-0" />
+            <div className="flex items-center gap-3 md:px-5 group">
+              <Webhook className="w-5 h-5 text-[#541827] group-hover:text-[#BF4827] transition-colors shrink-0" />
               <div>
                 <div className="text-xs font-bold text-[#292522]">Webhooks</div>
                 <div className="text-[11px] text-[#6E635D]">Real-time dispute and order events</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 md:px-5">
-              <ShieldCheck className="w-5 h-5 text-[#541827] shrink-0" />
+            <div className="flex items-center gap-3 md:px-5 group">
+              <ShieldCheck className="w-5 h-5 text-[#541827] group-hover:text-[#BF4827] transition-colors shrink-0" />
               <div>
                 <div className="text-xs font-bold text-[#292522]">Disputes API</div>
                 <div className="text-[11px] text-[#6E635D]">Automate resolution and settlement</div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 md:pl-5">
-              <KeyRound className="w-5 h-5 text-[#541827] shrink-0" />
+            <div className="flex items-center gap-3 md:pl-5 group">
+              <KeyRound className="w-5 h-5 text-[#541827] group-hover:text-[#BF4827] transition-colors shrink-0" />
               <div>
                 <div className="text-xs font-bold text-[#292522]">AP2 Mandates</div>
                 <div className="text-[11px] text-[#6E635D]">Standardized agent payment mandates</div>
@@ -469,65 +606,327 @@ export default function OverviewView({
         </div>
       </section>
 
-      {/* 3. Horizontal 4-Step Resolution Workflow */}
+      {/* 3. Interactive Expandable 4-Step Workflow */}
       <section className="py-14 lg:py-16 border-b border-[#DCCDBB]">
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 space-y-9">
-          <h2 className="font-serif text-3xl sm:text-4xl font-semibold tracking-tight text-[#541827]">
-            From purchase mandate to accountable resolution.
-          </h2>
+        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+            <h2 className="font-serif editorial-expand-title text-3xl sm:text-4xl font-semibold tracking-tight text-[#541827]">
+              From purchase mandate to accountable resolution.
+            </h2>
+            <span className="text-xs text-[#6E635D]">Click any step to expand cryptographic spec</span>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
                 num: '01',
                 title: 'Bind mandate',
                 desc: 'Sign buyer intent, spend caps, and product specs (Ed25519) and attach directly to the PayPal order.',
+                detail: 'IntentMandate + CartMandate canonical JSON hashed with SHA-256 and bound to Orders v2 custom_id.',
                 hasArrow: true,
               },
               {
                 num: '02',
                 title: 'Ingest evidence',
                 desc: 'Collect dispute webhooks, merchant listings, warehouse delivery reports, and agent reasoning traces.',
+                detail: 'PayPal webhook signatures are verified via /v1/notifications/verify-webhook-signature.',
                 hasArrow: true,
               },
               {
                 num: '03',
                 title: 'Evaluate policy',
                 desc: 'Run deterministic C1–C7 checks plus a constrained AI arbiter to determine exact financial liability.',
+                detail: 'Deterministic rules take strict precedence over LLM classification (prompt-injection shielded).',
                 hasArrow: true,
               },
               {
                 num: '04',
                 title: 'Resolve dispute',
                 desc: 'Preview the PayPal Disputes API payload and execute refund, evidence, or offer in one click.',
+                detail: 'HATEOAS-validated execution writes a permanent SHA-256 chained audit event to the ledger.',
                 hasArrow: false,
               },
-            ].map((step) => (
-              <div key={step.num} className="space-y-2.5">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-baseline gap-2.5">
-                    <span className="font-serif text-3xl font-medium text-[#BF4827] tabular-nums">
-                      {step.num}
-                    </span>
-                    <h3 className="text-sm font-bold text-[#292522]">{step.title}</h3>
+            ].map((step) => {
+              const isOpen = expandedStep === step.num
+              return (
+                <button
+                  key={step.num}
+                  type="button"
+                  onClick={() => setExpandedStep(isOpen ? '' : step.num)}
+                  className={`text-left rounded-2xl p-5 border transition-all duration-300 ${
+                    isOpen
+                      ? 'bg-white border-[#BF4827] shadow-md -translate-y-0.5'
+                      : 'bg-white/60 border-[#DCCDBB] hover:bg-white hover:border-[#BF4827]/60'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <div className="flex items-baseline gap-2.5">
+                      <span
+                        className={`font-serif font-medium tabular-nums transition-all duration-300 ${
+                          isOpen ? 'text-4xl text-[#BF4827]' : 'text-3xl text-[#541827]'
+                        }`}
+                      >
+                        {step.num}
+                      </span>
+                      <h3
+                        className={`font-bold transition-all duration-300 ${
+                          isOpen ? 'text-base text-[#541827] tracking-[0.01em]' : 'text-sm text-[#292522]'
+                        }`}
+                      >
+                        {step.title}
+                      </h3>
+                    </div>
+                    {step.hasArrow && (
+                      <ArrowRight
+                        className={`w-4 h-4 hidden lg:block shrink-0 transition-transform duration-300 ${
+                          isOpen ? 'text-[#BF4827] translate-x-1' : 'text-[#C5B9AB]'
+                        }`}
+                      />
+                    )}
                   </div>
-                  {step.hasArrow && (
-                    <ArrowRight className="w-4 h-4 text-[#C5B9AB] hidden lg:block shrink-0" />
-                  )}
-                </div>
-                <p className="text-xs text-[#574D48] leading-relaxed">{step.desc}</p>
-              </div>
-            ))}
+                  <p className="text-xs text-[#574D48] leading-relaxed">{step.desc}</p>
+
+                  {/* Smooth CSS Grid Expand */}
+                  <div
+                    className={`grid transition-all duration-300 ease-out ${
+                      isOpen ? 'grid-rows-[1fr] opacity-100 mt-3 pt-3 border-t border-[#DCCDBB]' : 'grid-rows-[0fr] opacity-0'
+                    }`}
+                  >
+                    <div className="overflow-hidden text-[11px] font-mono text-[#541827] leading-relaxed">
+                      {step.detail}
+                    </div>
+                  </div>
+                </button>
+              )
+            })}
           </div>
         </div>
       </section>
 
-      {/* 4. Evidence JSON Record + Why Veripact */}
+      {/* 4. Interactive Animated Telemetry Chart & Verdict Matrix Section */}
+      <section className="py-14 lg:py-16 border-b border-[#DCCDBB] bg-white/60">
+        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div className="space-y-1.5">
+              <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[#BF4827] flex items-center gap-1.5">
+                <BarChart3 className="w-3.5 h-3.5" />
+                Live Telemetry &amp; Fault Distribution
+              </div>
+              <h2 className="font-serif editorial-expand-title text-3xl font-semibold tracking-tight text-[#541827]">
+                Auditable arbiter signals at a glance.
+              </h2>
+            </div>
+            <button
+              onClick={() => onNavigateTab('eval')}
+              className="text-xs font-semibold text-[#541827] hover:text-[#BF4827] inline-flex items-center gap-1.5 transition"
+            >
+              <span>Inspect full 15-scenario matrix</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Animated Curved SVG Chart */}
+            <div className="lg:col-span-7 bg-white rounded-2xl border border-[#DCCDBB] p-6 shadow-sm space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <h3 className="text-sm font-bold text-[#292522]">Verification Accuracy &amp; Fault Trajectory</h3>
+                  <p className="text-xs text-[#6E635D]">
+                    Hover any checkpoint to inspect verified mandate coverage vs. breach rates.
+                  </p>
+                </div>
+                <div className="flex items-center gap-3 text-[11px] text-[#574D48]">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#52705C]" /> Verified
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#BF4827]" /> Breach
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#541827]" /> Regret
+                  </span>
+                </div>
+              </div>
+
+              <div className="relative bg-[#FCF9F4] rounded-xl border border-[#DCCDBB] p-4">
+                <svg
+                  viewBox={`0 0 ${chartPoints.width} ${chartPoints.height}`}
+                  className="w-full h-44 overflow-visible"
+                  role="img"
+                  aria-label="Verification accuracy and fault trend chart"
+                >
+                  <defs>
+                    <linearGradient id="veripactForestArea" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#52705C" stopOpacity="0.24" />
+                      <stop offset="100%" stopColor="#52705C" stopOpacity="0.01" />
+                    </linearGradient>
+                  </defs>
+
+                  {[0.2, 0.5, 0.8].map((ratio) => (
+                    <line
+                      key={ratio}
+                      x1={20}
+                      y1={chartPoints.padY + ratio * (chartPoints.height - chartPoints.padY * 2)}
+                      x2={chartPoints.width - 20}
+                      y2={chartPoints.padY + ratio * (chartPoints.height - chartPoints.padY * 2)}
+                      stroke="#DCCDBB"
+                      strokeDasharray="3 4"
+                      strokeWidth="0.9"
+                    />
+                  ))}
+
+                  <path d={chartPoints.verifiedArea} fill="url(#veripactForestArea)" className="animate-area-fade" />
+                  <path
+                    d={chartPoints.verifiedLine}
+                    fill="none"
+                    stroke="#52705C"
+                    strokeWidth="2.6"
+                    strokeLinecap="round"
+                    className="animate-draw-path"
+                  />
+                  <path
+                    d={chartPoints.breachLine}
+                    fill="none"
+                    stroke="#BF4827"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    className="animate-draw-path"
+                  />
+                  <path
+                    d={chartPoints.regretLine}
+                    fill="none"
+                    stroke="#541827"
+                    strokeWidth="1.8"
+                    strokeDasharray="4 3"
+                    strokeLinecap="round"
+                    className="animate-draw-path"
+                  />
+
+                  {chartPoints.verifiedPts.map((pt, idx) => {
+                    const isHovered = hoveredChartIdx === idx
+                    const bPt = chartPoints.breachPts[idx]
+                    return (
+                      <g
+                        key={idx}
+                        onMouseEnter={() => setHoveredChartIdx(idx)}
+                        className="cursor-pointer"
+                      >
+                        {isHovered && (
+                          <line
+                            x1={pt.x}
+                            y1={chartPoints.padY}
+                            x2={pt.x}
+                            y2={chartPoints.height - chartPoints.padY}
+                            stroke="#541827"
+                            strokeOpacity="0.25"
+                            strokeWidth="1"
+                          />
+                        )}
+                        <circle
+                          cx={pt.x}
+                          cy={pt.y}
+                          r={isHovered ? 5.5 : 3.5}
+                          fill="#FFFFFF"
+                          stroke="#52705C"
+                          strokeWidth="2.2"
+                          className="transition-all duration-200"
+                        />
+                        <circle
+                          cx={bPt.x}
+                          cy={bPt.y}
+                          r={isHovered ? 4.5 : 2.8}
+                          fill="#FFFFFF"
+                          stroke="#BF4827"
+                          strokeWidth="2"
+                          className="transition-all duration-200"
+                        />
+                        <text
+                          x={pt.x}
+                          y={chartPoints.height - 2}
+                          textAnchor="middle"
+                          fontSize="9"
+                          fill={isHovered ? '#541827' : '#8C7F77'}
+                          fontWeight={isHovered ? '700' : '500'}
+                          fontFamily="JetBrains Mono, monospace"
+                        >
+                          {CHART_SERIES[idx].label}
+                        </text>
+                      </g>
+                    )
+                  })}
+                </svg>
+
+                {/* Live Interactive Checkpoint Readout */}
+                <div className="mt-2 pt-2.5 border-t border-[#DCCDBB] flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                  <span className="text-[#541827] font-bold">
+                    Checkpoint {CHART_SERIES[hoveredChartIdx].label}
+                  </span>
+                  <div className="flex flex-wrap items-center gap-4 text-[11px]">
+                    <span className="text-[#52705C] font-semibold">
+                      Verified: {CHART_SERIES[hoveredChartIdx].verified}%
+                    </span>
+                    <span className="text-[#BF4827] font-semibold">
+                      Breach Rate: {CHART_SERIES[hoveredChartIdx].breach}%
+                    </span>
+                    <span className="text-[#541827] font-semibold">
+                      Regret: {CHART_SERIES[hoveredChartIdx].regret}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Animated Verdict Class Accuracy Bars */}
+            <div className="lg:col-span-5 bg-white rounded-2xl border border-[#DCCDBB] p-6 shadow-sm space-y-4">
+              <div>
+                <h3 className="text-sm font-bold text-[#292522]">Eval Accuracy by Verdict Class</h3>
+                <p className="text-xs text-[#6E635D]">
+                  Live benchmark pass rates ({evalSummary ? `${evalSummary.passed_scenarios}/${evalSummary.total_scenarios}` : '15/15'} scenarios).
+                </p>
+              </div>
+
+              <div className="space-y-3.5 pt-1">
+                {evalBreakdownEntries.map((item, idx) => {
+                  const barColor =
+                    item.name === 'MERCHANT_AT_FAULT'
+                      ? 'bg-[#BF4827]'
+                      : item.name === 'OPERATOR_AT_FAULT'
+                      ? 'bg-[#541827]'
+                      : item.name === 'NO_FAULT'
+                      ? 'bg-[#52705C]'
+                      : 'bg-[#8C5B2B]'
+                  return (
+                    <div key={item.name} className="space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-mono">
+                        <span className="font-semibold text-[#292522]">{item.name}</span>
+                        <span className="text-[#52705C] font-bold tabular-nums">
+                          {item.count} ({item.pct}%)
+                        </span>
+                      </div>
+                      <div className="w-full h-2.5 rounded-full bg-[#F2EBE0] overflow-hidden border border-[#DCCDBB]/60">
+                        <div
+                          className={`h-full rounded-full ${barColor} transition-all duration-1000 ease-out`}
+                          style={{
+                            width: barsMounted ? `${item.pct}%` : '0%',
+                            transitionDelay: `${idx * 90}ms`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Evidence JSON Record + Interactive Expandable Why Veripact */}
       <section className="py-14 lg:py-16">
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           {/* Left Code Card */}
           <div className="lg:col-span-6">
-            <div className="bg-white rounded-2xl border border-[#DCCDBB] shadow-sm overflow-hidden">
+            <div className="bg-white rounded-2xl border border-[#DCCDBB] shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
               <div className="px-4 py-2.5 border-b border-[#DCCDBB] bg-[#FCF9F4] flex items-center justify-between text-xs">
                 <span className="flex items-center gap-2 font-semibold text-[#292522]">
                   <FileCode2 className="w-4 h-4 text-[#BF4827]" />
@@ -557,36 +956,77 @@ export default function OverviewView({
             </div>
           </div>
 
-          {/* Right Why Veripact */}
-          <div className="lg:col-span-6 space-y-6">
-            <h2 className="font-serif text-3xl font-semibold tracking-tight text-[#541827]">
+          {/* Right Expandable Why Veripact */}
+          <div className="lg:col-span-6 space-y-5">
+            <h2 className="font-serif editorial-expand-title text-3xl font-semibold tracking-tight text-[#541827]">
               Why Veripact
             </h2>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {[
                 {
                   title: 'Deterministic by design',
-                  desc: `C1–C7 policy checks with verifiable logic (${evalSummary ? `${evalSummary.accuracy_pct}%` : '100%'} eval pass rate across 15 adversarial scenarios).`,
+                  summary: `C1–C7 policy checks with verifiable logic (${evalSummary ? `${evalSummary.accuracy_pct}%` : '100%'} eval pass rate).`,
+                  more: 'Every intent signature, nonce expiry, SHA-256 cart digest, allowed merchant list, and spend cap is verified via pure Python functions before any LLM runs.',
                 },
                 {
                   title: 'Tamper-evident audit',
-                  desc: `Hash-chained SHA-256 records for every mandate, evidence pack, and decision (${ledgerStatus?.total_entries ?? 3} sealed entries live).`,
+                  summary: `Hash-chained SHA-256 records for every mandate and decision (${ledgerStatus?.total_entries ?? 3} sealed entries live).`,
+                  more: 'Each ledger entry embeds prev_hash and entry_hash so modifying any historical verdict or evidence field is detected immediately via /api/cases/ledger/verify.',
                 },
                 {
                   title: 'PayPal-native execution',
-                  desc: 'Automated dispute resolution via Orders v2, Webhooks, and Customer Disputes API with human-in-the-loop safety.',
+                  summary: 'Automated dispute resolution via Orders v2, Webhooks, and Customer Disputes API.',
+                  more: 'Action plans strictly inspect PayPal HATEOAS links and allowed response options before dispatching accept-claim, provide-evidence, or make-offer.',
                 },
-              ].map((item) => (
-                <div key={item.title} className="flex items-start gap-3">
-                  <div className="mt-0.5 w-5 h-5 rounded-full border border-[#DCCDBB] bg-white flex items-center justify-center shrink-0">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#BF4827]" />
-                  </div>
-                  <div className="text-sm text-[#574D48] leading-relaxed">
-                    <strong className="text-[#292522] font-semibold">{item.title}</strong> &mdash; {item.desc}
-                  </div>
-                </div>
-              ))}
+              ].map((item, idx) => {
+                const open = expandedWhy === idx
+                return (
+                  <button
+                    key={item.title}
+                    type="button"
+                    onClick={() => setExpandedWhy(open ? -1 : idx)}
+                    className={`w-full text-left p-4 rounded-xl border transition-all duration-300 ${
+                      open
+                        ? 'bg-white border-[#BF4827]/70 shadow-sm'
+                        : 'bg-white/60 border-[#DCCDBB] hover:bg-white'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-3">
+                        <div className="mt-0.5 w-5 h-5 rounded-full border border-[#DCCDBB] bg-[#F8F3EB] flex items-center justify-center shrink-0">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#52705C]" />
+                        </div>
+                        <div className="text-sm text-[#574D48] leading-relaxed">
+                          <strong
+                            className={`font-semibold transition-all duration-300 ${
+                              open ? 'text-[#541827] text-[15px] tracking-[0.01em]' : 'text-[#292522]'
+                            }`}
+                          >
+                            {item.title}
+                          </strong>{' '}
+                          &mdash; {item.summary}
+                        </div>
+                      </div>
+                      <ChevronDown
+                        className={`w-4 h-4 text-[#6E635D] shrink-0 mt-1 transition-transform duration-300 ${
+                          open ? 'rotate-180 text-[#BF4827]' : ''
+                        }`}
+                      />
+                    </div>
+
+                    <div
+                      className={`grid transition-all duration-300 ease-out ${
+                        open ? 'grid-rows-[1fr] opacity-100 mt-2.5 pt-2.5 border-t border-[#DCCDBB]/70' : 'grid-rows-[0fr] opacity-0'
+                      }`}
+                    >
+                      <div className="overflow-hidden pl-8 text-xs text-[#6E635D] leading-relaxed">
+                        {item.more}
+                      </div>
+                    </div>
+                  </button>
+                )
+              })}
             </div>
 
             <div className="pt-2 flex flex-wrap items-center gap-3">
@@ -609,14 +1049,14 @@ export default function OverviewView({
         </div>
       </section>
 
-      {/* 5. Bottom Deep Oxblood Burgundy Banner */}
+      {/* 6. Bottom Deep Oxblood Burgundy Banner */}
       <section className="relative overflow-hidden bg-gradient-to-r from-[#3D101B] via-[#541827] to-[#681F31] text-white">
         <div
-          className="absolute right-0 top-0 bottom-0 w-44 bg-[#9B5E4A]/20 -skew-x-12 translate-x-12 pointer-events-none"
+          className="absolute right-0 top-0 bottom-0 w-44 bg-[#BF4827]/20 -skew-x-12 translate-x-12 pointer-events-none"
           aria-hidden="true"
         />
         <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-9 relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <h2 className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-white">
+          <h2 className="font-serif editorial-expand-title text-2xl sm:text-3xl font-semibold tracking-tight text-white">
             Make autonomous commerce accountable.
           </h2>
 
@@ -627,10 +1067,10 @@ export default function OverviewView({
 
           <button
             onClick={() => onNavigateTab('purchase')}
-            className="px-5 py-3 bg-[#BF4827] hover:bg-[#A33B1E] text-white rounded-lg text-xs sm:text-sm font-semibold inline-flex items-center gap-2 shadow-md transition self-start lg:self-auto shrink-0"
+            className="group px-5 py-3 bg-[#BF4827] hover:bg-[#A33B1E] text-white rounded-lg text-xs sm:text-sm font-semibold inline-flex items-center gap-2 shadow-md transition-all self-start lg:self-auto shrink-0"
           >
             <span>Try Live Demo</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       </section>

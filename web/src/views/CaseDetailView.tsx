@@ -13,7 +13,6 @@ import {
   Brain,
   Lock,
   ChevronDown,
-  ChevronUp,
 } from 'lucide-react'
 import { VERDICT_STYLES } from '../agGridSetup'
 import { CaseDetail, DeterministicCheck, VerdictType } from '../types'
@@ -386,7 +385,7 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
             <div className="w-full bg-[#EAE3D8] rounded-full h-2 overflow-hidden">
               <div
                 style={{ width: `${Math.min(100, verdict.regret_score * 100)}%` }}
-                className={`h-full ${verdict.is_regret_flagged ? 'bg-[#C97B18]' : 'bg-[#541827]'}`}
+                className={`h-full transition-all duration-700 ease-out ${verdict.is_regret_flagged ? 'bg-[#C97B18]' : 'bg-[#541827]'}`}
               />
             </div>
             <p className="text-[10px] text-[#6E635D]">
@@ -560,17 +559,23 @@ export default function CaseDetailView({ caseId, onBack }: CaseDetailViewProps) 
                   </div>
                   <div className="flex items-center gap-2 text-[10px] font-mono text-[#6E635D]">
                     <span className="truncate max-w-xs md:max-w-md">Hash: {ev.entry_hash}</span>
-                    {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isExpanded ? 'rotate-180 text-[#BF4827]' : ''}`} />
                   </div>
                 </button>
-                {isExpanded && (
-                  <div className="px-3 pb-3 pt-2 border-t border-[#DCCDBB] space-y-1 bg-white">
-                    <div className="text-[10px] font-mono text-[#6E635D]">prev_hash: {ev.prev_hash}</div>
-                    <pre className="text-[10px] font-mono bg-[#F8F3EB] border border-[#DCCDBB] p-2 rounded text-[#292522] overflow-x-auto">
-                      {JSON.stringify(ev.payload, null, 2)}
-                    </pre>
+                <div
+                  className={`grid transition-all duration-300 ease-out ${
+                    isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <div className="px-3 pb-3 pt-2 border-t border-[#DCCDBB] space-y-1 bg-white">
+                      <div className="text-[10px] font-mono text-[#6E635D]">prev_hash: {ev.prev_hash}</div>
+                      <pre className="text-[10px] font-mono bg-[#F8F3EB] border border-[#DCCDBB] p-2 rounded text-[#292522] overflow-x-auto">
+                        {JSON.stringify(ev.payload, null, 2)}
+                      </pre>
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             )
           })}
