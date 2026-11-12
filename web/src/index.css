@@ -19,11 +19,13 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Editorial Motion & Chart Animations */
+/* =========================================================
+   Veripact Editorial Motion & Continuous Fintech Animations
+   ========================================================= */
 @keyframes veripactFadeUp {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -49,20 +51,69 @@ body {
   }
 }
 
+@keyframes veripactFloatSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes veripactMarquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes veripactBeamFlow {
+  0% {
+    stroke-dashoffset: 280;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes veripactAmbientShift {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate(14px, -10px) scale(1.06);
+    opacity: 0.8;
+  }
+}
+
+@keyframes veripactPingSlow {
+  0% {
+    transform: scale(1);
+    opacity: 0.65;
+  }
+  75%, 100% {
+    transform: scale(2.15);
+    opacity: 0;
+  }
+}
+
 .animate-fade-up {
-  animation: veripactFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: veripactFadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .animate-fade-up-delay-1 {
-  animation: veripactFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+  animation: veripactFadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
 
 .animate-fade-up-delay-2 {
-  animation: veripactFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
+  animation: veripactFadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
 }
 
 .animate-fade-up-delay-3 {
-  animation: veripactFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both;
+  animation: veripactFadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
 
 .animate-draw-path {
@@ -75,13 +126,46 @@ body {
   animation: veripactAreaFade 0.9s ease-out 0.35s both;
 }
 
+.animate-float-slow {
+  animation: veripactFloatSlow 6s ease-in-out infinite;
+}
+
+.animate-float-slow:hover {
+  animation-play-state: paused;
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: veripactMarquee 32s linear infinite;
+}
+
+.marquee-wrapper:hover .animate-marquee {
+  animation-play-state: paused;
+}
+
+.animate-beam-flow {
+  stroke-dasharray: 18 16;
+  animation: veripactBeamFlow 2.6s linear infinite;
+}
+
+.animate-ambient-shift {
+  animation: veripactAmbientShift 9s ease-in-out infinite;
+}
+
+.animate-ping-slow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: veripactPingSlow 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
 /* Editorial Serif Expand Hover */
 .editorial-expand-title {
   transition: letter-spacing 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .editorial-expand-title:hover {
-  letter-spacing: 0.012em;
+  letter-spacing: 0.014em;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -90,7 +174,12 @@ body {
   .animate-fade-up-delay-2,
   .animate-fade-up-delay-3,
   .animate-draw-path,
-  .animate-area-fade {
+  .animate-area-fade,
+  .animate-float-slow,
+  .animate-marquee,
+  .animate-beam-flow,
+  .animate-ambient-shift,
+  .animate-ping-slow {
     animation: none !important;
     stroke-dashoffset: 0 !important;
     opacity: 1 !important;

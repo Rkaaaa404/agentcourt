@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   ArrowRight,
   ArrowUpRight,
@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   ChevronDown,
   Clock,
+  Cpu,
   FileCode2,
   FileText,
   KeyRound,
@@ -48,6 +49,32 @@ function useCountUp(target: number, durationMs = 700) {
   return value
 }
 
+function useInViewReveal(threshold = 0.12) {
+  const ref = useRef<HTMLDivElement | null>(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setVisible(true)
+      return
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setVisible(true)
+          observer.disconnect()
+        }
+      },
+      { threshold }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [threshold])
+
+  return { ref, visible }
+}
+
 const CHART_SERIES = [
   { label: 'D-6', verified: 68, breach: 18, regret: 14 },
   { label: 'D-5', verified: 74, breach: 20, regret: 12 },
@@ -56,6 +83,15 @@ const CHART_SERIES = [
   { label: 'D-2', verified: 91, breach: 11, regret: 9 },
   { label: 'D-1', verified: 96, breach: 8, regret: 7 },
   { label: 'Live', verified: 100, breach: 6, regret: 5 },
+]
+
+const MARQUEE_ITEMS = [
+  { icon: ShoppingBag, title: 'PayPal Orders API v2', sub: 'Create & capture agent purchases' },
+  { icon: Webhook, title: 'Verified Webhooks', sub: 'Real-time dispute & order sync' },
+  { icon: ShieldCheck, title: 'Customer Disputes API', sub: 'Automated settlement execution' },
+  { icon: KeyRound, title: 'AP2 Mandates', sub: 'Signed intent & cart bindings' },
+  { icon: Lock, title: 'SHA-256 Audit Ledger', sub: 'Tamper-evident hash chain' },
+  { icon: Cpu, title: 'Deterministic C1–C7', sub: 'Pure-function policy guardrails' },
 ]
 
 export default function OverviewView({
@@ -76,12 +112,37 @@ export default function OverviewView({
   const [expandedStep, setExpandedStep] = useState<string>('01')
   const [expandedWhy, setExpandedWhy] = useState<number>(0)
   const [hoveredChartIdx, setHoveredChartIdx] = useState<number>(6)
+  const [isChartHovered, setIsChartHovered] = useState(false)
+  const [activeCodeLine, setActiveCodeLine] = useState<number>(1)
+  const [isCodeHovered, setIsCodeHovered] = useState(false)
   const [barsMounted, setBarsMounted] = useState(false)
 
+  const workflowReveal = useInViewReveal(0.1)
+  const chartReveal = useInViewReveal(0.1)
+  const evidenceReveal = useInViewReveal(0.1)
+
   useEffect(() => {
-    const timer = setTimeout(() => setBarsMounted(true), 120)
+    const timer = setTimeout(() => setBarsMounted(true), 150)
     return () => clearTimeout(timer)
   }, [])
+
+  // Auto-cycle chart checkpoint subtly until hovered
+  useEffect(() => {
+    if (isChartHovered) return
+    const id = setInterval(() => {
+      setHoveredChartIdx((prev) => (prev + 1) % CHART_SERIES.length)
+    }, 2300)
+    return () => clearInterval(id)
+  }, [isChartHovered])
+
+  // Subtle live code line scanner
+  useEffect(() => {
+    if (isCodeHovered) return
+    const id = setInterval(() => {
+      setActiveCodeLine((prev) => (prev >= 8 ? 1 : prev + 1))
+    }, 1400)
+    return () => clearInterval(id)
+  }, [isCodeHovered])
 
   useEffect(() => {
     const loadData = async () => {
@@ -163,7 +224,7 @@ export default function OverviewView({
 
   const chartPoints = useMemo(() => {
     const width = 440
-    const height = 140
+    const height = 145
     const padX = 24
     const padY = 18
     const usableW = width - padX * 2
@@ -225,14 +286,21 @@ export default function OverviewView({
   }, [evalSummary])
 
   return (
-    <div className="bg-[#F8F3EB] text-[#292522]">
-      {/* 1. Editorial 2-Column Hero */}
-      <section className="border-b border-[#DCCDBB]">
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-14 lg:pt-14 lg:pb-16">
+    <div className="bg-[#F8F3EB] text-[#292522] overflow-x-hidden">
+      {/* 1. Editorial 2-Column Hero with Ambient Glow & Floating Workbench */}
+      <section className="relative border-b border-[#DCCDBB] overflow-hidden">
+        {/* Subtle shifting editorial ambient glow */}
+        <div
+          className="pointer-events-none absolute -top-24 right-[-6%] w-[460px] h-[460px] rounded-full bg-gradient-to-br from-[#BF4827]/12 via-[#541827]/8 to-[#52705C]/10 blur-3xl animate-ambient-shift"
+          aria-hidden="true"
+        />
+
+        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-14 lg:pt-14 lg:pb-16 relative">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-10 items-center">
             {/* Left Editorial Copy */}
             <div className="lg:col-span-5 space-y-6 animate-fade-up">
-              <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[#6E635D]">
+              <div className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.14em] uppercase text-[#6E635D]">
+                <span className="w-2 h-2 rounded-full bg-[#BF4827] animate-pulse" />
                 Liability Infrastructure for Autonomous Commerce
               </div>
 
@@ -310,9 +378,9 @@ export default function OverviewView({
               </div>
             </div>
 
-            {/* Right Interactive Workbench Card */}
+            {/* Right Floating Interactive Workbench Card */}
             <div className="lg:col-span-7 animate-fade-up-delay-1">
-              <div className="bg-white rounded-2xl border border-[#DCCDBB] shadow-[0_22px_50px_-18px_rgba(45,22,18,0.14)] overflow-hidden transition-shadow duration-300 hover:shadow-[0_28px_60px_-16px_rgba(84,24,39,0.18)]">
+              <div className="animate-float-slow bg-white rounded-2xl border border-[#DCCDBB] shadow-[0_22px_50px_-18px_rgba(45,22,18,0.14)] overflow-hidden transition-shadow duration-300 hover:shadow-[0_28px_60px_-16px_rgba(84,24,39,0.18)]">
                 <div className="grid grid-cols-12">
                   {/* Embedded Sidebar */}
                   <div className="hidden sm:flex sm:col-span-3 bg-[#FCF9F4] border-r border-[#DCCDBB] p-4 flex-col justify-between min-h-[395px]">
@@ -563,57 +631,71 @@ export default function OverviewView({
         </div>
       </section>
 
-      {/* 2. Integrations Strip */}
-      <section className="border-b border-[#DCCDBB] bg-[#F8F3EB]">
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="grid grid-cols-1 md:grid-cols-5 items-center gap-5 md:gap-0 md:divide-x md:divide-[#DCCDBB]">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[#8C7F77] md:pr-4">
-              Integrations
-            </div>
-
-            <div className="flex items-center gap-3 md:px-5 group">
-              <ShoppingBag className="w-5 h-5 text-[#541827] group-hover:text-[#BF4827] transition-colors shrink-0" />
-              <div>
-                <div className="text-xs font-bold text-[#292522]">PayPal Orders API</div>
-                <div className="text-[11px] text-[#6E635D]">Create and track agent purchases</div>
+      {/* 2. Continuous Infinite Integrations Marquee */}
+      <section className="border-b border-[#DCCDBB] bg-white/55 marquee-wrapper overflow-hidden py-5">
+        <div className="animate-marquee flex items-center gap-6">
+          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, idx) => {
+            const Icon = item.icon
+            return (
+              <div
+                key={`${item.title}-${idx}`}
+                className="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-white border border-[#DCCDBB] shadow-sm shrink-0 hover:border-[#BF4827] transition-colors"
+              >
+                <div className="p-2 rounded-lg bg-[#F8F3EB] text-[#541827]">
+                  <Icon className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-[#292522] whitespace-nowrap">{item.title}</div>
+                  <div className="text-[11px] text-[#6E635D] whitespace-nowrap">{item.sub}</div>
+                </div>
               </div>
-            </div>
-
-            <div className="flex items-center gap-3 md:px-5 group">
-              <Webhook className="w-5 h-5 text-[#541827] group-hover:text-[#BF4827] transition-colors shrink-0" />
-              <div>
-                <div className="text-xs font-bold text-[#292522]">Webhooks</div>
-                <div className="text-[11px] text-[#6E635D]">Real-time dispute and order events</div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 md:px-5 group">
-              <ShieldCheck className="w-5 h-5 text-[#541827] group-hover:text-[#BF4827] transition-colors shrink-0" />
-              <div>
-                <div className="text-xs font-bold text-[#292522]">Disputes API</div>
-                <div className="text-[11px] text-[#6E635D]">Automate resolution and settlement</div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 md:pl-5 group">
-              <KeyRound className="w-5 h-5 text-[#541827] group-hover:text-[#BF4827] transition-colors shrink-0" />
-              <div>
-                <div className="text-xs font-bold text-[#292522]">AP2 Mandates</div>
-                <div className="text-[11px] text-[#6E635D]">Standardized agent payment mandates</div>
-              </div>
-            </div>
-          </div>
+            )
+          })}
         </div>
       </section>
 
-      {/* 3. Interactive Expandable 4-Step Workflow */}
-      <section className="py-14 lg:py-16 border-b border-[#DCCDBB]">
-        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      {/* 3. Interactive Expandable 4-Step Workflow with Continuous SVG Beam */}
+      <section
+        ref={workflowReveal.ref}
+        className={`py-14 lg:py-16 border-b border-[#DCCDBB] transition-all duration-700 ease-out ${
+          workflowReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+        }`}
+      >
+        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
             <h2 className="font-serif editorial-expand-title text-3xl sm:text-4xl font-semibold tracking-tight text-[#541827]">
               From purchase mandate to accountable resolution.
             </h2>
-            <span className="text-xs text-[#6E635D]">Click any step to expand cryptographic spec</span>
+            <span className="text-xs text-[#6E635D]">Live cryptographic pipeline &bull; Click any step</span>
+          </div>
+
+          {/* Continuous SVG Data-Packet Beam Connector */}
+          <div className="hidden lg:block px-8">
+            <svg viewBox="0 0 1000 32" className="w-full h-8 overflow-visible" aria-hidden="true">
+              <line x1="60" y1="16" x2="940" y2="16" stroke="#DCCDBB" strokeWidth="2" />
+              <path
+                id="veripactPipelineBeam"
+                d="M 60 16 L 940 16"
+                fill="none"
+                stroke="#BF4827"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                className="animate-beam-flow"
+              />
+              {/* Traveling glowing packet */}
+              <circle r="5" fill="#BF4827">
+                <animateMotion dur="3.6s" repeatCount="indefinite" path="M 60 16 L 940 16" />
+              </circle>
+              <circle r="5" fill="#52705C">
+                <animateMotion dur="3.6s" begin="1.8s" repeatCount="indefinite" path="M 60 16 L 940 16" />
+              </circle>
+              {[60, 353, 646, 940].map((cx, i) => (
+                <g key={cx}>
+                  <circle cx={cx} cy="16" r="7" fill="#F8F3EB" stroke={i === 3 ? '#52705C' : '#541827'} strokeWidth="2.2" />
+                  <circle cx={cx} cy="16" r="2.8" fill={i === 3 ? '#52705C' : '#BF4827'} />
+                </g>
+              ))}
+            </svg>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -656,7 +738,7 @@ export default function OverviewView({
                   className={`text-left rounded-2xl p-5 border transition-all duration-300 ${
                     isOpen
                       ? 'bg-white border-[#BF4827] shadow-md -translate-y-0.5'
-                      : 'bg-white/60 border-[#DCCDBB] hover:bg-white hover:border-[#BF4827]/60'
+                      : 'bg-white/70 border-[#DCCDBB] hover:bg-white hover:border-[#BF4827]/60'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2 mb-2">
@@ -670,7 +752,7 @@ export default function OverviewView({
                       </span>
                       <h3
                         className={`font-bold transition-all duration-300 ${
-                          isOpen ? 'text-base text-[#541827] tracking-[0.01em]' : 'text-sm text-[#292522]'
+                          isOpen ? 'text-base text-[#541827] tracking-[0.012em]' : 'text-sm text-[#292522]'
                         }`}
                       >
                         {step.title}
@@ -704,7 +786,12 @@ export default function OverviewView({
       </section>
 
       {/* 4. Interactive Animated Telemetry Chart & Verdict Matrix Section */}
-      <section className="py-14 lg:py-16 border-b border-[#DCCDBB] bg-white/60">
+      <section
+        ref={chartReveal.ref}
+        className={`py-14 lg:py-16 border-b border-[#DCCDBB] bg-white/60 transition-all duration-700 ease-out ${
+          chartReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+        }`}
+      >
         <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="space-y-1.5">
@@ -726,13 +813,17 @@ export default function OverviewView({
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Animated Curved SVG Chart */}
-            <div className="lg:col-span-7 bg-white rounded-2xl border border-[#DCCDBB] p-6 shadow-sm space-y-4">
+            {/* Animated Curved SVG Chart with Live Pulse & Auto-Cycle */}
+            <div
+              onMouseEnter={() => setIsChartHovered(true)}
+              onMouseLeave={() => setIsChartHovered(false)}
+              className="lg:col-span-7 bg-white rounded-2xl border border-[#DCCDBB] p-6 shadow-sm space-y-4"
+            >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <h3 className="text-sm font-bold text-[#292522]">Verification Accuracy &amp; Fault Trajectory</h3>
                   <p className="text-xs text-[#6E635D]">
-                    Hover any checkpoint to inspect verified mandate coverage vs. breach rates.
+                    Auto-sweeping checkpoints (hover any dot to lock inspection).
                   </p>
                 </div>
                 <div className="flex items-center gap-3 text-[11px] text-[#574D48]">
@@ -784,6 +875,16 @@ export default function OverviewView({
                     strokeLinecap="round"
                     className="animate-draw-path"
                   />
+                  {/* Continuous subtle pulse beam along Verified path */}
+                  <path
+                    d={chartPoints.verifiedLine}
+                    fill="none"
+                    stroke="#FFFFFF"
+                    strokeOpacity="0.55"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    className="animate-beam-flow"
+                  />
                   <path
                     d={chartPoints.breachLine}
                     fill="none"
@@ -812,15 +913,26 @@ export default function OverviewView({
                         className="cursor-pointer"
                       >
                         {isHovered && (
-                          <line
-                            x1={pt.x}
-                            y1={chartPoints.padY}
-                            x2={pt.x}
-                            y2={chartPoints.height - chartPoints.padY}
-                            stroke="#541827"
-                            strokeOpacity="0.25"
-                            strokeWidth="1"
-                          />
+                          <>
+                            <line
+                              x1={pt.x}
+                              y1={chartPoints.padY}
+                              x2={pt.x}
+                              y2={chartPoints.height - chartPoints.padY}
+                              stroke="#541827"
+                              strokeOpacity="0.25"
+                              strokeWidth="1"
+                            />
+                            <circle
+                              cx={pt.x}
+                              cy={pt.y}
+                              r="6"
+                              fill="none"
+                              stroke="#52705C"
+                              strokeWidth="1.5"
+                              className="animate-ping-slow"
+                            />
+                          </>
                         )}
                         <circle
                           cx={pt.x}
@@ -858,7 +970,8 @@ export default function OverviewView({
 
                 {/* Live Interactive Checkpoint Readout */}
                 <div className="mt-2 pt-2.5 border-t border-[#DCCDBB] flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-                  <span className="text-[#541827] font-bold">
+                  <span className="text-[#541827] font-bold flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#52705C] animate-pulse" />
                     Checkpoint {CHART_SERIES[hoveredChartIdx].label}
                   </span>
                   <div className="flex flex-wrap items-center gap-4 text-[11px]">
@@ -908,7 +1021,7 @@ export default function OverviewView({
                           className={`h-full rounded-full ${barColor} transition-all duration-1000 ease-out`}
                           style={{
                             width: barsMounted ? `${item.pct}%` : '0%',
-                            transitionDelay: `${idx * 90}ms`,
+                            transitionDelay: `${idx * 100}ms`,
                           }}
                         />
                       </div>
@@ -921,37 +1034,60 @@ export default function OverviewView({
         </div>
       </section>
 
-      {/* 5. Evidence JSON Record + Interactive Expandable Why Veripact */}
-      <section className="py-14 lg:py-16">
+      {/* 5. Live Animated Evidence JSON Record + Expandable Why Veripact */}
+      <section
+        ref={evidenceReveal.ref}
+        className={`py-14 lg:py-16 transition-all duration-700 ease-out ${
+          evidenceReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+        }`}
+      >
         <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-          {/* Left Code Card */}
-          <div className="lg:col-span-6">
+          {/* Left Animated Code Scanner Card */}
+          <div
+            onMouseEnter={() => setIsCodeHovered(true)}
+            onMouseLeave={() => setIsCodeHovered(false)}
+            className="lg:col-span-6"
+          >
             <div className="bg-white rounded-2xl border border-[#DCCDBB] shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
               <div className="px-4 py-2.5 border-b border-[#DCCDBB] bg-[#FCF9F4] flex items-center justify-between text-xs">
                 <span className="flex items-center gap-2 font-semibold text-[#292522]">
                   <FileCode2 className="w-4 h-4 text-[#BF4827]" />
                   Evidence Record <span className="font-mono text-[#6E635D] font-normal">(mandate.json)</span>
                 </span>
-                <span className="text-[10px] font-mono text-[#6E635D]">Live Case Payload</span>
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-mono text-[#52705C] font-semibold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#52705C] animate-pulse" />
+                  LIVE VERIFIED
+                </span>
               </div>
 
               <div className="p-4 bg-[#F8F3EB]/60 font-mono text-xs leading-6 overflow-x-auto">
-                {jsonSnippetLines.map((line, i) => (
-                  <div key={i} className="flex gap-4">
-                    <span className="w-4 text-right text-[#B3A69A] select-none shrink-0">{i + 1}</span>
-                    <span
-                      className={
-                        line.includes('"verdict"') || line.includes('"captured_amount"')
-                          ? 'text-[#BF4827] font-semibold'
-                          : line.includes(':')
-                          ? 'text-[#541827]'
-                          : 'text-[#6E635D]'
-                      }
+                {jsonSnippetLines.map((line, i) => {
+                  const isScanned = activeCodeLine === i
+                  return (
+                    <div
+                      key={i}
+                      onMouseEnter={() => setActiveCodeLine(i)}
+                      className={`flex gap-4 px-2 rounded transition-all duration-300 border-l-2 ${
+                        isScanned
+                          ? 'bg-white/90 border-[#BF4827] shadow-[0_1px_4px_rgba(84,24,39,0.06)]'
+                          : 'border-transparent'
+                      }`}
                     >
-                      {line}
-                    </span>
-                  </div>
-                ))}
+                      <span className="w-4 text-right text-[#B3A69A] select-none shrink-0">{i + 1}</span>
+                      <span
+                        className={
+                          line.includes('"verdict"') || line.includes('"captured_amount"')
+                            ? 'text-[#BF4827] font-semibold'
+                            : line.includes(':')
+                            ? 'text-[#541827]'
+                            : 'text-[#6E635D]'
+                        }
+                      >
+                        {line}
+                      </span>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </div>
